@@ -2,16 +2,6 @@ import styled from 'styled-components'
 import { FooterData } from './FooterData'
 import { MEDIA_QUERY_SM, MEDIA_QUERY_MD } from '../../styles/breakpoints'
 
-const device = {
-  mobileS: '320px',
-  mobileM: '375px',
-  mobileL: '425px',
-  tablet: 'max-width: 768px',
-  laptop: 'max-width: 1024px',
-  laptopL: '1440px',
-  desktop: '2560px',
-}
-
 const FooterRow = styled.footer`
   background-color: ${(props) => props.theme.general_400};
   padding: 50px 0 20px 0;
