@@ -37,6 +37,11 @@ const SuperLargeButton = styled(SmallButton)`
   letter-spacing: 0.5px;
 `
 
+export const CenterLargeButton = styled(SuperLargeButton)`
+  max-width: 120px;
+  margin: 30px auto;
+`
+
 // label：寫按鈕上面的文字
 export const ButtonSmall = ({ label }) => <SmallButton>{label}</SmallButton>
 export const ButtonSuperLarge = ({ label }) => (

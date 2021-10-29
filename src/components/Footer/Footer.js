@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import { FooterData } from './FooterData'
+import { Link } from 'react-router-dom'
 import { MEDIA_QUERY_SM, MEDIA_QUERY_MD } from '../../styles/breakpoints'
 
 const FooterRow = styled.footer`
@@ -31,7 +32,7 @@ const FooterLi = styled.li`
     font-size: 18px;
   }
 `
-const FooterLink = styled.a`
+const FooterLink = styled(Link)`
   color: ${(props) => props.theme.secondary};
   font-weight: normal;
   &:hover {
@@ -43,16 +44,16 @@ const Copyright = styled.div`
   margin-top: 40px;
 `
 
-export default function Footer() {
+export const Footer = () => {
   return (
     <FooterRow>
       <FooterArea>
         <FooterUl>
           {FooterData.about.map((item, index) => {
             return (
-              <FooterLi key={item.index}>
+              <FooterLi key={index}>
                 {item.link ? (
-                  <FooterLink href={item.link}>{item.title}</FooterLink>
+                  <FooterLink to={item.link}>{item.title}</FooterLink>
                 ) : (
                   item.title
                 )}
@@ -63,9 +64,9 @@ export default function Footer() {
         <FooterUl>
           {FooterData.help.map((item, index) => {
             return (
-              <FooterLi key={item.index}>
+              <FooterLi key={index}>
                 {item.link ? (
-                  <FooterLink href={item.link}>{item.title}</FooterLink>
+                  <FooterLink to={item.link}>{item.title}</FooterLink>
                 ) : (
                   item.title
                 )}
@@ -76,9 +77,15 @@ export default function Footer() {
         <FooterUl>
           {FooterData.follow.map((item, index) => {
             return (
-              <FooterLi key={item.index}>
+              <FooterLi key={index}>
                 {item.link ? (
-                  <FooterLink href={item.link}>{item.title}</FooterLink>
+                  <FooterLink
+                    to={item.link}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  >
+                    {item.title}
+                  </FooterLink>
                 ) : (
                   item.title
                 )}

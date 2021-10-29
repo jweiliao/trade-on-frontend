@@ -1,6 +1,6 @@
 import React from 'react'
 import FrontNavbar from './components/Navbar/FrontNavbar'
-import Footer from './components/Footer/Footer'
+import { Footer } from './components/Footer/Footer'
 import { HashRouter as Router, Switch, Route } from 'react-router-dom'
 import styled from 'styled-components'
 import HomePage from './pages/HomePage'
@@ -51,19 +51,19 @@ export default function App() {
             <AboutPage />
             <Footer />
           </Route>
-          <Route path="/givings">
+          <Route exact path="/givings">
             <FrontNavbar />
             <GivingsPage />
-            <Footer />
-          </Route>
-          <Route exact path="/givings/:id">
-            <FrontNavbar />
-            <ItemPage />
             <Footer />
           </Route>
           <Route path="/givings/add">
             <FrontNavbar />
             <AddGiftPage />
+            <Footer />
+          </Route>
+          <Route path="/givings/:id">
+            <FrontNavbar />
+            <ItemPage />
             <Footer />
           </Route>
           <Route path="/givings/edit">
