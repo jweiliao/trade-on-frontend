@@ -1,7 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 
 /* Style - 下拉選單中的每一欄 */
 const SubmenuLink = styled(Link)`

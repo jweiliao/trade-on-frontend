@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect } from 'react'
 import { FrontSubnavMemberData } from './FrontnavData'
 
 import useRWD from '../useRWD'
@@ -12,7 +12,7 @@ export default function useSubmenu() {
   const [submenuData, setSubMenuData] = useState([])
 
   // 是否為管理員
-  const isAdminLogin = true
+  // const isAdminLogin = true
 
   useEffect(() => {
     // 如果裝置為 PC 時，下拉選單不顯示 "禮物"、 "關於我們"
@@ -36,11 +36,11 @@ export default function useSubmenu() {
   // }
 
   // 用 filter， 只有 isShow 為 true 的資料才被放入 submenuData 中
-  const handleisShowAdmin = useMemo(() => {
-    return submenuData.filter((item) => {
-      return item.isShow
-    })
-  }, [submenuData])
+  // const handleisShowAdmin = useMemo(() => {
+  //   return submenuData.filter((item) => {
+  //     return item.isShow
+  //   })
+  // }, [submenuData])
 
   return { submenuData }
 }

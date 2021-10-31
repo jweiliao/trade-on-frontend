@@ -22,6 +22,7 @@ const HeaderContainer = styled.div`
   padding: 24px 120px 24px 22px;
   background: #ffffff;
   border-bottom: solid 1px ${(props) => props.theme.general_200};
+  z-index: 10;
 
   ${MEDIA_QUERY_SM} {
     padding: 24px 22px 24px 22px;
@@ -106,8 +107,7 @@ const DropdownNav = styled.div`
   justify-content: center;
   flex-direction: column;
   position: fixed;
-  ${({ dropdown }) =>
-    (dropdown && `top:64px`) || (!dropdown && `display: none;`)};
+  ${({ dropdown }) => (dropdown ? 'top:64px' : 'display:none')};
   right: 22px;
   transition: 500ms;
   z-index: 10;
