@@ -28,6 +28,29 @@ const SmallButton = styled.button`
   }
 `
 
+// label：寫按鈕上面的文字
+export const ButtonSmall = ({ label }) => <SmallButton>{label}</SmallButton>
+
+/* button/btn_medium */
+const MediumButton = styled.button`
+  display: flex;
+  align-items: center;
+  text-align: center;
+  width: 160px;
+  height: 51px;
+  padding: 12px 36px;
+  font-size: 18px;
+  line-height: 27px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  background: ${(props) => props.theme.primary_200};
+  border-radius: 4px;
+  border: none;
+
+  /* brand/secondary/purple */
+  color: ${(props) => props.theme.secondary};
+`
+
 const SuperLargeButton = styled(SmallButton)`
   width: 100%;
   height: 44px;
@@ -38,7 +61,7 @@ const SuperLargeButton = styled(SmallButton)`
 `
 
 // label：寫按鈕上面的文字
-export const ButtonSmall = ({ label }) => <SmallButton>{label}</SmallButton>
+export const ButtonMedium = ({ label }) => <MediumButton>{label}</MediumButton>
 export const ButtonSuperLarge = ({ label }) => (
   <SuperLargeButton>{label}</SuperLargeButton>
 )
