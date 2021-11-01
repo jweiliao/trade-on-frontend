@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
-import { ButtonSmall } from '../buttons'
+import { SmallButton } from '../buttons'
 import FrontNavbarSubMenu from './FrontnavbarSubmenu'
 import ClickAwayListener from 'react-click-away-listener'
 import * as GiIcons from 'react-icons/gi'
@@ -148,7 +148,7 @@ export default function FrontNavbar() {
         {!user && (
           <>
             <Link to="/login">
-              <ButtonSmall label="註冊/登入"></ButtonSmall>
+              <SmallButton>註冊/登入</SmallButton>
             </Link>
           </>
         )}
