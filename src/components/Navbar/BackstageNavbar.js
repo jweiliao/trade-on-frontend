@@ -21,7 +21,7 @@ const Nav = styled.div`
 
 const NavbarWrap = styled.div``
 
-export const BackstageNavbar = () => {
+export default function BackstageNavbar() {
   return (
     <Nav>
       <NavbarWrap>
