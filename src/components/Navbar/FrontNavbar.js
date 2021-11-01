@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
-import { ButtonSmall } from '../buttons'
+import { SmallButton } from '../buttons'
 import FrontNavbarSubMenu from './FrontnavbarSubmenu'
 import ClickAwayListener from 'react-click-away-listener'
 import * as GiIcons from 'react-icons/gi'
@@ -22,6 +22,7 @@ const HeaderContainer = styled.div`
   padding: 24px 120px 24px 22px;
   background: #ffffff;
   border-bottom: solid 1px ${(props) => props.theme.general_200};
+  z-index: 10;
 
   ${MEDIA_QUERY_SM} {
     padding: 24px 22px 24px 22px;
@@ -106,8 +107,7 @@ const DropdownNav = styled.div`
   justify-content: center;
   flex-direction: column;
   position: fixed;
-  ${({ dropdown }) =>
-    (dropdown && `top:64px`) || (!dropdown && `display: none;`)};
+  ${({ dropdown }) => (dropdown ? 'top:64px' : 'display:none')};
   right: 22px;
   transition: 500ms;
   z-index: 10;
@@ -148,7 +148,7 @@ export default function FrontNavbar() {
         {!user && (
           <>
             <Link to="/login">
-              <ButtonSmall label="註冊/登入"></ButtonSmall>
+              <SmallButton>註冊/登入</SmallButton>
             </Link>
           </>
         )}
