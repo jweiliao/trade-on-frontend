@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import { MEDIA_QUERY_SM, MEDIA_QUERY_MD } from '../../styles/breakpoints'
-import { ButtonMedium } from '../../components/buttons'
+import { MediumButton } from '../../components/buttons'
 
 // 首頁最上方大圖
 import homebanner from '../../images/homeBanner.svg'
@@ -193,7 +193,7 @@ export default function HomePage() {
 
           {/* "介紹"右側文字下方的按鈕 */}
           <Link to="/about">
-            <ButtonMedium label="了解更多"></ButtonMedium>
+            <MediumButton>了解更多</MediumButton>
           </Link>
         </HomeIntrolRight>
       </HomeIntro>

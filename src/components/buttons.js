@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 
 /* button/btn_small */
-const SmallButton = styled.button`
+export const SmallButton = styled.button`
   display: flex;
   align-items: center;
   text-align: center;
@@ -21,18 +21,22 @@ const SmallButton = styled.button`
 
   /* brand/secondary/purple */
   color: ${(props) => props.theme.secondary};
+
+  &:hover {
+    background-color: ${(props) => props.theme.primary_100};
+  }
 `
 // label：寫按鈕上面的文字
-export const ButtonSmall = ({ label }) => <SmallButton>{label}</SmallButton>
+// export const ButtonSmall = ({ label }) => <SmallButton>{label}</SmallButton>
 
-/* button/btn_small */
-const MediumButton = styled.button`
+/* button/btn_medium */
+export const MediumButton = styled.button`
   display: flex;
   align-items: center;
   text-align: center;
   width: 160px;
   height: 51px;
-  padding: 12px 36px;
+  padding: 12px 42px;
   font-size: 18px;
   line-height: 27px;
   letter-spacing: 0.5px;
@@ -43,6 +47,10 @@ const MediumButton = styled.button`
 
   /* brand/secondary/purple */
   color: ${(props) => props.theme.secondary};
+
+  &:hover {
+    background-color: ${(props) => props.theme.primary_100};
+  }
 `
 // label：寫按鈕上面的文字
-export const ButtonMedium = ({ label }) => <MediumButton>{label}</MediumButton>
+// export const ButtonMedium = ({ label }) => <MediumButton>{label}</MediumButton>

@@ -27,7 +27,7 @@ function Carousel() {
   // 設定 carousel 的參數
   let settings = {
     dots: true,
-    infinite: false,
+    infinite: true,
     speed: 100,
     // 幻燈片顯示幾張
     slidesToShow: 4,
@@ -35,6 +35,7 @@ function Carousel() {
     slidesToScroll: 1,
     // 兩側是否有箭頭
     arrows: true,
+    autoplay: true,
 
     // 設定 carousel 的 RWD
     responsive: [
@@ -83,7 +84,7 @@ function Carousel() {
               {/* card - 每一個卡片的內容 */}
               <div className="card">
                 {/* 將卡片的連接設為此物品的物品詳細頁*/}
-                <Link to="/givings">
+                <Link to={`/givings/${current.id}`}>
                   {/* 圖片 */}
                   <img
                     className="card-img"
