@@ -20,9 +20,9 @@ export default function FormikContainer() {
   ]
   // checkbox 資料
   const checkboxOptions = [
-    { key: 'option 1', value: 'cOption1' },
-    { key: 'option 2', value: 'cOption2' },
-    { key: 'option 3', value: 'cOption3' },
+    { key: '全家店到店', value: '全家店到店' },
+    { key: '11店到店', value: '7-11店到店' },
+    { key: '面交', value: '面交' },
   ]
   // 初始化狀態
   const initialValues = {
@@ -54,32 +54,48 @@ export default function FormikContainer() {
     >
       {(formik) => (
         <Form>
+          <div className="sub-title">禮物資訊</div>
           <FormikControl control="input" label="物品名稱" name="itemName" />
           <FormikControl
-            control="textarea"
-            label="物品內容"
-            name="description"
-          />
-          <FormikControl
             control="select"
-            label="選單"
+            label="物品分類"
             name="selectOption"
             options={dropDownOptions}
           />
           <FormikControl
-            control="radio"
-            label="Radio Topic"
-            name="radioOption"
-            options={radioOptions}
+            control="select"
+            label="新舊程度"
+            name="selectGoods"
+            options={dropDownOptions}
           />
           <FormikControl
+            control="select"
+            label="物品數量"
+            name="selectCount"
+            options={dropDownOptions}
+          />
+          <FormikControl
+            control="textarea"
+            label="物品內容說明"
+            name="description"
+          />
+          <label class="sc-kfPuZi jxJhVC">圖片上傳</label>
+          <input type="file" />
+          <hr />
+          <div className="sub-title">交貨方式</div>
+          <FormikControl
             control="checkbox"
-            label="checkbox Topic"
+            label=""
             name="checkboxOption"
             options={checkboxOptions}
           />
-          <button type="submit">新增物品</button>
-          <CenterLargeButton>新增物品</CenterLargeButton>
+          <FormikControl
+            control="select"
+            label="選擇縣市"
+            name="selectOption"
+            options={dropDownOptions}
+          />
+          <CenterLargeButton type="submit">新增物品</CenterLargeButton>
         </Form>
       )}
     </Formik>
