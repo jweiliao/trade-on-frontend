@@ -1,6 +1,6 @@
 import React from 'react'
 import FrontNavbar from './components/Navbar/FrontNavbar'
-import Footer from './components/Footer/Footer'
+import { Footer } from './components/Footer/Footer'
 import BackstageNavbar from './components/Navbar/BackstageNavbar'
 import { HashRouter as Router, Switch, Route } from 'react-router-dom'
 import HomePage from './pages/HomePage'

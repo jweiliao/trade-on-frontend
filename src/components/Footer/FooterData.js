@@ -6,7 +6,7 @@ export const FooterData = {
     },
     {
       title: '關於我們',
-      link: '#',
+      link: '/about',
     },
   ],
   help: [
@@ -16,15 +16,15 @@ export const FooterData = {
     },
     {
       title: '關於我們',
-      link: '#',
+      link: '/about',
     },
     {
       title: '隱私權政策',
-      link: '#',
+      link: '/Privacy',
     },
     {
       title: '服務條款',
-      link: '#',
+      link: '/terms',
     },
   ],
   follow: [

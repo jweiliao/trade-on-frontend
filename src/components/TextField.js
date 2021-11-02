@@ -73,3 +73,36 @@ export const InputCheckBox = ({ label }) => (
     <span></span>
   </CheckBoxWrapper>
 )
+
+export const StyledLabel = styled.label`
+  display: block;
+  margin: 10px 0;
+`
+export const StyledInput = styled.input`
+  border: 1px solid ${(props) => props.inputColor};
+  outline: none;
+  $:focus,
+  &:active {
+    outline: none;
+    border: 1px solid #f00;
+  }
+`
+
+export const StyledSelect = styled.select``
+
+export const StyledTextarea = styled.textarea`
+  resize: none;
+  overflow-x: hidden;
+  border: 1px solid ${(props) => props.inputColor};
+  outline: none;
+  $:focus,
+  &:active {
+    outline: none;
+    border: 1px solid #f00;
+  }
+`
+export const StyledRadio = styled.input`
+  padding: 10px !important;
+`
+
+export const StyledCheckbox = styled.input``

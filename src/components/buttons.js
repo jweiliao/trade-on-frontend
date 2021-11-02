@@ -1,4 +1,3 @@
-import React from 'react'
 import styled from 'styled-components'
 
 /* button/btn_small */
@@ -47,7 +46,7 @@ export const LargeButton = styled(SmallButton)`
   line-height: 27px;
   letter-spacing: 0.5px;
 `
-
+/* button/btn_super large */
 export const SuperLargeButton = styled(SmallButton)`
   width: 100%;
   height: 44px;
@@ -55,4 +54,8 @@ export const SuperLargeButton = styled(SmallButton)`
   font-size: 16px;
   line-height: 24px;
   letter-spacing: 0.5px;
+`
+export const CenterLargeButton = styled(SuperLargeButton)`
+  max-width: 120px;
+  margin: 30px auto;
 `
