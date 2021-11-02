@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import { TabSmall } from '../../components/tabs'
 import { Input, InputPassword, InputCheckBox } from '../../components/TextField'
-import { ButtonSuperLarge } from '../../components/buttons'
+import { SuperLargeButton } from '../../components/buttons'
 
 const Wrapper = styled.div`
   width: 500px;
@@ -75,7 +75,7 @@ export default function RegisterPage() {
           }
         />
       </InputWrapper>
-      <ButtonSuperLarge label="註冊" />
+      <SuperLargeButton>註冊</SuperLargeButton>
     </Wrapper>
   )
 }

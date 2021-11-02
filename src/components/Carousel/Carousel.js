@@ -69,11 +69,11 @@ function Carousel() {
     <div className="container">
       {/* 推薦物品的大標題*/}
       <div className="container_title">快來把這些物品索取回家吧</div>
-      {/* 推薦物品的數量為 0 時，顯示 Loading...*/}
+      {/* 推薦物品的數量為 0 時，顯示 "尚無推薦" */}
       {/* 推薦物品的數量不為 0 時，顯示推薦的物品 */}
       {recommended.length === 0 ? (
         <div>
-          <span>Loading...</span>
+          <span>尚無推薦...</span>
         </div>
       ) : (
         <Slider {...settings}>

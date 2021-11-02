@@ -234,7 +234,9 @@ export default function GivingsPage() {
       <GivingArea>
         <GivingTitle>禮物區</GivingTitle>
         <GivingSubtitle>快來把這些物品索取回家吧</GivingSubtitle>
-        <UploadGiftButton to="/givings/add">上傳禮物</UploadGiftButton>
+        <Link to="/givings/add">
+          <UploadGiftButton>上傳禮物</UploadGiftButton>
+        </Link>
       </GivingArea>
 
       {/* 禮物頁中間的 "所有禮物" 區塊 */}

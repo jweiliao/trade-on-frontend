@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { TabSmall } from '../../components/tabs'
 import { Input, InputPassword } from '../../components/TextField'
-import { ButtonSuperLarge } from '../../components/buttons'
+import { SuperLargeButton } from '../../components/buttons'
 
 const Wrapper = styled.div`
   width: 500px;
@@ -53,7 +53,7 @@ export default function LoginPage() {
         <InputText placeholder="信箱" />
         <InputHide placeholder="密碼" />
       </InputWrapper>
-      <ButtonSuperLarge label="登入" />
+      <SuperLargeButton>登入</SuperLargeButton>
     </Wrapper>
   )
 }

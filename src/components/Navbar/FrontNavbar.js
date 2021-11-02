@@ -75,6 +75,7 @@ const Avatar = styled.button`
   // background: url(.png);
   border-radius: 44px;
   border: none;
+  cursor: pointer;
 
   ${MEDIA_QUERY_SM} {
     display: none;
@@ -148,7 +149,13 @@ export default function FrontNavbar() {
         {!user && (
           <>
             <Link to="/login">
-              <SmallButton>註冊/登入</SmallButton>
+              <SmallButton
+                style={{
+                  cursor: 'pointer',
+                }}
+              >
+                註冊/登入
+              </SmallButton>
             </Link>
           </>
         )}

@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
-import { MEDIA_QUERY_SM, MEDIA_QUERY_MD } from '../../styles/breakpoints'
+import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 import { LargeButton } from '../../components/buttons'
 import * as FaIcons from 'react-icons/fa'
 import * as MdIcons from 'react-icons/md'
