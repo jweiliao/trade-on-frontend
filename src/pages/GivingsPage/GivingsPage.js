@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import { MEDIA_QUERY_SM, MEDIA_QUERY_MD } from '../../styles/breakpoints'
 import { MediumButton } from '../../components/buttons'
+import Container from '../../components/Container'
 
 // 禮物頁最上方大圖
 import givingsbanner from '../../images/givingsBanner.svg'
@@ -229,47 +230,48 @@ export default function GivingsPage() {
           <BannerSubTitle>目前上架中的禮物有...</BannerSubTitle>
         </BannerText>
       </GivingsBanner>
+      <Container>
+        {/* 禮物頁中間的 "禮物區" 區塊 */}
+        <GivingArea>
+          <GivingTitle>禮物區</GivingTitle>
+          <GivingSubtitle>快來把這些物品索取回家吧</GivingSubtitle>
+          <Link to="/givings/add">
+            <UploadGiftButton>上傳禮物</UploadGiftButton>
+          </Link>
+        </GivingArea>
 
-      {/* 禮物頁中間的 "禮物區" 區塊 */}
-      <GivingArea>
-        <GivingTitle>禮物區</GivingTitle>
-        <GivingSubtitle>快來把這些物品索取回家吧</GivingSubtitle>
-        <Link to="/givings/add">
-          <UploadGiftButton>上傳禮物</UploadGiftButton>
-        </Link>
-      </GivingArea>
+        {/* 禮物頁中間的 "所有禮物" 區塊 */}
+        <GivingCards>
+          {recommended.map((current) => (
+            // cards - 包住所有卡片的元件
+            <Cards key={current.id}>
+              {/* card - 每一個卡片的內容 */}
+              <Card>
+                {/* 將卡片的連接設為此物品的物品詳細頁*/}
+                <Link to={`/givings/${current.id}`}>
+                  {/* 圖片 */}
+                  <CardImage
+                    src={`https://source.unsplash.com/random/${current.id}`}
+                  ></CardImage>
+                  {/* 文字內容 */}
+                  <CardContent>
+                    <CardTitle>{current.username}</CardTitle>
+                  </CardContent>
+                </Link>
+              </Card>
+            </Cards>
+          ))}
+        </GivingCards>
 
-      {/* 禮物頁中間的 "所有禮物" 區塊 */}
-      <GivingCards>
-        {recommended.map((current) => (
-          // cards - 包住所有卡片的元件
-          <Cards key={current.id}>
-            {/* card - 每一個卡片的內容 */}
-            <Card>
-              {/* 將卡片的連接設為此物品的物品詳細頁*/}
-              <Link to={`/givings/${current.id}`}>
-                {/* 圖片 */}
-                <CardImage
-                  src={`https://source.unsplash.com/random/${current.id}`}
-                ></CardImage>
-                {/* 文字內容 */}
-                <CardContent>
-                  <CardTitle>{current.username}</CardTitle>
-                </CardContent>
-              </Link>
-            </Card>
-          </Cards>
-        ))}
-      </GivingCards>
-
-      {/* 顯示頁數 */}
-      <PaginationContainer>
-        {/* 顯示頁數按鈕 */}
-        <PageButton>&lt;</PageButton>
-        <PageButton>1</PageButton>
-        <PageButton>2</PageButton>
-        <PageButton>&gt;</PageButton>
-      </PaginationContainer>
+        {/* 顯示頁數 */}
+        <PaginationContainer>
+          {/* 顯示頁數按鈕 */}
+          <PageButton>&lt;</PageButton>
+          <PageButton>1</PageButton>
+          <PageButton>2</PageButton>
+          <PageButton>&gt;</PageButton>
+        </PaginationContainer>
+      </Container>
     </>
   )
 }
