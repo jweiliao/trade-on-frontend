@@ -17,10 +17,7 @@ const Title = styled.h1`
   margin: 0 0 1.25rem;
 `
 
-const Divider = styled.div`
-  border-top: 0.1rem solid ${(props) => props.theme.general_500};
-  height: 0.1rem;
-  box-sizing: border-box;
+const Divider = styled.hr`
   margin-bottom: 3.5rem;
 `
 
