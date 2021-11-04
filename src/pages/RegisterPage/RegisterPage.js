@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
-import { TabSmall } from '../../components/tabs'
-import { Input, InputPassword, InputCheckBox } from '../../components/TextField'
+import { TextTab } from '../../components/tabs'
+import { Input, InputPassword, InputCheckBox } from '../../components/textField'
 import { SuperLargeButton } from '../../components/buttons'
 
 const Wrapper = styled.div`
@@ -52,8 +52,10 @@ export default function RegisterPage() {
       <Title>TRADE ON</Title>
       <Divider />
       <TabWrapper>
-        <TabSmall label="登入" path="/login" />
-        <TabSmall label="註冊" path="/register" isActive="true" />
+        <TextTab to="/login">登入</TextTab>
+        <TextTab to="/register" $isActive="true">
+          註冊
+        </TextTab>
       </TabWrapper>
       <InputWrapper>
         <InputText placeholder="信箱" />
@@ -63,11 +65,11 @@ export default function RegisterPage() {
         <InputCheckBox
           label={
             <>
-              我同意 TRADE ON 的
+              我同意 TRADE ON 的<span> </span>
               <AgreeItemLink to="/terms" target="_blank">
                 會員條款
               </AgreeItemLink>
-              與
+              <span> </span>與<span> </span>
               <AgreeItemLink to="/privacy" target="_blank">
                 隱私權政策
               </AgreeItemLink>

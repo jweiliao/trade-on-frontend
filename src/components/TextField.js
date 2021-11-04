@@ -15,11 +15,12 @@ export const InputPassword = styled(Input).attrs({ type: 'password' })``
 const CheckBoxWrapper = styled.label`
   display: block;
   position: relative;
-  padding: 0.03rem 0 0.03rem 1.8rem;
+  padding-left: 1.8rem;
   box-sizing: border-box;
   font-size: 1rem;
   font-style: normal;
   font-weight: normal;
+  line-height: 1.25;
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;

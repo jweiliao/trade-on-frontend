@@ -1,6 +1,6 @@
 import styled from 'styled-components'
-import { TabSmall } from '../../components/tabs'
-import { Input, InputPassword } from '../../components/TextField'
+import { TextTab } from '../../components/tabs'
+import { Input, InputPassword } from '../../components/textField'
 import { SuperLargeButton } from '../../components/buttons'
 
 const Wrapper = styled.div`
@@ -46,8 +46,10 @@ export default function LoginPage() {
       <Title>TRADE ON</Title>
       <Divider />
       <TabWrapper>
-        <TabSmall label="登入" path="/login" isActive="true" />
-        <TabSmall label="註冊" path="/register" />
+        <TextTab to="/login" $isActive="true">
+          登入
+        </TextTab>
+        <TextTab to="/register">註冊</TextTab>
       </TabWrapper>
       <InputWrapper>
         <InputText placeholder="信箱" />

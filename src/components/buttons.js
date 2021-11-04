@@ -18,12 +18,21 @@ export const SmallButton = styled.button`
   background: ${(props) => props.theme.primary_200};
   border-radius: 4px;
   border: none;
+  cursor: pointer;
 
   /* brand/secondary/purple */
   color: ${(props) => props.theme.secondary};
 
   &:hover {
-    background-color: ${(props) => props.theme.primary_100};
+    background-color: ${(props) => props.theme.primary_250};
+  }
+`
+
+export const DangerSmallButton = styled(SmallButton)`
+  background: ${(props) => props.theme.danger_000};
+  color: ${(props) => props.theme.general_100};
+  :hover {
+    background: ${(props) => props.theme.danger_100};
   }
 `
 
@@ -46,6 +55,7 @@ export const LargeButton = styled(SmallButton)`
   line-height: 27px;
   letter-spacing: 0.5px;
 `
+
 /* button/btn_super large */
 export const SuperLargeButton = styled(SmallButton)`
   width: 100%;
@@ -55,6 +65,7 @@ export const SuperLargeButton = styled(SmallButton)`
   line-height: 24px;
   letter-spacing: 0.5px;
 `
+
 export const CenterLargeButton = styled(SuperLargeButton)`
   max-width: 120px;
   margin: 30px auto;
