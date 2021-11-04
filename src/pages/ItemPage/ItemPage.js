@@ -57,7 +57,7 @@ const DonorAvatar = styled.div`
   border-radius: 50%;
   background-color: ${(props) => props.theme.primary_200};
 `
-const DonorNickname = styled.div`
+const DonorNickname = styled(Link)`
   font-size: 16px;
   line-height: 1.5;
   letter-spacing: 0.5px;
@@ -113,8 +113,8 @@ const EditGiftButton = styled(LargeButton)`
 `
 
 const GiftIntro = styled.div`
-  width: 557px;
-  margin: 50px; auto;
+  max-width: 557px;
+  margin: 50px 0px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -147,7 +147,8 @@ export default function ItemPage() {
           <DetailRight>
             <Donor>
               <DonorAvatar></DonorAvatar>
-              <DonorNickname>Kimi</DonorNickname>
+              {/* todo: 連結到 donor 的個人主頁 */}
+              <DonorNickname to="#">Kimi</DonorNickname>
             </Donor>
 
             <GiftTitle>2022 輕便方格手帳 </GiftTitle>
@@ -215,6 +216,7 @@ export default function ItemPage() {
           {/* 想要禮物的內文 */}
           <IntroContent>目前沒有資料</IntroContent>
           <Comments></Comments>
+          <Comments></Comments>
         </GiftIntro>
 
         {/* 禮物詳情頁的 "留言" 區塊 */}
@@ -223,6 +225,7 @@ export default function ItemPage() {
           <IntroTitle>留言</IntroTitle>
           {/* 留言的內文 */}
           <IntroContent>目前沒有資料</IntroContent>
+          <Comments></Comments>
           {/* todo：留言區塊 */}
           <LargeTextArea></LargeTextArea>
         </GiftIntro>

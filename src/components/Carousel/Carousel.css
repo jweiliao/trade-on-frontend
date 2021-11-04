@@ -81,13 +81,13 @@
 }
 
 @media only screen and (max-width: 768px) {
-  .slick-list {
+  /* .slick-list {
     margin: 0px;
-  }
+  } */
 
   /* the slides - 每一張卡片*/
-  .slick-slide {
+  /* .slick-slide {
     width: 200px !important;
     margin-right: 55px;
-  }
+  } */
 }

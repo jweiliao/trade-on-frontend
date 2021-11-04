@@ -6,7 +6,6 @@
 
 .sliders {
   width: 521px;
-  margin: 0 auto 10px;
 }
 
 .thumbnail_slider-wrap {
@@ -26,8 +25,21 @@
 }
 
 .thumbnail_sliders-item .thumbnail_slider-img {
-  width: 98%;
+  width: 96%;
   height: 90px;
-  margin: 0 auto;
+  margin-top: 5px;
   object-fit: cover;
+}
+
+@media only screen and (max-width: 768px) {
+  .sliders-wrap {
+    margin-left: -29px;
+  }
+
+  .thumbnail_sliders-item .thumbnail_slider-img {
+    width: 77%;
+    height: 90px;
+    margin: 0;
+    margin-top: 10px;
+  }
 }
