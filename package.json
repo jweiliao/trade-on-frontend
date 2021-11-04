@@ -2,7 +2,7 @@
   "name": "app",
   "version": "0.1.0",
   "private": true,
-  "homepage": "./*",
+  "homepage": "././",
   "dependencies": {
     "@chakra-ui/react": "^1.6.12",
     "@emotion/react": "^11.5.0",
