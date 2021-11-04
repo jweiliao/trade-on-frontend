@@ -24,14 +24,14 @@ export const SmallButton = styled.button`
   color: ${(props) => props.theme.secondary};
 
   &:hover {
-    background-color: ${(props) => props.theme.primary_250};
+    background: ${(props) => props.theme.primary_250};
   }
 `
 
 export const DangerSmallButton = styled(SmallButton)`
   background: ${(props) => props.theme.danger_000};
   color: ${(props) => props.theme.general_100};
-  :hover {
+  &:hover {
     background: ${(props) => props.theme.danger_100};
   }
 `
@@ -69,4 +69,22 @@ export const SuperLargeButton = styled(SmallButton)`
 export const CenterLargeButton = styled(SuperLargeButton)`
   max-width: 120px;
   margin: 30px auto;
+`
+
+export const PageButton = styled.li`
+  width: 3rem;
+  height: 3rem;
+  font-size: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  border: solid 1px ${(props) => props.theme.general_500};
+  :not(:first-child) {
+    border-left: 0px;
+  }
+  color: ${(props) => props.theme.primary_300};
+  &:hover {
+    background-color: ${(props) => props.theme.primary_100};
+  }
 `
