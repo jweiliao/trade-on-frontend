@@ -123,11 +123,11 @@ function comments() {
         </SubComment>
         <SubComment>
           <CommentTop>
-            <CommentNickname>Kimi</CommentNickname>
+            <CommentNickname>Willy</CommentNickname>
           </CommentTop>
-          <CommentContent>準備寄送囉，記得先付運費哊！</CommentContent>
+          <CommentContent>已付運費囉～ 感謝 </CommentContent>
           <CommentBottom>
-            <CommentTime>2021/10/14 14:07</CommentTime>
+            <CommentTime>2021/10/14 14:21</CommentTime>
             <CommentUpdates>
               <CommentReply>回覆</CommentReply>
               <CommentEdit> | 編輯留言</CommentEdit>
