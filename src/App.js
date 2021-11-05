@@ -2,7 +2,7 @@ import React from 'react'
 import FrontNavbar from './components/Navbar/FrontNavbar'
 import { Footer } from './components/Footer/Footer'
 import BackstageNavbar from './components/Navbar/BackstageNavbar'
-import { HashRouter as Router, Switch, Route } from 'react-router-dom'
+import { HashRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
@@ -36,7 +36,7 @@ const Home = () => {
         <Route exact path="/givings" component={GivingsPage} />
         <Route path="/givings/add" component={AddGiftPage} />
         <Route path="/givings/edit" component={EditGiftsPage} />
-        <Route path="/givings/:id" component={ItemPage} />
+        <Route exact strict path="/givings/:id" component={ItemPage} />
         <Route exact path="/portfolio" component={PortfolioPage} />
         <Route path="/portfolio/edit" component={EditPortfolioPage} />
         <Route exact path="/transactions" component={TransactionsPage} />
@@ -44,6 +44,7 @@ const Home = () => {
         <Route path="/faq" component={FaqPage} />
         <Route path="/privacy" component={PrivacyPage} />
         <Route path="/terms" component={TermsPage} />
+        <Redirect from="*" to="/" />
       </Switch>
       <Footer />
     </>
