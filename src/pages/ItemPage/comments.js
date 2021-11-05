@@ -57,20 +57,20 @@ const CommentUpdates = styled.div`
 const CommentReply = styled.div`
   color: ${(props) => props.theme.primary_300};
   &:hover {
-    color: ${(props) => props.theme.general_500};
+    color: ${(props) => props.theme.primary_250};
   }
 `
 const CommentEdit = styled.div`
   color: ${(props) => props.theme.primary_300};
 
   &:hover {
-    color: ${(props) => props.theme.general_500};
+    color: ${(props) => props.theme.primary_250};
   }
 `
 const CommentDelete = styled.div`
-  color: ${(props) => props.theme.danger};
+  color: ${(props) => props.theme.danger_100};
   &:hover {
-    color: ${(props) => props.theme.general_500};
+    color: ${(props) => props.theme.danger_000};
   }
 `
 const SubCommentContainer = styled.div`

@@ -8,7 +8,7 @@ import {
   StyledTextarea,
   StyledRadio,
   StyledCheckbox,
-} from './textField'
+} from './TextField'
 
 /* label: 欄位標籤 name: 欄位名稱 rest: */
 export const Input = (props) => {
