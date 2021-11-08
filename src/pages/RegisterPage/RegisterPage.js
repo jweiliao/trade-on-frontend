@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import { TextTab } from '../../components/tabs'
-import { Input, InputPassword, InputCheckBox } from '../../components/TextField'
+import { Input, InputPassword, InputCheckBox } from '../../components/textField'
 import { SuperLargeButton } from '../../components/buttons'
 
 const Wrapper = styled.div`

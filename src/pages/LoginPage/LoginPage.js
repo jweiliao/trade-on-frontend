@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { TextTab } from '../../components/tabs'
-import { Input, InputPassword } from '../../components/TextField'
+import { Input, InputPassword } from '../../components/textField'
 import { SuperLargeButton } from '../../components/buttons'
 
 const Wrapper = styled.div`
