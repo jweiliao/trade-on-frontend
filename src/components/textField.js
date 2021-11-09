@@ -12,12 +12,23 @@ export const Input = styled.input`
 
 export const InputPassword = styled(Input).attrs({ type: 'password' })``
 
+export const Textarea = styled.textarea`
+  display: block;
+  padding: 0.5rem;
+  margin: 1.2rem 0;
+  border: 0.1rem solid ${(props) => props.theme.secondary};
+  border-radius: 0.25rem;
+  resize: none;
+  outline: none;
+  line-height: 1.5;
+`
 const CheckBoxWrapper = styled.label`
   display: block;
   position: relative;
+  margin-top: 1.2rem;
   padding-left: 1.8rem;
   box-sizing: border-box;
-  font-size: 1rem;
+  font-size: 1.125rem;
   font-style: normal;
   font-weight: normal;
   line-height: 1.25;
@@ -67,10 +78,10 @@ const CheckBox = styled.input.attrs({ type: 'checkbox' })`
   }
 `
 
-export const InputCheckBox = ({ label }) => (
+export const InputCheckBox = ({ label, isChecked }) => (
   <CheckBoxWrapper>
     {label}
-    <CheckBox />
+    <CheckBox checked={isChecked} />
     <span></span>
   </CheckBoxWrapper>
 )
