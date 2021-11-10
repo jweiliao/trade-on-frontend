@@ -1,7 +1,7 @@
 export const FooterData = {
   about: [
     {
-      title: '關於我們',
+      title: '關於 TRADE ON',
       link: null,
     },
     {
@@ -15,12 +15,12 @@ export const FooterData = {
       link: null,
     },
     {
-      title: '關於我們',
-      link: '/about',
+      title: '常見問題',
+      link: '/backstage/faq',
     },
     {
       title: '隱私權政策',
-      link: '/Privacy',
+      link: '/privacy',
     },
     {
       title: '服務條款',

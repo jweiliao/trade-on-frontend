@@ -30,7 +30,7 @@ const HeaderContainer = styled.div`
 `
 /* 導覽列左邊 - 品牌名稱的連接 */
 const HeaderLeft = styled(Link)`
-  width: 89px;
+  min-width: 89px;
   height: 16px;
   color: ${(props) => props.theme.primary_300};
   font-weight: bold;
