@@ -16,7 +16,7 @@ export const FooterData = {
     },
     {
       title: '常見問題',
-      link: '/backstage/faq',
+      link: '/faq',
     },
     {
       title: '隱私權政策',
