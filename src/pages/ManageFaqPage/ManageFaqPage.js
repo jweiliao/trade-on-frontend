@@ -1,7 +1,12 @@
+import styled from 'styled-components'
+import { BackstageTitle } from '../../components/heading'
+
+const Title = styled(BackstageTitle)``
+
 export default function ManageFaqPage() {
   return (
-    <div>
-      <h1>ManageFaq Page</h1>
-    </div>
+    <>
+      <Title>常見問題管理</Title>
+    </>
   )
 }

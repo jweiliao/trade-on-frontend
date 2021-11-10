@@ -1,7 +1,12 @@
-export default function MangeCategoryPage() {
+import styled from 'styled-components'
+import { BackstageTitle } from '../../components/heading'
+
+const Title = styled(BackstageTitle)``
+
+export default function ManageFaqPage() {
   return (
-    <div>
-      <h1>MangeCategory Page</h1>
-    </div>
+    <>
+      <Title>物品分類管理</Title>
+    </>
   )
 }
