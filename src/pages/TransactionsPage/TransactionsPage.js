@@ -8,6 +8,7 @@ import {
   PageButton,
 } from '../../components/buttons'
 import { MEDIA_QUERY_SM, MEDIA_QUERY_MD } from '../../styles/breakpoints'
+import Swal from 'sweetalert2'
 
 const ActionTabsWrapper = styled.div`
   margin: 3rem 0 2rem;
@@ -169,6 +170,29 @@ const PaginationWrapper = styled.ul`
 `
 
 export default function TransactionsPage() {
+  const handleCancel = () => {
+    Swal.fire({
+      title: '取消交易',
+      text: '確定要取消交易嗎？',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#e25151',
+      cancelButtonColor: '#B7B7B7',
+      cancelButtonText: '不，我要繼續交易',
+      confirmButtonText: '是的，我要取消',
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: '取消成功',
+          text: '此筆交易已被取消',
+          icon: 'success',
+          confirmButtonColor: '#FFD803',
+          confirmButtonText: '完成',
+        })
+      }
+    })
+  }
   return (
     <Container>
       <PageTitle>交易紀錄</PageTitle>
@@ -200,7 +224,7 @@ export default function TransactionsPage() {
             </TextWrapper>
             <ButtonsWrapper>
               <Button>交易詳情</Button>
-              <DangerButton>取消交易</DangerButton>
+              <DangerButton onClick={handleCancel}>取消交易</DangerButton>
             </ButtonsWrapper>
           </ContentWrapper>
         </Record>
