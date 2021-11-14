@@ -22,6 +22,8 @@ import BackstagePage from './pages/BackstagePage'
 import ManageMemberPage from './pages/ManageMemberPage'
 import ManageCategoryPage from './pages/ManageCategoryPage'
 import ManageFaqPage from './pages/ManageFaqPage'
+import ManageFaqPageAdd from './pages/ManageFaqPageAdd'
+import ManageFaqPageEdit from './pages/ManageFaqPageEdit'
 import ManageGivingPage from './pages/ManageGivingPage'
 
 const Home = () => {
@@ -59,7 +61,9 @@ const Backstage = () => {
         <Route exact path="/backstage" component={BackstagePage} />
         <Route path="/backstage/member" component={ManageMemberPage} />
         <Route path="/backstage/category" component={ManageCategoryPage} />
-        <Route path="/backstage/faq" component={ManageFaqPage} />
+        <Route exact path="/backstage/faq" component={ManageFaqPage} />
+        <Route path="/backstage/faq/add" component={ManageFaqPageAdd} />
+        <Route path="/backstage/faq/edit" component={ManageFaqPageEdit} />
         <Route path="/backstage/giving" component={ManageGivingPage} />
       </Switch>
     </>
