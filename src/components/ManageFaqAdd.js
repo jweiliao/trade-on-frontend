@@ -1,9 +1,22 @@
 import styled from 'styled-components'
-import Container from '../../components/Container'
-import { Input, Textarea } from '../../components/textField'
-import { BackstageTitle } from '../../components/heading'
-import { SmallButton } from '../../components/buttons'
+// import Container from '../../components/Container'
+import { Input, Textarea } from './textField'
+import { BackstageTitle } from './heading'
+import { SmallButton } from './buttons'
+import Swal from 'sweetalert2'
 
+const AddFaqWrapper = styled.div`
+  z-index: 100;
+  width: 500px;
+  padding: 10px 50px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border: 1px solid ${(props) => props.theme.general_500};
+  border-radius: 4px;
+`
 const Title = styled(BackstageTitle)``
 
 const AddFaq = styled.div`
@@ -12,7 +25,7 @@ const AddFaq = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  padding-left: 30px;
+  // padding-left: 30px;
   font-size: 20px;
   margin-bottom: 30px;
 `
@@ -52,9 +65,24 @@ const FaqCancelButton = styled(SmallButton)`
 const FaqSaveButton = styled(SmallButton)`
   margin-left: 27px;
 `
-export default function ManageFaqPageAdd() {
+
+export default function ManageFaqPageAdd({ setAddPopUp }) {
+  const handleAdd = () => {
+    setAddPopUp(false)
+    Swal.fire({
+      icon: 'success',
+      title: '新增成功',
+      showConfirmButton: false,
+      timer: 1500,
+    })
+  }
+
+  const handleCancelClick = () => {
+    setAddPopUp(false)
+  }
+
   return (
-    <Container>
+    <AddFaqWrapper>
       {/* 標題 */}
       <Title>新增常見問題</Title>
       <AddFaq>
@@ -62,9 +90,11 @@ export default function ManageFaqPageAdd() {
         回答<FaqAnswer name="answer" placeholder="請輸入回答"></FaqAnswer>
       </AddFaq>
       <FaqConfirmWrapper>
-        <FaqCancelButton>取消</FaqCancelButton>
-        <FaqSaveButton type="submit">儲存</FaqSaveButton>
+        <FaqCancelButton onClick={handleCancelClick}>取消</FaqCancelButton>
+        <FaqSaveButton type="submit" onClick={handleAdd}>
+          新增
+        </FaqSaveButton>
       </FaqConfirmWrapper>
-    </Container>
+    </AddFaqWrapper>
   )
 }

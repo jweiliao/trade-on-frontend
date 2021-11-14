@@ -6,6 +6,8 @@ import Container from '../../components/Container'
 import { SmallButton, DangerSmallButton } from '../../components/buttons'
 import { MEDIA_QUERY_SM, MEDIA_QUERY_MD } from '../../styles/breakpoints'
 import Swal from 'sweetalert2'
+import ManageFaqAdd from '../../components/ManageFaqAdd'
+import ManageFaqEdit from '../../components/ManageFaqEdit'
 
 // 先帶入暫時的資料，之後再串接後端的資料
 const faqQuestions = [
@@ -96,6 +98,16 @@ const FaqSaveButton = styled(SmallButton)`
 
 export default function ManageFaqPage() {
   const [manageFaqData, setManageFaqData] = useState(faqQuestions)
+  const [addPopUp, setAddPopUp] = useState(false)
+  const [editPopUp, setEditPopUp] = useState(false)
+
+  const handleAddFaqClick = () => {
+    setAddPopUp(!addPopUp)
+  }
+
+  const handleEditFaqClick = () => {
+    setEditPopUp(!editPopUp)
+  }
 
   const handleDelete = () => {
     Swal.fire({
@@ -105,8 +117,9 @@ export default function ManageFaqPage() {
       showCancelButton: true,
       confirmButtonColor: '#e25151',
       cancelButtonColor: '#B7B7B7',
-      cancelButtonText: '取消',
+      cancelButtonText: '不，取消刪除',
       confirmButtonText: '是的，我要刪除',
+      reverseButtons: true,
     }).then((result) => {
       if (result.isConfirmed) {
         Swal.fire({
@@ -114,6 +127,7 @@ export default function ManageFaqPage() {
           text: '此筆資料已被刪除',
           icon: 'success',
           confirmButtonColor: '#FFD803',
+          confirmButtonText: '完成',
         })
       }
     })
@@ -123,9 +137,18 @@ export default function ManageFaqPage() {
       <Container>
         {/* 標題 */}
         <Title>常見問題管理</Title>
-        <Link to="/backstage/faq/add">
-          <AddNewFaqButton>+ 新增問答</AddNewFaqButton>
-        </Link>
+        {/* <Link to="/backstage/faq/add"> */}
+        <AddNewFaqButton onClick={handleAddFaqClick}>
+          + 新增問答
+        </AddNewFaqButton>
+        {addPopUp && (
+          <ManageFaqAdd
+            addPopUp={addPopUp}
+            setAddPopUp={setAddPopUp}
+            handleAddPopUp={handleAddFaqClick}
+          />
+        )}
+        {/* </Link> */}
         <FaqWrapper>
           {manageFaqData.map((item) => {
             return (
@@ -136,9 +159,18 @@ export default function ManageFaqPage() {
                     <FaAnswer>{item.answer}</FaAnswer>
                   </FaqItems>
                   <FaqUpdateWrapper>
-                    <Link to="/backstage/faq/edit">
-                      <FaqEditButton>編輯</FaqEditButton>
-                    </Link>
+                    {/* <Link to="/backstage/faq/edit"> */}
+                    <FaqEditButton onClick={handleEditFaqClick}>
+                      編輯
+                    </FaqEditButton>
+                    {editPopUp && (
+                      <ManageFaqEdit
+                        editPopUp={editPopUp}
+                        setEditPopUp={setEditPopUp}
+                        handleEditPopUp={handleEditFaqClick}
+                      />
+                    )}
+                    {/* </Link> */}
                     <FaqDeleteButton onClick={handleDelete}>
                       刪除
                     </FaqDeleteButton>
