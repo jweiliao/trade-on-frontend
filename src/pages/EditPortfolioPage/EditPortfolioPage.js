@@ -1,10 +1,11 @@
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import Container from '../../components/Container'
 import { SmallButton, LargeButton } from '../../components/buttons'
 import { Input, Textarea, InputCheckBox } from '../../components/textField'
 import { SubTitle } from '../../components/heading'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
-
+import UpdatePortfolioPw from '../../components/UpdatePortfolioPw'
 const BorderWrapper = styled(Container)`
   border: ${(props) => props.theme.general_300} solid 1px;
   padding: 3rem 5%;
@@ -181,6 +182,10 @@ const CancelButton = styled(UpdateButton)`
 `
 
 export default function EditPortfolioPage() {
+  const [pwPopUp, setPwPopUp] = useState(false)
+  const handleEditPwClick = () => {
+    setPwPopUp(true)
+  }
   return (
     <Container>
       <BorderWrapper>
@@ -190,7 +195,12 @@ export default function EditPortfolioPage() {
             <UploadAvatarBtn>編輯</UploadAvatarBtn>
           </AvatarWrapper>
           <Email>janejane8491@gmail.com</Email>
-          <EditPasswordBtn>更改密碼</EditPasswordBtn>
+          <EditPasswordBtn onClick={handleEditPwClick}>
+            更改密碼
+          </EditPasswordBtn>
+          {pwPopUp && (
+            <UpdatePortfolioPw pwPopUp={pwPopUp} setPwPopUp={setPwPopUp} />
+          )}
         </PersonalInfo>
         <BasicInfo>
           <BasicInfoTitle>基本資料</BasicInfoTitle>
