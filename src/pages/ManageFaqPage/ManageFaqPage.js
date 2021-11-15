@@ -146,7 +146,7 @@ export default function ManageFaqPage() {
       confirmButtonText: '是的，我要刪除', // 取消按鈕的文字
       reverseButtons: true, // 按鈕的排列順序
     }).then((result) => {
-      // 點擊確認後
+      // 點擊 "確認" 後
       if (result.isConfirmed) {
         Swal.fire({
           title: '刪除成功',
