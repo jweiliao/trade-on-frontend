@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { BackstageTitle, SubTitle } from '../../components/heading'
 import Container from '../../components/Container'
 import { SmallButton, DangerSmallButton } from '../../components/buttons'
+import { MEDIA_QUERY_SM, MEDIA_QUERY_MD } from '../../styles/breakpoints'
 
 // 引入 sweetalert2 彈窗套件
 import Swal from 'sweetalert2'
@@ -53,6 +54,9 @@ const FaqContent = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  ${MEDIA_QUERY_SM} {
+    flex-direction: column;
+  }
 `
 /* 常見問題左邊：問題與回答 */
 const FaqItems = styled.div`
@@ -81,11 +85,14 @@ const FaAnswer = styled.div`
 /* 常見問題右邊：更新的按鈕們 */
 const FaqUpdateWrapper = styled.div`
   display: flex;
+  ${MEDIA_QUERY_SM} {
+    margin-top: 20px;
+  }
 `
 
 /* 常見問題右邊："編輯" 按鈕 */
 const FaqEditButton = styled(SmallButton)`
-  max-width: 60px;
+  width: 60px;
   background-color: ${(props) => props.theme.general_200};
   &:hover {
     background-color: ${(props) => props.theme.general_300};
@@ -93,7 +100,7 @@ const FaqEditButton = styled(SmallButton)`
 `
 /* 常見問題右邊："刪除" 按鈕 */
 const FaqDeleteButton = styled(DangerSmallButton)`
-  max-width: 60px;
+  width: 60px;
   margin-left: 10px;
 `
 // const FaqConfirmWrapper = styled.div`
@@ -132,6 +139,10 @@ export default function ManageFaqPage() {
     setEditPopUp(!editPopUp)
   }
 
+  const closeModal = () => {
+    setAddPopUp(false)
+    setEditPopUp(false)
+  }
   // 當點擊 "刪除" 按鈕時，執行 handleDelete
   const handleDelete = () => {
     // 顯示再次確認刪除的彈窗
@@ -172,7 +183,9 @@ export default function ManageFaqPage() {
 
         {/* 如果 addPopUp  的 state 為 true，則顯示設定新增問答的彈窗 */}
         {/* 並且將 setAddPopUp 當作 props 帶到彈窗的 component，以便彈窗執行操作時，同時更改 addPopUp 的狀態 */}
-        {addPopUp && <ManageFaqAdd setAddPopUp={setAddPopUp} />}
+        {addPopUp && (
+          <ManageFaqAdd setAddPopUp={setAddPopUp} closeModal={closeModal} />
+        )}
 
         {/* 所有問答內容的整個區塊 */}
         <FaqWrapper>
@@ -200,7 +213,12 @@ export default function ManageFaqPage() {
 
                     {/* 如果 editPopUp  的 state 為 true，則顯示設定編輯問答的彈窗 */}
                     {/* 並且將 setEditPopUp 當作 props 帶到彈窗的 component，以便彈窗執行操作時，同時更改 editPopUp 的狀態 */}
-                    {editPopUp && <ManageFaqEdit setEditPopUp={setEditPopUp} />}
+                    {editPopUp && (
+                      <ManageFaqEdit
+                        setEditPopUp={setEditPopUp}
+                        closeModal={closeModal}
+                      />
+                    )}
 
                     {/* 常見問題右邊："刪除" 按鈕 */}
                     {/* 點擊 "刪除" 的按鈕後，執行 handleDelete */}

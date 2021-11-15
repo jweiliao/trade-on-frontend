@@ -15,7 +15,20 @@ const AddFaqWrapper = styled.div`
   background-color: white;
   border: 1px solid ${(props) => props.theme.general_500};
   border-radius: 4px;
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+  transition: all 0.5s ease-out;
 `
+
+const BackDrop = styled.div`
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  z-index: 50;
+  left: 0;
+  top: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+`
+
 const Title = styled(BackstageTitle)``
 
 const AddFaq = styled.div`
@@ -65,7 +78,7 @@ const FaqSaveButton = styled(SmallButton)`
   margin-left: 27px;
 `
 
-export default function ManageFaqPageAdd({ setEditPopUp }) {
+export default function ManageFaqPageAdd({ setEditPopUp, closeModal }) {
   const handleEdit = () => {
     setEditPopUp(false)
     Swal.fire({
@@ -81,29 +94,32 @@ export default function ManageFaqPageAdd({ setEditPopUp }) {
   }
 
   return (
-    <AddFaqWrapper>
-      {/* 標題 */}
-      <Title>編輯常見問題</Title>
-      <AddFaq>
-        問題
-        <FaqQuestion
-          name="question"
-          placeholder="請輸入問題"
-          value="aaa"
-        ></FaqQuestion>
-        回答
-        <FaqAnswer
-          name="answer"
-          placeholder="請輸入回答"
-          value="bbb"
-        ></FaqAnswer>
-      </AddFaq>
-      <FaqConfirmWrapper>
-        <FaqCancelButton onClick={handleCancelClick}>取消</FaqCancelButton>
-        <FaqSaveButton type="submit" onClick={handleEdit}>
-          更新
-        </FaqSaveButton>
-      </FaqConfirmWrapper>
-    </AddFaqWrapper>
+    <>
+      {setEditPopUp && <BackDrop onClick={closeModal}></BackDrop>}
+      <AddFaqWrapper>
+        {/* 標題 */}
+        <Title>編輯常見問題</Title>
+        <AddFaq>
+          問題
+          <FaqQuestion
+            name="question"
+            placeholder="請輸入問題"
+            value="aaa"
+          ></FaqQuestion>
+          回答
+          <FaqAnswer
+            name="answer"
+            placeholder="請輸入回答"
+            value="bbb"
+          ></FaqAnswer>
+        </AddFaq>
+        <FaqConfirmWrapper>
+          <FaqCancelButton onClick={handleCancelClick}>取消</FaqCancelButton>
+          <FaqSaveButton type="submit" onClick={handleEdit}>
+            更新
+          </FaqSaveButton>
+        </FaqConfirmWrapper>
+      </AddFaqWrapper>
+    </>
   )
 }

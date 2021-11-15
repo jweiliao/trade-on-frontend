@@ -16,7 +16,20 @@ const AddFaqWrapper = styled.div`
   background-color: white;
   border: 1px solid ${(props) => props.theme.general_500};
   border-radius: 4px;
+  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+  transition: all 0.5s ease-out;
 `
+
+const BackDrop = styled.div`
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  z-index: 50;
+  left: 0;
+  top: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+`
+
 const Title = styled(BackstageTitle)``
 
 const AddFaq = styled.div`
@@ -66,7 +79,7 @@ const FaqSaveButton = styled(SmallButton)`
   margin-left: 27px;
 `
 
-export default function ManageFaqPageAdd({ setAddPopUp }) {
+export default function ManageFaqPageAdd({ setAddPopUp, closeModal }) {
   const handleAdd = () => {
     setAddPopUp(false)
     Swal.fire({
@@ -82,19 +95,23 @@ export default function ManageFaqPageAdd({ setAddPopUp }) {
   }
 
   return (
-    <AddFaqWrapper>
-      {/* 標題 */}
-      <Title>新增常見問題</Title>
-      <AddFaq>
-        問題<FaqQuestion name="question" placeholder="請輸入問題"></FaqQuestion>
-        回答<FaqAnswer name="answer" placeholder="請輸入回答"></FaqAnswer>
-      </AddFaq>
-      <FaqConfirmWrapper>
-        <FaqCancelButton onClick={handleCancelClick}>取消</FaqCancelButton>
-        <FaqSaveButton type="submit" onClick={handleAdd}>
-          新增
-        </FaqSaveButton>
-      </FaqConfirmWrapper>
-    </AddFaqWrapper>
+    <>
+      {setAddPopUp && <BackDrop onClick={closeModal}></BackDrop>}
+      <AddFaqWrapper>
+        {/* 標題 */}
+        <Title>新增常見問題</Title>
+        <AddFaq>
+          問題
+          <FaqQuestion name="question" placeholder="請輸入問題"></FaqQuestion>
+          回答<FaqAnswer name="answer" placeholder="請輸入回答"></FaqAnswer>
+        </AddFaq>
+        <FaqConfirmWrapper>
+          <FaqCancelButton onClick={handleCancelClick}>取消</FaqCancelButton>
+          <FaqSaveButton type="submit" onClick={handleAdd}>
+            新增
+          </FaqSaveButton>
+        </FaqConfirmWrapper>
+      </AddFaqWrapper>
+    </>
   )
 }
