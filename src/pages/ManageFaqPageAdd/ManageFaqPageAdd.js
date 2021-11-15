@@ -4,9 +4,11 @@ import { Input, Textarea } from '../../components/textField'
 import { BackstageTitle } from '../../components/heading'
 import { SmallButton } from '../../components/buttons'
 
+/* 標題 */
 const Title = styled(BackstageTitle)``
 
-const AddFaq = styled.div`
+/* 輸入問答的整個區塊 */
+const AddFaqWrapper = styled.div`
   max-width: 100%;
   display: flex;
   flex-direction: column;
@@ -16,6 +18,8 @@ const AddFaq = styled.div`
   font-size: 20px;
   margin-bottom: 30px;
 `
+
+/* 輸入框 - 問題 */
 const FaqQuestion = styled(Input)`
   width: 100%;
   margin-bottom: 50px;
@@ -27,6 +31,7 @@ const FaqQuestion = styled(Input)`
   }
 `
 
+/* 輸入框 - 回答 */
 const FaqAnswer = styled(Textarea)`
   width: 100%;
   height: 7.5rem;
@@ -38,17 +43,22 @@ const FaqAnswer = styled(Textarea)`
   }
 `
 
+/* 確認更新的按鈕們 */
 const FaqConfirmWrapper = styled.div`
   display: flex;
   justify-content: center;
   margin-bottom: 50px;
 `
+
+/* "取消" 按鈕 */
 const FaqCancelButton = styled(SmallButton)`
   background-color: ${(props) => props.theme.general_200};
   &:hover {
     background-color: ${(props) => props.theme.general_300};
   }
 `
+
+/* "儲存" 按鈕 */
 const FaqSaveButton = styled(SmallButton)`
   margin-left: 27px;
 `
@@ -57,10 +67,14 @@ export default function ManageFaqPageAdd() {
     <Container>
       {/* 標題 */}
       <Title>新增常見問題</Title>
-      <AddFaq>
+
+      {/* 輸入問答的整個區塊 */}
+      <AddFaqWrapper>
         問題<FaqQuestion name="question" placeholder="請輸入問題"></FaqQuestion>
         回答<FaqAnswer name="answer" placeholder="請輸入回答"></FaqAnswer>
-      </AddFaq>
+      </AddFaqWrapper>
+
+      {/* 確認更新的按鈕們  */}
       <FaqConfirmWrapper>
         <FaqCancelButton>取消</FaqCancelButton>
         <FaqSaveButton type="submit">儲存</FaqSaveButton>
