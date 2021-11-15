@@ -182,10 +182,15 @@ const CancelButton = styled(UpdateButton)`
 `
 
 export default function EditPortfolioPage() {
+  // 設定是否顯示更新密碼彈窗的 state，預設 false（不顯示彈窗）
   const [pwPopUp, setPwPopUp] = useState(false)
+
+  // 當點擊 "更改密碼" 的按鈕時，執行 handleEditPwClick
+  // => 更新 pwPopUp 的 state 為 true （顯示彈窗）
   const handleEditPwClick = () => {
     setPwPopUp(true)
   }
+
   return (
     <Container>
       <BorderWrapper>
@@ -195,12 +200,14 @@ export default function EditPortfolioPage() {
             <UploadAvatarBtn>編輯</UploadAvatarBtn>
           </AvatarWrapper>
           <Email>janejane8491@gmail.com</Email>
+          {/* 點擊 "更改密碼" 的按鈕時，執行 handleEditPwClick */}
           <EditPasswordBtn onClick={handleEditPwClick}>
             更改密碼
           </EditPasswordBtn>
-          {pwPopUp && (
-            <UpdatePortfolioPw pwPopUp={pwPopUp} setPwPopUp={setPwPopUp} />
-          )}
+
+          {/* 如果 pwPopUp 的 state 為 true，則顯示設定新密碼的彈窗 */}
+          {/* 並且將 setPwPopUp 當作 props 帶到彈窗的 component，以便彈窗執行操作時，同時更改 pwPopUp 的狀態 */}
+          {pwPopUp && <UpdatePortfolioPw setPwPopUp={setPwPopUp} />}
         </PersonalInfo>
         <BasicInfo>
           <BasicInfoTitle>基本資料</BasicInfoTitle>
