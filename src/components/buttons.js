@@ -36,6 +36,14 @@ export const DangerSmallButton = styled(SmallButton)`
   }
 `
 
+export const BackstageSmallButton = styled(SmallButton)`
+  border: solid 0.06rem ${(props) => props.theme.general_500};
+  background: ${(props) => props.theme.secondary_100};
+  &:hover {
+    background: ${(props) => props.theme.secondary_200};
+  }
+`
+
 /* button/btn_medium */
 export const MediumButton = styled(SmallButton)`
   width: 160px;
@@ -86,5 +94,12 @@ export const PageButton = styled.li`
   color: ${(props) => props.theme.primary_300};
   &:hover {
     background-color: ${(props) => props.theme.primary_100};
+  }
+`
+
+export const BackstagePageButton = styled(PageButton)`
+  color: ${(props) => props.theme.secondary};
+  &:hover {
+    background-color: ${(props) => props.theme.secondary_100};
   }
 `
