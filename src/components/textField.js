@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { MEDIA_QUERY_SM } from '../styles/breakpoints'
 
 export const Input = styled.input`
   display: block;
@@ -22,6 +23,16 @@ export const Textarea = styled.textarea`
   outline: none;
   line-height: 1.5;
 `
+
+export const Select = styled.select`
+  height: 2.5rem;
+  margin: 1.2rem 0;
+  padding: 0 0.5rem;
+  border: 0.1rem solid ${(props) => props.theme.secondary};
+  border-radius: 0.25rem;
+  outline: none;
+`
+
 const CheckBoxWrapper = styled.label`
   display: block;
   position: relative;
@@ -54,7 +65,7 @@ const CheckBoxWrapper = styled.label`
     top: 0.15rem;
     width: 0.3rem;
     height: 0.6rem;
-    border: solid white;
+    border: solid ${(props) => props.theme.general_000};
     border-width: 0 0.2rem 0.2rem 0;
     -webkit-transform: rotate(45deg);
     -ms-transform: rotate(45deg);
@@ -84,6 +95,71 @@ export const InputCheckBox = ({ label, isChecked }) => (
     <CheckBox checked={isChecked} />
     <span></span>
   </CheckBoxWrapper>
+)
+
+const BackstageCheckBoxWrapper = styled.label`
+  display: inline-block;
+  height: 100%;
+  width: 100%;
+  position: relative;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  :hover input ~ span {
+    background: ${(props) => props.theme.secondary_100};
+  }
+
+  input:checked ~ span {
+    background: ${(props) => props.theme.secondary_200};
+    border: none;
+  }
+
+  span:after {
+    content: '';
+    position: absolute;
+    display: none;
+    left: 0.4rem;
+    top: 0.15rem;
+    width: 0.3rem;
+    height: 0.6rem;
+    border: solid ${(props) => props.theme.general_000};
+    border-width: 0 0.2rem 0.2rem 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }
+
+  input:checked ~ span:after {
+    display: block;
+  }
+`
+
+const BackstageCheckBox = styled.input.attrs({ type: 'checkbox' })`
+  display: none;
+  + span {
+    position: absolute;
+    right: 50%;
+    bottom: 0;
+    transform: translateX(50%) translateY(15%);
+    height: 1.25rem;
+    width: 1.25rem;
+    border: 0.1rem solid ${(props) => props.theme.secondary};
+    border-radius: 0.25rem;
+    ${MEDIA_QUERY_SM} {
+      right: 0;
+      transform: translateX(-10%) translateY(20%);
+    }
+  }
+`
+
+export const BackstageInputCheckBox = ({ isChecked }) => (
+  <BackstageCheckBoxWrapper>
+    <BackstageCheckBox checked={isChecked} />
+    <span></span>
+  </BackstageCheckBoxWrapper>
 )
 
 export const StyledLabel = styled.label`
