@@ -1,11 +1,16 @@
 import styled from 'styled-components'
 import Container from '../../components/Container'
 import { SmallButton, LargeButton } from '../../components/buttons'
-import { Input, Textarea, InputCheckBox } from '../../components/textField'
+import {
+  Input,
+  Textarea,
+  Select,
+  InputCheckBox,
+} from '../../components/textField'
 import { SubTitle } from '../../components/heading'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 
-const BorderWrapper = styled(Container)`
+const BorderWrapper = styled.form`
   border: ${(props) => props.theme.general_300} solid 1px;
   padding: 3rem 5%;
   margin: 3rem;
@@ -111,20 +116,15 @@ const Counties = styled(NickName)`
   margin: 0.8rem 0 0 1.8rem;
 `
 
-const CountiesSelect = styled.select`
+const CountiesSelect = styled(Select)`
   height: 1.8rem;
   width: 5.5rem;
-  margin-left: 0.5rem;
+  margin: 0 0 0 0.5rem;
   padding: 0 0.3rem;
-  border: 0.1rem solid ${(props) => props.theme.secondary};
-  border-radius: 0.25rem;
-  outline: none;
   font-size: 1rem;
 `
 
-const CountiesOption = styled.option`
-  color: ${(props) => props.theme.secondary};
-`
+const CountiesOption = styled.option``
 
 const District = styled(Counties)``
 
