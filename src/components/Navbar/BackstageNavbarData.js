@@ -1,12 +1,7 @@
-import { FaHome, FaDesktop, FaSignOutAlt } from 'react-icons/fa'
+import { FaDesktop, FaSignOutAlt } from 'react-icons/fa'
 
 export const BackstageNavbarData = {
   BackstagePage: [
-    {
-      title: null,
-      path: '/backstage',
-      icon: <FaHome />,
-    },
     {
       title: '會員',
       path: '/backstage/member',

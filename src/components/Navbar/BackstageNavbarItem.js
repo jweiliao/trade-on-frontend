@@ -7,7 +7,8 @@ const NavbarLink = styled(Link)`
   color: ${(props) => props.theme.general_000};
   height: 100%;
   ${MEDIA_QUERY_SM} {
-    display: block;
+    display: flex;
+    justify-content: center;
     margin: 0.5rem 0;
   }
 `
@@ -21,6 +22,9 @@ const Icon = styled.div`
     width: 100%;
     height: 100%;
     vertical-align: middle;
+  }
+  ${MEDIA_QUERY_SM} {
+    display: none;
   }
 `
 

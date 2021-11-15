@@ -26,7 +26,7 @@ const TabWrapper = styled.div`
   margin-bottom: 2rem;
 `
 
-const InputWrapper = styled.div`
+const InputWrapper = styled.form`
   margin-bottom: 4rem;
 `
 
