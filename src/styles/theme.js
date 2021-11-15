@@ -8,6 +8,8 @@ const theme = {
 
   // secondary
   secondary: '#272343',
+  secondary_100: '#e3f6f5',
+  secondary_200: '#bae8e8',
 
   // danger
   danger_000: '#E56051',
