@@ -13,6 +13,7 @@ import {
   DangerSmallButton,
   BackstagePageButton,
 } from '../../components/buttons'
+import Swal from 'sweetalert2'
 
 const Title = styled(BackstageTitle)``
 
@@ -28,6 +29,30 @@ const PaginationWrapper = styled.ul`
 `
 
 export default function ManageGivingPage() {
+  const handleDelete = () => {
+    Swal.fire({
+      title: '刪除',
+      text: '確定要刪除嗎？',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#e25151',
+      cancelButtonColor: '#B7B7B7',
+      cancelButtonText: '不，取消刪除',
+      confirmButtonText: '是的，我要刪除',
+      reverseButtons: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: '刪除成功',
+          text: '此筆資料已被刪除',
+          icon: 'success',
+          confirmButtonColor: '#bae8e8',
+          confirmButtonText: '完成',
+        })
+      }
+    })
+  }
+
   return (
     <>
       <Title>贈物文管理</Title>
@@ -52,7 +77,7 @@ export default function ManageGivingPage() {
             </Data>
             <Data data-label="上架時間">2021/10/11 23:31</Data>
             <ButtonTableCell>
-              <DeleteBtn>刪除</DeleteBtn>
+              <DeleteBtn onClick={handleDelete}>刪除</DeleteBtn>
             </ButtonTableCell>
           </Row>
           <Row>
@@ -62,7 +87,7 @@ export default function ManageGivingPage() {
             <Data data-label="物品介紹">就是個花瓶</Data>
             <Data data-label="上架時間">2021/10/11 23:31</Data>
             <ButtonTableCell>
-              <DeleteBtn>刪除</DeleteBtn>
+              <DeleteBtn onClick={handleDelete}>刪除</DeleteBtn>
             </ButtonTableCell>
           </Row>
         </Body>
