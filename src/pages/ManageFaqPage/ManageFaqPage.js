@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { BackstageTitle, SubTitle } from '../../components/heading'
 import Container from '../../components/Container'
 import { SmallButton, DangerSmallButton } from '../../components/buttons'
-import { MEDIA_QUERY_SM, MEDIA_QUERY_MD } from '../../styles/breakpoints'
+import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 
 // 引入 sweetalert2 彈窗套件
 import Swal from 'sweetalert2'

@@ -192,6 +192,11 @@ export default function EditPortfolioPage() {
     setPwPopUp(true)
   }
 
+  // closeModal => 更新 pwPopUp 的 state 為 false （不顯示彈窗）
+  const closeModal = () => {
+    setPwPopUp(false)
+  }
+
   return (
     <Container>
       <BorderWrapper>
@@ -207,8 +212,13 @@ export default function EditPortfolioPage() {
           </EditPasswordBtn>
 
           {/* 如果 pwPopUp 的 state 為 true，則顯示設定新密碼的彈窗 */}
-          {/* 並且將 setPwPopUp 當作 props 帶到彈窗的 component，以便彈窗執行操作時，同時更改 pwPopUp 的狀態 */}
-          {pwPopUp && <UpdatePortfolioPw setPwPopUp={setPwPopUp} />}
+          {/* 並且將 setPwPopUp、closeModal 當作 props 帶到彈窗的 component，以便彈窗執行操作時，同時更改 pwPopUp 的狀態 */}
+          {pwPopUp && (
+            <UpdatePortfolioPw
+              setPwPopUp={setPwPopUp}
+              closeModal={closeModal}
+            />
+          )}
         </PersonalInfo>
         <BasicInfo>
           <BasicInfoTitle>基本資料</BasicInfoTitle>
