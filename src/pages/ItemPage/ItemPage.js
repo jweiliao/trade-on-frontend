@@ -1,16 +1,23 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
+import Container from '../../components/Container'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 import { LargeButton } from '../../components/buttons'
+
+// 引入 react icons
 import * as FaIcons from 'react-icons/fa'
 import * as MdIcons from 'react-icons/md'
 import * as ImIcons from 'react-icons/im'
-import AsNavFor from './AsNavFor'
-import Container from '../../components/Container'
-import LargeTextArea from './textArea'
-import Comments from './comments'
 
+// 引入 AsNavFor （圖片輪播）
+import AsNavFor from './AsNavFor'
+// 引入 留言
+import Comments from './comments'
+// 引入填寫留言的區塊
+import LargeTextArea from './textArea'
+
+/* 禮物詳情頁最上方 "物品" 資訊的全部區塊 */
 const GiftDetails = styled.div`
   width: 960px;
   margin-top: 50px;
@@ -23,6 +30,8 @@ const GiftDetails = styled.div`
     align-items: baseline;
   }
 `
+
+/* "物品" 資訊：左側全部的區塊 */
 const DetailLeft = styled.div`
   width: 527px;
   height: 626px;
@@ -31,7 +40,7 @@ const DetailLeft = styled.div`
     margin-bottom: 50px;
   }
 `
-
+/* "物品" 資訊：右側全部的區塊 */
 const DetailRight = styled.div`
   width: 340px;
   height: 626px;
@@ -43,13 +52,15 @@ const DetailRight = styled.div`
     margin-bottom: 50px;
   }
 `
-
+/* "物品" 資訊右側：贈物者資訊 */
 const Donor = styled.div`
   margin-bottom: 38px;
   display: flex;
   justify-content: flex-start;
   align-items: center;
 `
+
+/* 贈物者頭像 */
 const DonorAvatar = styled.div`
   width: 50px;
   height: 50px;
@@ -57,12 +68,15 @@ const DonorAvatar = styled.div`
   border-radius: 50%;
   background-color: ${(props) => props.theme.primary_200};
 `
+
+/* 贈物者暱稱 */
 const DonorNickname = styled(Link)`
   font-size: 16px;
   line-height: 1.5;
   letter-spacing: 0.5px;
 `
 
+/* "物品" 資訊右側：物品名稱 */
 const GiftTitle = styled.div`
   margin-bottom: 40px;
   padding-bottom: 10px;
@@ -72,6 +86,7 @@ const GiftTitle = styled.div`
   letter-spacing: 0.5px;
 `
 
+/* "物品" 資訊右側：物品細節 */
 const GiftDetail = styled.ul`
   display: flex;
   flex-direction: column;
@@ -79,39 +94,55 @@ const GiftDetail = styled.ul`
   line-height: 1.5;
   letter-spacing: 0.5px;
 `
+
+/* 每一項物品細節前的 icon */
 const Icon = styled.div`
   width: 26px;
   height: 26px;
   color: ${(props) => props.theme.primary_300};
 `
+
+/* 每一項物品細節的內容 */
 const Label = styled.div`
   margin-left: 17px;
 `
+
+/* 分類 */
 const Category = styled.li`
   display: flex;
   margin-bottom: 20px;
 `
+
+/* 寄送地點 */
 const Location = styled.li`
   display: flex;
   margin-bottom: 20px;
 `
+
+/* 寄送方式 */
 const Delivery = styled.li`
   display: flex;
   margin-bottom: 20px;
 `
+
+/* 物品狀態 */
 const GiftState = styled.li`
   display: flex;
   margin-bottom: 20px;
 `
+
+/* 運費支付 */
 const ShippingFee = styled.li`
   display: flex;
   margin-bottom: 20px;
 `
 
+/* "編輯禮物" 按鈕 */
 const EditGiftButton = styled(LargeButton)`
   margin-top: 25px;
 `
 
+/* 禮物詳情頁的 "物品介紹" 區塊 */
 const GiftIntro = styled.div`
   max-width: 557px;
   margin: 50px 0px;
@@ -121,12 +152,15 @@ const GiftIntro = styled.div`
   align-items: flex-start;
   border-bottom: 2px solid ${(props) => props.theme.general_500};
 `
+/* 物品介紹的標題 */
 const IntroTitle = styled.div`
   border-left: 10px solid ${(props) => props.theme.primary_200};
   padding-left: 17px;
   font-size: 24px;
   margin-bottom: 50px;
 `
+
+/* 物品介紹的內文 */
 const IntroContent = styled.div`
   white-space: pre-wrap;
   font-size: 16px;
@@ -139,21 +173,32 @@ export default function ItemPage() {
   return (
     <>
       <Container>
+        {/* 禮物詳情頁最上方的 "物品" 資訊 */}
         <GiftDetails>
+          {/* "物品" 資訊：左側 */}
           <DetailLeft>
+            {/* 圖片輪播 */}
             <AsNavFor></AsNavFor>
           </DetailLeft>
 
+          {/* "物品" 資訊：右側 */}
           <DetailRight>
+            {/* "物品" 資訊右側：贈物者資訊 */}
             <Donor>
+              {/* 贈物者頭像 */}
               <DonorAvatar></DonorAvatar>
-              {/* todo: 連結到 donor 的個人主頁 */}
+
+              {/* 贈物者暱稱 */}
+              {/* todo: 連結到贈物者的個人主頁 */}
               <DonorNickname to="#">Kimi</DonorNickname>
             </Donor>
 
+            {/* "物品" 資訊右側：物品名稱 */}
             <GiftTitle>2022 輕便方格手帳 </GiftTitle>
 
+            {/* "物品" 資訊右側：物品細節 */}
             <GiftDetail>
+              {/* 分類 */}
               <Category>
                 <Icon>
                   <FaIcons.FaTags />
@@ -161,6 +206,7 @@ export default function ItemPage() {
                 <Label>辦公用品</Label>
               </Category>
 
+              {/* 寄送地點 */}
               <Location>
                 <Icon>
                   <ImIcons.ImLocation />
@@ -168,6 +214,7 @@ export default function ItemPage() {
                 <Label>新北市板橋區</Label>
               </Location>
 
+              {/* 寄送方式 */}
               <Delivery>
                 <Icon>
                   <FaIcons.FaTruckLoading />
@@ -175,6 +222,7 @@ export default function ItemPage() {
                 <Label>寄送方式：面交 / 郵件寄送</Label>
               </Delivery>
 
+              {/* 物品狀態 */}
               <GiftState>
                 <Icon>
                   <FaIcons.FaInfoCircle />
@@ -182,6 +230,7 @@ export default function ItemPage() {
                 <Label>物品狀態：二手</Label>
               </GiftState>
 
+              {/* 運費支付 */}
               <ShippingFee>
                 <Icon>
                   <MdIcons.MdMonetizationOn />
@@ -189,6 +238,8 @@ export default function ItemPage() {
                 <Label>運費支付：匯運費給贈送者</Label>
               </ShippingFee>
             </GiftDetail>
+
+            {/* "編輯禮物" 按鈕 */}
             <Link to="/givings/edit">
               <EditGiftButton>編輯禮物</EditGiftButton>
             </Link>
@@ -215,6 +266,7 @@ export default function ItemPage() {
           <IntroTitle>想要禮物</IntroTitle>
           {/* 想要禮物的內文 */}
           <IntroContent>目前沒有資料</IntroContent>
+          {/* 留言內容 */}
           <Comments></Comments>
           <Comments></Comments>
         </GiftIntro>
@@ -225,8 +277,9 @@ export default function ItemPage() {
           <IntroTitle>留言</IntroTitle>
           {/* 留言的內文 */}
           <IntroContent>目前沒有資料</IntroContent>
+          {/* 留言內容 */}
           <Comments></Comments>
-          {/* todo：留言區塊 */}
+          {/* 填寫留言的區塊 */}
           <LargeTextArea></LargeTextArea>
         </GiftIntro>
       </Container>

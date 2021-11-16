@@ -2,6 +2,7 @@ import styled from 'styled-components'
 import { SmallButton } from '../../components/buttons'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 
+/* Form - 整個區塊 */
 const Form = styled.div`
   display: flex;
   flex-direction: column;
@@ -9,6 +10,8 @@ const Form = styled.div`
   align-items: flex-start;
   margin-top: 50px;
 `
+
+/* TextArea - 輸入留言的地方 */
 const TextArea = styled.textarea`
   width: 557px;
   font-size: 16px;
@@ -26,6 +29,7 @@ const TextArea = styled.textarea`
     max-width: 80%;
   }
 `
+/* MessageSubmitButton - 送出留言的按鈕 */
 const MessageSubmitButton = styled(SmallButton)`
   margin: 5px 0;
 `
@@ -33,12 +37,15 @@ const LargeTextArea = () => {
   return (
     <>
       <Form>
+        {/* 輸入留言的地方 */}
         <TextArea
           rows="3"
           maxlength="200"
           placeholder="請輸入您的留言 / 提問"
           required
         ></TextArea>
+
+        {/* 送出留言的按鈕 */}
         <MessageSubmitButton type="submit">送出留言</MessageSubmitButton>
       </Form>
     </>

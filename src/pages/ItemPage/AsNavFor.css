@@ -1,3 +1,4 @@
+/* 輪播圖的整個區塊 */
 .sliders-wrap {
   display: flex;
   flex-direction: column;
@@ -8,15 +9,13 @@
   width: 521px;
 }
 
-.thumbnail_slider-wrap {
-  width: 447px;
-  height: 90px;
-  margin: 0 auto 10px;
-}
+/* 包住整個圖片的區塊 */
 .sliders-item {
   width: 521px;
   height: 400px;
 }
+
+/* 大圖 */
 .sliders-item .slider-img {
   width: 100%;
   height: 100%;
@@ -24,6 +23,14 @@
   /* object-position: center center; */
 }
 
+/* 下方小圖 */
+.thumbnail_slider-wrap {
+  width: 447px;
+  height: 90px;
+  margin: 0 auto 10px;
+}
+
+/* 小圖 */
 .thumbnail_sliders-item .thumbnail_slider-img {
   width: 96%;
   height: 90px;
