@@ -1,24 +1,11 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import Container from '../../components/Container'
 import { PageTitle } from '../../components/heading'
 import { SubTitle } from '../../components/heading'
 
-// 先帶入暫時的資料，之後再串接後端的資料
-const faqQuestions = [
-  {
-    question: '請問如何贈物?',
-    answer: `點擊 "上傳禮物" 後，輸入要贈物的資料，完成後即可等待索物方請求 `,
-    id: 1,
-    isShowed: false,
-  },
-  {
-    question: '請問如何索物?',
-    answer: `選擇想要索物的物品後，點擊 "想要禮物"，輸入資料後等待贈物者的給予 `,
-    id: 2,
-    isShowed: false,
-  },
-]
+// 引入 axios 來帶後端的資料
+import axios from '../../WebAPI'
 
 /* 所有問答內容的整個區塊 */
 const FaqContent = styled.div`
@@ -51,7 +38,18 @@ const FaAnswer = styled.div`
 
 export default function FaqPage() {
   // 設定問答資料 state
-  const [faqData, setFaqData] = useState(faqQuestions)
+  const [faqData, setFaqData] = useState([])
+
+  // 第一次進入頁面時，撈後端資料，並帶入 faqData 的 state
+  useEffect(() => {
+    axios
+      .get('/commonqnas/all')
+      .then((result) => {
+        setFaqData(result.data.allQAs)
+        // console.log(result.data.allQAs)
+      })
+      .catch((err) => console.log(err))
+  }, [])
 
   // 點擊 "問題" 後，執行 handleQuestionClick，更新 faqData 的 state ，
   // 1. 將點擊的這筆問題的 id 與 faqData 資料中每一筆 id 比對，
