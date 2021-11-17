@@ -163,7 +163,7 @@ export default function ManageFaqPage() {
           title: '刪除成功',
           text: '此筆資料已被刪除',
           icon: 'success',
-          confirmButtonColor: '#FFD803',
+          confirmButtonColor: '#bae8e8',
           confirmButtonText: '完成',
         })
       }

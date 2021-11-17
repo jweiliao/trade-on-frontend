@@ -103,6 +103,10 @@ const FaqCancelButton = styled(SmallButton)`
 /* "新增" 按鈕 */
 const FaqAddButton = styled(SmallButton)`
   margin-left: 27px;
+  background-color: ${(props) => props.theme.secondary_100};
+  :hover {
+    background-color: ${(props) => props.theme.secondary_200};
+  }
   ${MEDIA_QUERY_SM} {
     width: 100%;
     margin-top: 20px;
