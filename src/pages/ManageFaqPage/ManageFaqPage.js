@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { BackstageTitle, SubTitle } from '../../components/heading'
 import Container from '../../components/Container'
@@ -11,22 +11,8 @@ import Swal from 'sweetalert2'
 import ManageFaqAdd from '../../components/ManageFaqAdd'
 // 引入 ManageFaqEdit 彈窗 component
 import ManageFaqEdit from '../../components/ManageFaqEdit'
-
-// 先帶入暫時的資料，之後再串接後端的資料
-const faqQuestions = [
-  {
-    question: '請問如何贈物?',
-    answer: `點擊 "上傳禮物" 後，輸入要贈物的資料，完成後即可等待索物方請求 `,
-    id: 1,
-    isShowed: false,
-  },
-  {
-    question: '請問如何索物?',
-    answer: `選擇想要索物的物品後，點擊 "想要禮物"，輸入資料後等待贈物者的給予 `,
-    id: 2,
-    isShowed: false,
-  },
-]
+// 引入 axios 來帶後端的資料
+import { instance as axios, deleteFaq } from '../../WebAPI'
 
 /* 標題 */
 const Title = styled(BackstageTitle)``
@@ -119,13 +105,27 @@ const FaqDeleteButton = styled(DangerSmallButton)`
 
 export default function ManageFaqPage() {
   // 設定問答資料 state
-  const [manageFaqData, setManageFaqData] = useState(faqQuestions)
+  // const [manageFaqData, setManageFaqData] = useState(faqQuestions)
+
+  // 設定問答資料 state
+  const [manageFaqData, setManageFaqData] = useState([])
 
   // 設定是否顯示新增問答的彈窗的 state，預設 false（不顯示彈窗）
   const [addPopUp, setAddPopUp] = useState(false)
 
   // 設定是否顯示編輯問答的彈窗的 state，預設 false（不顯示彈窗）
   const [editPopUp, setEditPopUp] = useState(false)
+
+  // 第一次進入頁面時，撈後端資料，並帶入 manageFaqData 的 state
+  useEffect(() => {
+    axios
+      .get('/commonqnas/all')
+      .then((result) => {
+        setManageFaqData(result.data.allQAs)
+        console.log(result.data.allQAs)
+      })
+      .catch((err) => console.log(err))
+  }, [])
 
   // 當點擊 "新增問答" 的按鈕時，執行 handleAddFaqClick
   // => 更新 addPopUp 的 state（toggle 彈窗：若原本無顯示彈窗，則打開；若已顯示彈窗，則關閉）
@@ -143,31 +143,42 @@ export default function ManageFaqPage() {
     setAddPopUp(false)
     setEditPopUp(false)
   }
-  // 當點擊 "刪除" 按鈕時，執行 handleDelete
-  const handleDelete = () => {
-    // 顯示再次確認刪除的彈窗
-    Swal.fire({
-      title: '刪除', // 標題
-      text: '確定要刪除嗎？', // 內文
-      icon: 'warning', // 最上方為警告的 icon
-      showCancelButton: true, // 是否顯示 "取消" 的按鈕
-      confirmButtonColor: '#e25151', // 確認按鈕的背景色
-      cancelButtonColor: '#B7B7B7', // 取消按鈕的背景色
-      cancelButtonText: '不，取消刪除', // 確認按鈕的文字
-      confirmButtonText: '是的，我要刪除', // 取消按鈕的文字
-      reverseButtons: true, // 按鈕的排列順序
-    }).then((result) => {
-      // 點擊 "確認" 後
-      if (result.isConfirmed) {
-        Swal.fire({
-          title: '刪除成功',
-          text: '此筆資料已被刪除',
-          icon: 'success',
-          confirmButtonColor: '#bae8e8',
-          confirmButtonText: '完成',
-        })
+  // 當點擊 "刪除" 按鈕時，執行 handleDeleteQA
+  const handleDeleteQA = async (id) => {
+    console.log(id)
+    try {
+      // 顯示再次確認刪除的彈窗
+      const willDelete = await Swal.fire({
+        title: '刪除', // 標題
+        text: '確定要刪除嗎？', // 內文
+        icon: 'warning', // 最上方為警告的 icon
+        showCancelButton: true, // 是否顯示 "取消" 的按鈕
+        confirmButtonColor: '#e25151', // 確認按鈕的背景色
+        cancelButtonColor: '#B7B7B7', // 取消按鈕的背景色
+        cancelButtonText: '不，取消刪除', // 確認按鈕的文字
+        confirmButtonText: '是的，我要刪除', // 取消按鈕的文字
+        reverseButtons: true, // 按鈕的排列順序
+        backdrop: true,
+      })
+      // 點擊 "是的，我要刪除" 後，執行：
+      if (willDelete) {
+        console.log('Yes, I want to delete this item')
+        const result = await deleteFaq(id)
+        console.log(result)
+        // if (result.status === 200) {
+        //   Swal.fire({
+        //     title: '刪除成功',
+        //     text: '此筆資料已被刪除',
+        //     icon: 'success',
+        //     confirmButtonColor: '#bae8e8',
+        //     confirmButtonText: '完成',
+        //   })
+        // }
       }
-    })
+    } catch (err) {
+      console.log(err)
+      Swal.fire('請稍候再試一次!', 'error')
+    }
   }
   return (
     <>
@@ -221,8 +232,8 @@ export default function ManageFaqPage() {
                     )}
 
                     {/* 常見問題右邊："刪除" 按鈕 */}
-                    {/* 點擊 "刪除" 的按鈕後，執行 handleDelete */}
-                    <FaqDeleteButton onClick={handleDelete}>
+                    {/* 點擊 "刪除" 的按鈕後，執行 handleDeleteQA */}
+                    <FaqDeleteButton onClick={() => handleDeleteQA(item.id)}>
                       刪除
                     </FaqDeleteButton>
                   </FaqUpdateWrapper>
@@ -240,3 +251,53 @@ export default function ManageFaqPage() {
     </>
   )
 }
+
+//   preConfirm: (id) => {
+//     deleteFaq(id)
+//       .then((response) => {
+//         console.log(response)
+//         // if (!response.ok) {
+//         //   throw new Error(response.statusText)
+//         // }
+//         // return response.json()
+//       })
+//       .catch((error) => {
+//         Swal.showValidationMessage(`Request failed: ${error}`)
+//       })
+//   },
+//   allowOutsideClick: () => !Swal.isLoading(),
+// }).then((result) => {
+//   if (result.isConfirmed) {
+//     Swal.fire({
+//       title: '刪除成功',
+//       text: '此筆資料已被刪除',
+//       icon: 'success',
+//       confirmButtonColor: '#bae8e8',
+//       confirmButtonText: '完成',
+//     })
+//   }
+// })
+
+// 顯示再次確認刪除的彈窗
+// Swal.fire({
+//   title: '刪除', // 標題
+//   text: '確定要刪除嗎？', // 內文
+//   icon: 'warning', // 最上方為警告的 icon
+//   showCancelButton: true, // 是否顯示 "取消" 的按鈕
+//   confirmButtonColor: '#e25151', // 確認按鈕的背景色
+//   cancelButtonColor: '#B7B7B7', // 取消按鈕的背景色
+//   cancelButtonText: '不，取消刪除', // 確認按鈕的文字
+//   confirmButtonText: '是的，我要刪除', // 取消按鈕的文字
+//   reverseButtons: true, // 按鈕的排列順序
+// }).then((result) => {
+//   // 點擊 "確認" 後
+//   if (result.isConfirmed) {
+//     Swal.fire({
+//       title: '刪除成功',
+//       text: '此筆資料已被刪除',
+//       icon: 'success',
+//       confirmButtonColor: '#bae8e8',
+//       confirmButtonText: '完成',
+//     })
+//   }
+// })
