@@ -7,6 +7,7 @@ import {
   Textarea,
   Select,
   InputCheckBox,
+  InputLabel,
 } from '../../components/textField'
 import { SubTitle } from '../../components/heading'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
@@ -85,9 +86,7 @@ const BasicInfoTitle = styled(SubTitle)`
   margin-bottom: 2rem;
 `
 
-const NickName = styled.p`
-  font-size: 1.125rem;
-`
+const NickName = styled(InputLabel)``
 
 const NickNameInput = styled(Input)`
   width: 20rem;
