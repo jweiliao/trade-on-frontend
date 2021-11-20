@@ -1,8 +1,14 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import FrontNavbar from './components/Navbar/FrontNavbar'
 import { Footer } from './components/Footer/Footer'
 import BackstageNavbar from './components/Navbar/BackstageNavbar'
-import { HashRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
+import {
+  HashRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+  useLocation,
+} from 'react-router-dom'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
@@ -25,10 +31,21 @@ import ManageFaqPageAdd from './pages/ManageFaqPageAdd'
 import ManageFaqPageEdit from './pages/ManageFaqPageEdit'
 import ManageGivingPage from './pages/ManageGivingPage'
 
+const ScrollToTop = () => {
+  const { pathname } = useLocation()
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
+
+  return null
+}
+
 const Home = () => {
   return (
     <>
       <FrontNavbar />
+      <ScrollToTop />
       <Switch>
         <Route exact path="/" component={HomePage} />
         <Route path="/login" component={LoginPage} />

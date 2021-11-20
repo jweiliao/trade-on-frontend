@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { MEDIA_QUERY_SM, MEDIA_QUERY_MD } from '../../styles/breakpoints'
 import { MediumButton } from '../../components/buttons'
 import Container from '../../components/Container'
+import ProgressiveImage from 'react-progressive-graceful-image'
 
 // 禮物頁最上方大圖
 import givingsbanner from '../../images/givingsBanner.svg'
@@ -204,6 +205,15 @@ const PageButton = styled.li`
     background-color: ${(props) => props.theme.primary_100};
   }
 `
+const BackgroundBlur = styled.div`
+  background-color: #fff3b3;
+  height: 200px;
+  width: 200px;
+  border-radius: 20px 20px 0 0;
+  filter: blur(4px);
+`
+// 圖片預載入處理
+const placeholder = <BackgroundBlur />
 
 export default function GivingsPage() {
   // 建立 recommended 的 state，儲存到時候後端傳來的推薦物品資料
@@ -250,9 +260,18 @@ export default function GivingsPage() {
                 {/* 將卡片的連接設為此物品的物品詳細頁*/}
                 <Link to={`/givings/${current.id}`}>
                   {/* 圖片 */}
-                  <CardImage
+                  <ProgressiveImage
                     src={`https://source.unsplash.com/random/${current.id}`}
-                  ></CardImage>
+                    placeholder=""
+                  >
+                    {(src, loading) => {
+                      return loading ? (
+                        placeholder
+                      ) : (
+                        <CardImage src={src} alt="an alternative text" />
+                      )
+                    }}
+                  </ProgressiveImage>
                   {/* 文字內容 */}
                   <CardContent>
                     <CardTitle>{current.username}</CardTitle>
