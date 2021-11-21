@@ -144,11 +144,11 @@ export default function ManageFaqPage() {
     setEditPopUp(false)
   }
   // 當點擊 "刪除" 按鈕時，執行 handleDeleteQA
-  const handleDeleteQA = async (id) => {
-    console.log(id)
+  const handleDeleteQA = async (faqId) => {
+    console.log(faqId)
     try {
       // 顯示再次確認刪除的彈窗
-      const willDelete = await Swal.fire({
+      await Swal.fire({
         title: '刪除', // 標題
         text: '確定要刪除嗎？', // 內文
         icon: 'warning', // 最上方為警告的 icon
@@ -159,22 +159,13 @@ export default function ManageFaqPage() {
         confirmButtonText: '是的，我要刪除', // 取消按鈕的文字
         reverseButtons: true, // 按鈕的排列順序
         backdrop: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          console.log('Yes, I want to delete this item')
+          deleteFaq(faqId)
+          // todo: 解決自動更新，不需重新整理
+        }
       })
-      // 點擊 "是的，我要刪除" 後，執行：
-      if (willDelete) {
-        console.log('Yes, I want to delete this item')
-        const result = await deleteFaq(id)
-        console.log(result)
-        // if (result.status === 200) {
-        //   Swal.fire({
-        //     title: '刪除成功',
-        //     text: '此筆資料已被刪除',
-        //     icon: 'success',
-        //     confirmButtonColor: '#bae8e8',
-        //     confirmButtonText: '完成',
-        //   })
-        // }
-      }
     } catch (err) {
       console.log(err)
       Swal.fire('請稍候再試一次!', 'error')

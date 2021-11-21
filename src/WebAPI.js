@@ -8,6 +8,6 @@ export const instance = axios.create({
   baseURL: config.apiHost2,
 })
 
-export const deleteFaq = (faqID) => instance.delete(`/commonqnas/${faqID}`)
+export const deleteFaq = (id) => instance.delete(`/commonqnas/${id}`)
 
 // export default instance
