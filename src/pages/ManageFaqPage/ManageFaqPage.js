@@ -13,7 +13,9 @@ import ManageFaqAdd from '../../components/ManageFaqAdd'
 import ManageFaqEdit from '../../components/ManageFaqEdit'
 
 // 引入 axios 與 deleteFaq 來串接後端的資料
-import { getAllFaqs, deleteFaq } from '../../WebAPI'
+import { getAllFaqs, deleteFaq, getLimitFaq } from '../../WebAPI'
+
+import { getPages } from '../../utils'
 
 /* 標題 */
 const Title = styled(BackstageTitle)``
@@ -104,6 +106,30 @@ const FaqDeleteButton = styled(DangerSmallButton)`
 //   margin-left: 27px;
 // `
 
+/* "分頁" - 整個元件 */
+const PaginationContainer = styled.ul`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 50px;
+  color: ${(props) => props.theme.secondary_300};
+`
+
+/* "分頁" - 分頁按鈕 */
+const PageButton = styled.li`
+  width: 48px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  cursor: pointer;
+  border: solid 1px ${(props) => props.theme.general_500};
+
+  &:hover {
+    background-color: ${(props) => props.theme.secondary_100};
+  }
+`
 export default function ManageFaqPage() {
   // 設定問答資料 state
   const [manageFaqData, setManageFaqData] = useState([])
@@ -114,12 +140,19 @@ export default function ManageFaqPage() {
   // 設定是否顯示編輯問答的彈窗的 state，預設 false（不顯示彈窗）
   const [editPopUp, setEditPopUp] = useState(false)
 
+  const [pages, setPages] = useState([])
+  const limit = 5
+
   // 第一次進入頁面時，撈後端資料，並帶入 manageFaqData 的 state
   useEffect(() => {
-    getAllFaqs
+    getAllFaqs(limit)
       .then((res) => {
-        setManageFaqData(res.data.allQAs)
-        console.log(res.data.allQAs)
+        let totalPages = res.data.paginate.allPages
+        setPages(getPages(totalPages))
+        // setManageFaqData(res.data.allQAs)
+      })
+      .then((data) => {
+        getLimitFaq(1, limit).then((faqs) => setManageFaqData(faqs.data.allQAs))
       })
       .catch((err) => console.log(err))
   }, [])
@@ -169,6 +202,12 @@ export default function ManageFaqPage() {
       Swal.fire('請稍候再試一次!', 'error')
     }
   }
+
+  // 執行 handlePageClick()
+  const handlePageClick = (page) => {
+    getLimitFaq(page, limit).then((faqs) => setManageFaqData(faqs.data.allQAs))
+  }
+
   return (
     <>
       <Container>
@@ -238,6 +277,17 @@ export default function ManageFaqPage() {
           <FaqCancelButton>取消</FaqCancelButton>
           <FaqSaveButton>儲存</FaqSaveButton>
         </FaqConfirmWrapper> */}
+        {/* 顯示頁數 */}
+        <PaginationContainer>
+          {/* 顯示頁數按鈕 */}
+          {manageFaqData.length > 0 &&
+            pages.map((page) => (
+              // 點擊頁碼按鈕時，執行 handlePageClick()
+              <PageButton key={page} onClick={() => handlePageClick(page)}>
+                {page}
+              </PageButton>
+            ))}
+        </PaginationContainer>
       </Container>
     </>
   )
