@@ -1,10 +1,13 @@
+import React from 'react'
 import styled from 'styled-components'
 import Container from './Container'
-import { Input } from './textField'
-import { BackstageTitle } from './heading'
+import { PageTitle } from './heading'
 import { SmallButton } from './buttons'
 import Swal from 'sweetalert2'
 import { MEDIA_QUERY_SM } from '../styles/breakpoints'
+import { Formik, Form } from 'formik'
+import * as Yup from 'yup'
+import FormikControl from './FormikControl'
 
 /* 彈窗出現時的遮罩背景 */
 const BackDrop = styled.div`
@@ -18,17 +21,17 @@ const BackDrop = styled.div`
 `
 
 /* 彈窗的整個區塊 */
-const UpdatePwWrapper = styled.div`
+const UpdatePwWrapper = styled(Form)`
   z-index: 100;
   width: 500px;
-  padding: 10px 50px;
+  padding: 2.5rem;
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: white;
   border: 1px solid ${(props) => props.theme.general_500};
-  border-radius: 4px;
+  border-radius: 0.25rem;
   box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
   transition: all 0.5s ease-out;
   ${MEDIA_QUERY_SM} {
@@ -38,11 +41,7 @@ const UpdatePwWrapper = styled.div`
 `
 
 /* 標題 */
-const Title = styled(BackstageTitle)`
-  ${MEDIA_QUERY_SM} {
-    margin-top: 3rem;
-  }
-`
+const Title = styled(PageTitle)``
 
 /* 與輸入框有關的整個區塊 */
 const ModifyPw = styled.div`
@@ -57,22 +56,14 @@ const ModifyPw = styled.div`
 `
 
 /* 每一個輸入框 */
-const InputContent = styled(Input)`
+const InputContent = styled.div`
   width: 100%;
-  margin-bottom: 30px;
-  &:focus {
-    outline: none;
-    border: 2px solid ${(props) => props.theme.general_500};
-    background-color: ${(props) => props.theme.general_000};
-    box-shadow: none;
-  }
 `
 
 /* 所有按鈕操作的整個區塊 */
 const PwConfirmWrapper = styled.div`
   display: flex;
   justify-content: center;
-  margin-bottom: 50px;
   ${MEDIA_QUERY_SM} {
     flex-direction: column;
     align-items: center;
@@ -122,46 +113,83 @@ export default function UpdatePortfolioPw({ setPwPopUp, closeModal }) {
     setPwPopUp(false)
   }
 
+  const initialValues = { password: '', newPassword: '', confirmPassword: '' }
+
+  const validationSchema = Yup.object({
+    password: Yup.string().required('此欄位為必填'),
+    newPassword: Yup.string().required('此欄位為必填'),
+    confirmPassword: Yup.string().oneOf(
+      [Yup.ref('newPassword'), null],
+      '請再次確認密碼'
+    ),
+  })
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    console.log('You clicked submit.')
+  }
+
   return (
     <>
       {/* 如果 setPwPopUp  的 state 為 true，顯示 BackDrop 遮罩*/}
       {/* 將 closeModal 帶入 BackDrop，設定當出現彈窗時，點擊彈窗外的區塊，會收回彈窗 */}
       {setPwPopUp && <BackDrop onClick={closeModal}></BackDrop>}
       <Container>
-        <UpdatePwWrapper>
-          {/* 標題 */}
-          <Title>修改密碼</Title>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
+        >
+          {(formik) => (
+            <UpdatePwWrapper>
+              {/* 標題 */}
+              <Title>更改密碼</Title>
 
-          {/* 與輸入框有關的整個區塊 */}
-          <ModifyPw>
-            <InputContent
-              name="password"
-              type="password"
-              placeholder="原密碼"
-            ></InputContent>
-            <InputContent
-              name="password"
-              type="password"
-              placeholder="新密碼"
-            ></InputContent>
-            <InputContent
-              name="confirmPassword"
-              type="password"
-              placeholder="再次輸入新密碼"
-            ></InputContent>
-          </ModifyPw>
+              {/* 與輸入框有關的整個區塊 */}
+              <ModifyPw>
+                <InputContent>
+                  <FormikControl
+                    control="input"
+                    type="password"
+                    label="目前密碼"
+                    placeholder="輸入目前密碼"
+                    name="password"
+                  />
+                </InputContent>
+                <InputContent>
+                  <FormikControl
+                    control="input"
+                    type="password"
+                    label="新密碼"
+                    placeholder="輸入新密碼"
+                    name="newPassword"
+                  />
+                </InputContent>
+                <InputContent>
+                  <FormikControl
+                    control="input"
+                    type="password"
+                    label="確認密碼"
+                    placeholder="再次輸入新密碼"
+                    name="confirmPassword"
+                  />
+                </InputContent>
+              </ModifyPw>
 
-          {/* 所有按鈕操作的整個區塊 */}
-          <PwConfirmWrapper>
-            {/* 點擊 "取消" 的按鈕時，執行 handleCancelClick */}
-            <PwCancelButton onClick={handleCancelClick}>取消</PwCancelButton>
-
-            {/* 點擊 "更新密碼" 的按鈕時，執行 handleUpdate */}
-            <PwUpdateButton type="submit" onClick={handleUpdate}>
-              更新密碼
-            </PwUpdateButton>
-          </PwConfirmWrapper>
-        </UpdatePwWrapper>
+              {/* 所有按鈕操作的整個區塊 */}
+              <PwConfirmWrapper>
+                {/* 點擊 "取消" 的按鈕時，執行 handleCancelClick */}
+                <PwCancelButton onClick={handleCancelClick}>
+                  取消
+                </PwCancelButton>
+                {/* 點擊 "更新密碼" 的按鈕時，執行 handleUpdate */}
+                <PwUpdateButton type="submit" onClick={handleUpdate}>
+                  送出
+                </PwUpdateButton>
+              </PwConfirmWrapper>
+            </UpdatePwWrapper>
+          )}
+        </Formik>
       </Container>
     </>
   )

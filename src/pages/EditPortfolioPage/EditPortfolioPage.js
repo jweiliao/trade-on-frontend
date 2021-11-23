@@ -2,18 +2,15 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import Container from '../../components/Container'
 import { SmallButton, LargeButton } from '../../components/buttons'
-import {
-  Input,
-  Textarea,
-  Select,
-  InputCheckBox,
-  InputLabel,
-} from '../../components/textField'
 import { SubTitle } from '../../components/heading'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 import UpdatePortfolioPw from '../../components/UpdatePortfolioPw'
+import { Link } from 'react-router-dom'
+import { Formik, Form } from 'formik'
+import * as Yup from 'yup'
+import FormikControl from '../../components/FormikControl'
 
-const BorderWrapper = styled.form`
+const BorderWrapper = styled(Form)`
   border: ${(props) => props.theme.general_300} solid 1px;
   padding: 3rem 5%;
   margin: 3rem;
@@ -86,23 +83,17 @@ const BasicInfoTitle = styled(SubTitle)`
   margin-bottom: 2rem;
 `
 
-const NickName = styled(InputLabel)``
-
-const NickNameInput = styled(Input)`
+const Name = styled.div`
   width: 20rem;
   ${MEDIA_QUERY_SM} {
     width: 100%;
   }
 `
 
-const Introduce = styled(NickName)``
-
-const IntroduceContent = styled(Textarea)`
+const Introduction = styled(Name)`
   width: 27rem;
-  height: 7.5rem;
   ${MEDIA_QUERY_SM} {
     width: 100%;
-    height: 8.5rem;
   }
 `
 
@@ -110,32 +101,27 @@ const TransactionType = styled(BasicInfo)``
 
 const TransactionTypeTitle = styled(BasicInfoTitle)``
 
-const TransactionTypeOption = styled(InputCheckBox)``
-
-const Counties = styled(NickName)`
-  display: inline-block;
-  margin: 0.8rem 0 0 1.8rem;
+const Trading = styled(Name)`
+  margin-bottom: 0.8rem;
 `
 
-const CountiesSelect = styled(Select)`
-  height: 1.8rem;
-  width: 5.5rem;
-  margin: 0 0 0 0.5rem;
-  padding: 0 0.3rem;
-  font-size: 1rem;
+const Region = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding-left: 1.8rem;
+  select {
+    margin: 0.4rem 0;
+    width: 9rem;
+    height: 1.9rem;
+  }
 `
 
-const CountiesOption = styled.option``
-
-const District = styled(Counties)``
-
-const DistrictInput = styled(NickNameInput)`
-  display: inline-block;
-  width: 6rem;
-  margin: 0;
-  margin-left: 0.5rem;
-  height: 1.8rem;
-  font-size: 1rem;
+const District = styled(Region)`
+  input {
+    margin: 0.4rem 0;
+    width: 9rem;
+    height: 1.9rem;
+  }
 `
 
 const TransferInfo = styled(BasicInfo)``
@@ -146,17 +132,11 @@ const Note = styled.span`
   font-size: 1rem;
 `
 
-const BankNumber = styled(NickName)``
+const BankCode = styled(Name)``
 
-const BankNumberInput = styled(NickNameInput)``
+const BankName = styled(Name)``
 
-const BankName = styled(NickName)``
-
-const BankNameInput = styled(NickNameInput)``
-
-const BankAccount = styled(NickName)``
-
-const BankAccountInput = styled(NickNameInput)``
+const BankAccount = styled(Name)``
 
 const ButtonsWrapper = styled.div`
   display: flex;
@@ -182,6 +162,65 @@ const CancelButton = styled(UpdateButton)`
 `
 
 export default function EditPortfolioPage() {
+  const tradingOptions = [
+    { key: '7-11 店到店', value: '7-11 店到店' },
+    { key: '全家店到店', value: '全家店到店' },
+    { key: '面交', value: '面交' },
+  ]
+
+  const regionOptions = [{ key: '基隆市', value: '基隆市' }]
+
+  const initialValues = {
+    name: '',
+    introduction: '',
+    trading: [],
+    region: '',
+    district: '',
+    bankCode: '',
+    bankName: '',
+    bankAccount: '',
+  }
+
+  const validationSchema = Yup.object({
+    name: Yup.string().required('此欄位為必填'),
+    introduction: Yup.string().max(100, '限 100 字'),
+    trading: Yup.array(),
+    region: Yup.string().when('trading', (trading, schema) => {
+      try {
+        if (trading.includes('面交')) {
+          return Yup.string().required('請選擇面交縣市')
+        }
+        return schema
+      } catch (error) {
+        console.log('error', error)
+      }
+    }),
+    district: Yup.string().when('trading', (trading, schema) => {
+      try {
+        if (trading.includes('面交')) {
+          return Yup.string().required('請填寫面交地點')
+        }
+        return schema
+      } catch (error) {
+        console.log('error', error)
+      }
+    }),
+    bankCode: Yup.string()
+      .matches(/^[0-9]+$/, '請填寫數字')
+      .min(3, '格式錯誤')
+      .max(3, '格式錯誤'),
+    bankName: Yup.string(),
+    bankAccount: Yup.string()
+      .matches(/^[0-9]+$/, '請填寫數字')
+      .min(10, '格式錯誤')
+      .max(14, '格式錯誤'),
+  })
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    console.log('You clicked submit.')
+  }
+
   // 設定是否顯示更新密碼彈窗的 state，預設 false（不顯示彈窗）
   const [pwPopUp, setPwPopUp] = useState(false)
 
@@ -198,67 +237,120 @@ export default function EditPortfolioPage() {
 
   return (
     <Container>
-      <BorderWrapper>
-        <PersonalInfo>
-          <AvatarWrapper>
-            <Avatar src={`https://i.pravatar.cc/300`} />
-            <UploadAvatarBtn>編輯</UploadAvatarBtn>
-          </AvatarWrapper>
-          <Email>janejane8491@gmail.com</Email>
-          {/* 點擊 "更改密碼" 的按鈕時，執行 handleEditPwClick */}
-          <EditPasswordBtn onClick={handleEditPwClick}>
-            更改密碼
-          </EditPasswordBtn>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleSubmit}
+      >
+        {(formik) => (
+          <BorderWrapper>
+            <PersonalInfo>
+              <AvatarWrapper>
+                <Avatar src={`https://i.pravatar.cc/300`} />
+                <UploadAvatarBtn>編輯</UploadAvatarBtn>
+              </AvatarWrapper>
+              <Email>janejane8491@gmail.com</Email>
+              {/* 點擊 "更改密碼" 的按鈕時，執行 handleEditPwClick */}
+              <EditPasswordBtn onClick={handleEditPwClick}>
+                更改密碼
+              </EditPasswordBtn>
 
-          {/* 如果 pwPopUp 的 state 為 true，則顯示設定新密碼的彈窗 */}
-          {/* 並且將 setPwPopUp、closeModal 當作 props 帶到彈窗的 component，以便彈窗執行操作時，同時更改 pwPopUp 的狀態 */}
-          {pwPopUp && (
-            <UpdatePortfolioPw
-              setPwPopUp={setPwPopUp}
-              closeModal={closeModal}
-            />
-          )}
-        </PersonalInfo>
-        <BasicInfo>
-          <BasicInfoTitle>基本資料</BasicInfoTitle>
-          <NickName>暱稱</NickName>
-          <NickNameInput value="萊斯裡有點粉紅" />
-          <Introduce>自我介紹（限 100 字）</Introduce>
-          <IntroduceContent />
-        </BasicInfo>
-        <TransactionType>
-          <TransactionTypeTitle>偏好交易方式</TransactionTypeTitle>
-          <TransactionTypeOption label="7-11 店到店" />
-          <TransactionTypeOption label="全家店到店" />
-          <TransactionTypeOption isChecked label="面交" />
-          <Counties>
-            縣市
-            <CountiesSelect>
-              <CountiesOption value="">請選擇</CountiesOption>
-              <CountiesOption>台北市</CountiesOption>
-            </CountiesSelect>
-          </Counties>
-          <District>
-            鄉鎮[市]區
-            <DistrictInput />
-          </District>
-        </TransactionType>
-        <TransferInfo>
-          <TransferInfoTitle>
-            匯款資訊<Note>（僅在交易中顯示）</Note>
-          </TransferInfoTitle>
-          <BankNumber>銀行代碼</BankNumber>
-          <BankNumberInput />
-          <BankName>銀行名稱</BankName>
-          <BankNameInput />
-          <BankAccount>帳號</BankAccount>
-          <BankAccountInput />
-        </TransferInfo>
-        <ButtonsWrapper>
-          <CancelButton>取消</CancelButton>
-          <UpdateButton>提交</UpdateButton>
-        </ButtonsWrapper>
-      </BorderWrapper>
+              {/* 如果 pwPopUp 的 state 為 true，則顯示設定新密碼的彈窗 */}
+              {/* 並且將 setPwPopUp、closeModal 當作 props 帶到彈窗的 component，以便彈窗執行操作時，同時更改 pwPopUp 的狀態 */}
+              {pwPopUp && (
+                <UpdatePortfolioPw
+                  setPwPopUp={setPwPopUp}
+                  closeModal={closeModal}
+                />
+              )}
+            </PersonalInfo>
+            <BasicInfo>
+              <BasicInfoTitle>基本資料</BasicInfoTitle>
+              <Name>
+                <FormikControl
+                  control="input"
+                  label="暱稱"
+                  name="name"
+                  placeholder="輸入暱稱"
+                />
+              </Name>
+              <Introduction>
+                <FormikControl
+                  control="textarea"
+                  label="自我介紹"
+                  name="introduction"
+                  placeholder="輸入自我介紹（限 100 字）"
+                />
+              </Introduction>
+            </BasicInfo>
+            <TransactionType>
+              <TransactionTypeTitle>偏好交易方式</TransactionTypeTitle>
+              <Trading>
+                <FormikControl
+                  control="checkbox"
+                  name="trading"
+                  options={tradingOptions}
+                />
+                {true && (
+                  <>
+                    <Region>
+                      <FormikControl
+                        control="select"
+                        label="縣市"
+                        name="region"
+                        options={regionOptions}
+                      />
+                    </Region>
+                    <District>
+                      <FormikControl
+                        control="input"
+                        label="地點"
+                        name="district"
+                        placeholder="輸入地點"
+                      />
+                    </District>
+                  </>
+                )}
+              </Trading>
+            </TransactionType>
+            <TransferInfo>
+              <TransferInfoTitle>
+                匯款資訊<Note>（僅在交易中顯示）</Note>
+              </TransferInfoTitle>
+              <BankCode>
+                <FormikControl
+                  control="input"
+                  label="銀行代碼"
+                  name="bankCode"
+                  placeholder="輸入銀行代碼"
+                />
+              </BankCode>
+              <BankName>
+                <FormikControl
+                  control="input"
+                  label="銀行名稱"
+                  name="bankName"
+                  placeholder="輸入銀行名稱"
+                />
+              </BankName>
+              <BankAccount>
+                <FormikControl
+                  control="input"
+                  label="帳號"
+                  name="bankAccount"
+                  placeholder="輸入銀行名稱"
+                />
+              </BankAccount>
+            </TransferInfo>
+            <ButtonsWrapper>
+              <CancelButton as={Link} to={'/portfolio'}>
+                取消
+              </CancelButton>
+              <UpdateButton type="submit">提交</UpdateButton>
+            </ButtonsWrapper>
+          </BorderWrapper>
+        )}
+      </Formik>
     </Container>
   )
 }
