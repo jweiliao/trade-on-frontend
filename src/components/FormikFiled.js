@@ -2,6 +2,7 @@ import React from 'react'
 import { Field, ErrorMessage } from 'formik'
 import {
   InputLabel,
+  InputErrorMessage,
   Input as StyledInput,
   Select as StyledSelect,
   Textarea as StyledTextarea,
@@ -9,13 +10,6 @@ import {
   CheckBoxLabel,
   CheckBoxSpan,
 } from './textField'
-import styled from 'styled-components'
-
-const Text = styled.p`
-  color: ${(props) => props.theme.danger_100};
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
-`
 
 /* label: 欄位標籤 name: 欄位名稱 rest: */
 export const Input = (props) => {
@@ -28,12 +22,19 @@ export const Input = (props) => {
         {({ field, meta }) => {
           return (
             <>
-              <StyledInput id={name} {...field} {...rest} />
+              <StyledInput
+                id={name}
+                placeholder={placeholder}
+                {...field}
+                {...rest}
+              />
             </>
           )
         }}
       </Field>
-      <ErrorMessage name={name}>{(msg) => <Text>{msg}</Text>}</ErrorMessage>
+      <ErrorMessage name={name}>
+        {(msg) => <InputErrorMessage>{msg}</InputErrorMessage>}
+      </ErrorMessage>
     </>
   )
 }
@@ -48,6 +49,9 @@ export const Select = (props) => {
           return (
             <>
               <StyledSelect id={name} name={name} {...field} {...rest}>
+                <option value="" selected disabled>
+                  選擇{label}
+                </option>
                 {options.map((option) => {
                   return (
                     <option key={option.value} value={option.value}>
@@ -60,7 +64,9 @@ export const Select = (props) => {
           )
         }}
       </Field>
-      <ErrorMessage name={name}>{(msg) => <Text>{msg}</Text>}</ErrorMessage>
+      <ErrorMessage name={name}>
+        {(msg) => <InputErrorMessage>{msg}</InputErrorMessage>}
+      </ErrorMessage>
     </>
   )
 }
@@ -80,7 +86,9 @@ export const Textarea = (props) => {
           )
         }}
       </Field>
-      <ErrorMessage name={name}>{(msg) => <Text>{msg}</Text>}</ErrorMessage>
+      <ErrorMessage name={name}>
+        {(msg) => <InputErrorMessage>{msg}</InputErrorMessage>}
+      </ErrorMessage>
     </div>
   )
 }
@@ -108,7 +116,9 @@ export const CheckboxGroup = (props) => {
           })
         }}
       </Field>
-      <ErrorMessage name={name}>{(msg) => <Text>{msg}</Text>}</ErrorMessage>
+      <ErrorMessage name={name}>
+        {(msg) => <InputErrorMessage>{msg}</InputErrorMessage>}
+      </ErrorMessage>
     </div>
   )
 }

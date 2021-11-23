@@ -5,6 +5,7 @@ import { SubTitle } from '../../components/heading'
 import { InputFile, InputLabel } from '../../components/textField'
 import { LargeButton } from '../../components/buttons'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
+import { Link } from 'react-router-dom'
 import { Formik, Form } from 'formik'
 import * as Yup from 'yup'
 import FormikControl from '../../components/FormikControl'
@@ -65,19 +66,11 @@ const Region = styled.div`
   display: flex;
   flex-direction: column;
   padding-left: 1.8rem;
-  margin-bottom: 0.8rem;
   select {
     margin: 0.4rem 0;
     width: 9rem;
     height: 1.9rem;
   }
-  p {
-    margin: 0rem;
-  }
-`
-
-const RegionLabel = styled.label`
-  width: 100%;
 `
 
 const District = styled(Region)`
@@ -87,8 +80,6 @@ const District = styled(Region)`
     height: 1.9rem;
   }
 `
-
-const DistrictLabel = styled(RegionLabel)``
 
 const ButtonsWrapper = styled.div`
   display: flex;
@@ -115,13 +106,9 @@ const CancelButton = styled(AddButton)`
 `
 
 export default function AddGiftPage() {
-  const categoryOptions = [
-    { key: '', value: '' },
-    { key: '居家用品', value: 'home' },
-  ]
+  const categoryOptions = [{ key: '居家用品', value: 'home' }]
 
   const statusOptions = [
-    { key: '', value: '' },
     { key: '全新', value: '全新' },
     { key: '二手', value: '二手' },
   ]
@@ -132,10 +119,7 @@ export default function AddGiftPage() {
     { key: '面交', value: '面交' },
   ]
 
-  const regionOptions = [
-    { key: '', value: '' },
-    { key: '基隆市', value: '基隆市' },
-  ]
+  const regionOptions = [{ key: '基隆市', value: '基隆市' }]
 
   // 初始化狀態
   const initialValues = {
@@ -194,7 +178,12 @@ export default function AddGiftPage() {
           <Form>
             <ItemInfoTitle>禮物資訊</ItemInfoTitle>
             <ItemName>
-              <FormikControl control="input" label="物品名稱" name="itemName" />
+              <FormikControl
+                control="input"
+                label="物品名稱"
+                name="itemName"
+                placeholder="輸入物品名稱"
+              />
             </ItemName>
             <Category>
               <FormikControl
@@ -217,6 +206,7 @@ export default function AddGiftPage() {
                 control="textarea"
                 label="物品介紹"
                 name="description"
+                placeholder="輸入物品介紹"
               />
             </Description>
             <Imgs>
@@ -238,25 +228,31 @@ export default function AddGiftPage() {
                 name="trading"
                 options={tradingOptions}
               />
+              {true && (
+                <>
+                  <Region>
+                    <FormikControl
+                      control="select"
+                      label="縣市"
+                      name="region"
+                      options={regionOptions}
+                    />
+                  </Region>
+                  <District>
+                    <FormikControl
+                      control="input"
+                      label="地點"
+                      name="district"
+                      placeholder="輸入地點"
+                    />
+                  </District>
+                </>
+              )}
             </Trading>
-            {true && (
-              <>
-                <Region>
-                  <RegionLabel>縣市</RegionLabel>
-                  <FormikControl
-                    control="select"
-                    name="region"
-                    options={regionOptions}
-                  />
-                </Region>
-                <District>
-                  <DistrictLabel>鄉鎮[市]區</DistrictLabel>
-                  <FormikControl control="input" name="district" />
-                </District>
-              </>
-            )}
             <ButtonsWrapper>
-              <CancelButton>取消</CancelButton>
+              <CancelButton as={Link} to={'/givings'}>
+                取消
+              </CancelButton>
               <AddButton type="submit">新增</AddButton>
             </ButtonsWrapper>
           </Form>

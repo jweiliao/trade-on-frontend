@@ -7,6 +7,12 @@ export const InputLabel = styled.label`
   margin-top: 1.2rem;
 `
 
+export const InputErrorMessage = styled.p`
+  color: ${(props) => props.theme.danger_100};
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+`
+
 export const Input = styled.input`
   display: block;
   height: 2.5rem;
@@ -14,9 +20,18 @@ export const Input = styled.input`
   margin-top: 1.2rem;
   padding: 0 0.5rem;
   color: ${(props) => props.theme.secondary};
-  border: 0.1rem solid ${(props) => props.theme.secondary};
+  border: 0.1rem solid ${(props) => props.theme.general_300};
   border-radius: 0.25rem;
   outline: none;
+  ::placeholder,
+  ::-webkit-input-placeholder {
+    color: ${(props) => props.theme.general_300};
+    font-weight: 100;
+  }
+  :-ms-input-placeholder {
+    color: ${(props) => props.theme.general_300};
+    font-weight: 100;
+  }
 `
 
 export const InputPassword = styled(Input).attrs({ type: 'password' })``
@@ -32,11 +47,20 @@ export const Textarea = styled.textarea`
   width: 100%;
   padding: 0.5rem;
   margin-top: 1.2rem;
-  border: 0.1rem solid ${(props) => props.theme.secondary};
+  border: 0.1rem solid ${(props) => props.theme.general_300};
   border-radius: 0.25rem;
   resize: none;
   outline: none;
   line-height: 1.5;
+  ::placeholder,
+  ::-webkit-input-placeholder {
+    color: ${(props) => props.theme.general_300};
+    font-weight: 100;
+  }
+  :-ms-input-placeholder {
+    color: ${(props) => props.theme.general_300};
+    font-weight: 100;
+  }
 `
 
 export const Select = styled.select`
@@ -44,13 +68,10 @@ export const Select = styled.select`
   width: 100%;
   margin-top: 1.2rem;
   padding: 0 0.5rem;
-  border: 0.1rem solid ${(props) => props.theme.secondary};
+  border: 0.1rem solid ${(props) => props.theme.general_300};
   border-radius: 0.25rem;
   outline: none;
   color: ${(props) => props.theme.secondary};
-  option[value=''] {
-    display: none;
-  }
 `
 
 export const CheckBoxLabel = styled.label`
@@ -89,7 +110,7 @@ export const CheckBoxSpan = styled.span`
   left: 0;
   height: 1.25rem;
   width: 1.25rem;
-  border: 0.1rem solid ${(props) => props.theme.secondary};
+  border: 0.1rem solid ${(props) => props.theme.general_300};
   border-radius: 0.25rem;
 
   :after {
@@ -107,14 +128,6 @@ export const CheckBoxSpan = styled.span`
     transform: rotate(45deg);
   }
 `
-
-export const InputCheckBox = ({ label, isChecked }) => (
-  <CheckBoxLabel>
-    {label}
-    <CheckBox checked={isChecked} />
-    <CheckBoxSpan />
-  </CheckBoxLabel>
-)
 
 const BackstageCheckBoxLabel = styled(CheckBoxLabel)`
   margin: 0;
@@ -140,7 +153,7 @@ const BackstageCheckBoxSpan = styled(CheckBoxSpan)`
   top: 50%;
   left: 50%;
   transform: translateX(-50%) translateY(-50%);
-  border: 0.1rem solid ${(props) => props.theme.secondary};
+  border: 0.1rem solid ${(props) => props.theme.general_300};
   ${MEDIA_QUERY_SM} {
     left: 100%;
     transform: translateX(-100%) translateY(-50%);

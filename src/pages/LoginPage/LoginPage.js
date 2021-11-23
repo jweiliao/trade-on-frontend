@@ -1,58 +1,88 @@
+import React from 'react'
 import styled from 'styled-components'
 import { TextTab } from '../../components/tabs'
-import { Input, InputPassword } from '../../components/textField'
+import { InputErrorMessage } from '../../components/textField'
 import { SuperLargeButton } from '../../components/buttons'
+import { Formik, Form } from 'formik'
+import * as Yup from 'yup'
+import FormikControl from '../../components/FormikControl'
 
-const Wrapper = styled.div`
+const Wrapper = styled(Form)`
   width: 500px;
   max-width: 94%;
   margin: 5rem auto;
   border: 0.1rem solid ${(props) => props.secondary};
-  border-radius: 0.1rem;
-  padding: 3rem 2.5rem 4.5rem;
-`
-
-const Title = styled.h1`
-  text-align: center;
-  margin: 0 0 1.25rem;
-`
-
-const Divider = styled.hr`
-  margin-bottom: 3.5rem;
+  padding: 2.5rem;
+  border-radius: 0.25rem;
 `
 
 const TabWrapper = styled.div`
-  margin-bottom: 2rem;
+  margin-bottom: 1.25rem;
+  display: flex;
+  justify-content: center;
 `
 
-const InputWrapper = styled.form`
-  margin-bottom: 4rem;
+const Divider = styled.hr`
+  margin-bottom: 1.25rem;
 `
 
-const InputText = styled(Input)`
-  width: 100%;
+const InputWrapper = styled.div``
+
+const ErrorMessage = styled(InputErrorMessage)`
+  display: none;
 `
 
-const InputHide = styled(InputPassword)`
-  width: 100%;
+const LoginBtn = styled(SuperLargeButton)`
+  margin-top: 1.25rem;
 `
 
 export default function LoginPage() {
+  const initialValues = { email: '', password: '' }
+
+  const validationSchema = Yup.object({
+    email: Yup.string().required('此欄位為必填'),
+    password: Yup.string().required('此欄位為必填'),
+  })
+
+  const handleSubmit = (e) => {
+    e.preventDefault()
+    console.log('You clicked submit.')
+  }
+
   return (
-    <Wrapper>
-      <Title>TRADE ON</Title>
-      <Divider />
-      <TabWrapper>
-        <TextTab to="/login" $isActive="true">
-          登入
-        </TextTab>
-        <TextTab to="/register">註冊</TextTab>
-      </TabWrapper>
-      <InputWrapper>
-        <InputText placeholder="信箱" />
-        <InputHide placeholder="密碼" />
-      </InputWrapper>
-      <SuperLargeButton>登入</SuperLargeButton>
-    </Wrapper>
+    <Formik
+      initialValues={initialValues}
+      validationSchema={validationSchema}
+      onSubmit={handleSubmit}
+    >
+      {(formik) => (
+        <Wrapper>
+          <TabWrapper>
+            <TextTab to="/login" $isActive="true">
+              登入
+            </TextTab>
+            <TextTab to="/register">註冊</TextTab>
+          </TabWrapper>
+          <Divider />
+          <InputWrapper>
+            <FormikControl
+              control="input"
+              label="信箱"
+              name="email"
+              placeholder="輸入信箱"
+            />
+            <FormikControl
+              control="input"
+              type="password"
+              label="密碼"
+              name="password"
+              placeholder="輸入密碼"
+            />
+          </InputWrapper>
+          <ErrorMessage>帳號或密碼錯誤，請重新輸入</ErrorMessage>
+          <LoginBtn type="submit">登入</LoginBtn>
+        </Wrapper>
+      )}
+    </Formik>
   )
 }
