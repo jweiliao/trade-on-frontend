@@ -11,8 +11,9 @@ import Swal from 'sweetalert2'
 import ManageFaqAdd from '../../components/ManageFaqAdd'
 // 引入 ManageFaqEdit 彈窗 component
 import ManageFaqEdit from '../../components/ManageFaqEdit'
-// 引入 axios 來帶後端的資料
-import { instance as axios, deleteFaq } from '../../WebAPI'
+
+// 引入 axios 與 deleteFaq 來串接後端的資料
+import { getAllFaqs, deleteFaq } from '../../WebAPI'
 
 /* 標題 */
 const Title = styled(BackstageTitle)``
@@ -105,9 +106,6 @@ const FaqDeleteButton = styled(DangerSmallButton)`
 
 export default function ManageFaqPage() {
   // 設定問答資料 state
-  // const [manageFaqData, setManageFaqData] = useState(faqQuestions)
-
-  // 設定問答資料 state
   const [manageFaqData, setManageFaqData] = useState([])
 
   // 設定是否顯示新增問答的彈窗的 state，預設 false（不顯示彈窗）
@@ -118,11 +116,10 @@ export default function ManageFaqPage() {
 
   // 第一次進入頁面時，撈後端資料，並帶入 manageFaqData 的 state
   useEffect(() => {
-    axios
-      .get('/commonqnas/all')
-      .then((result) => {
-        setManageFaqData(result.data.allQAs)
-        console.log(result.data.allQAs)
+    getAllFaqs
+      .then((res) => {
+        setManageFaqData(res.data.allQAs)
+        console.log(res.data.allQAs)
       })
       .catch((err) => console.log(err))
   }, [])
@@ -135,8 +132,9 @@ export default function ManageFaqPage() {
 
   // 當點擊 "編輯" 的按鈕時，執行 handleEditFaqClick
   // => 更新 editPopUp 的 state（toggle 彈窗：若原本無顯示，則打開彈窗；若已顯示，則關閉彈窗）
-  const handleEditFaqClick = () => {
+  const handleEditFaqClick = (id) => {
     setEditPopUp(!editPopUp)
+    console.log(id)
   }
 
   const closeModal = () => {
@@ -209,7 +207,7 @@ export default function ManageFaqPage() {
                   <FaqUpdateWrapper>
                     {/* 常見問題右邊："編輯" 按鈕 */}
                     {/* 點擊 "編輯" 的按鈕後，執行 handleEditFaqClick */}
-                    <FaqEditButton onClick={handleEditFaqClick}>
+                    <FaqEditButton onClick={() => handleEditFaqClick(item.id)}>
                       編輯
                     </FaqEditButton>
 
@@ -219,7 +217,9 @@ export default function ManageFaqPage() {
                       <ManageFaqEdit
                         setEditPopUp={setEditPopUp}
                         closeModal={closeModal}
-                      />
+                        item={item}
+                        faqId={item.id}
+                      ></ManageFaqEdit>
                     )}
 
                     {/* 常見問題右邊："刪除" 按鈕 */}
@@ -242,53 +242,3 @@ export default function ManageFaqPage() {
     </>
   )
 }
-
-//   preConfirm: (id) => {
-//     deleteFaq(id)
-//       .then((response) => {
-//         console.log(response)
-//         // if (!response.ok) {
-//         //   throw new Error(response.statusText)
-//         // }
-//         // return response.json()
-//       })
-//       .catch((error) => {
-//         Swal.showValidationMessage(`Request failed: ${error}`)
-//       })
-//   },
-//   allowOutsideClick: () => !Swal.isLoading(),
-// }).then((result) => {
-//   if (result.isConfirmed) {
-//     Swal.fire({
-//       title: '刪除成功',
-//       text: '此筆資料已被刪除',
-//       icon: 'success',
-//       confirmButtonColor: '#bae8e8',
-//       confirmButtonText: '完成',
-//     })
-//   }
-// })
-
-// 顯示再次確認刪除的彈窗
-// Swal.fire({
-//   title: '刪除', // 標題
-//   text: '確定要刪除嗎？', // 內文
-//   icon: 'warning', // 最上方為警告的 icon
-//   showCancelButton: true, // 是否顯示 "取消" 的按鈕
-//   confirmButtonColor: '#e25151', // 確認按鈕的背景色
-//   cancelButtonColor: '#B7B7B7', // 取消按鈕的背景色
-//   cancelButtonText: '不，取消刪除', // 確認按鈕的文字
-//   confirmButtonText: '是的，我要刪除', // 取消按鈕的文字
-//   reverseButtons: true, // 按鈕的排列順序
-// }).then((result) => {
-//   // 點擊 "確認" 後
-//   if (result.isConfirmed) {
-//     Swal.fire({
-//       title: '刪除成功',
-//       text: '此筆資料已被刪除',
-//       icon: 'success',
-//       confirmButtonColor: '#bae8e8',
-//       confirmButtonText: '完成',
-//     })
-//   }
-// })
