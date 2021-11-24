@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, lazy, Suspense } from 'react'
 import FrontNavbar from './components/Navbar/FrontNavbar'
 import { Footer } from './components/Footer/Footer'
 import BackstageNavbar from './components/Navbar/BackstageNavbar'
@@ -9,27 +9,34 @@ import {
   Redirect,
   useLocation,
 } from 'react-router-dom'
-import HomePage from './pages/HomePage'
-import LoginPage from './pages/LoginPage'
-import RegisterPage from './pages/RegisterPage'
-import AboutPage from './pages/AboutPage'
-import GivingsPage from './pages/GivingsPage'
-import ItemPage from './pages/ItemPage'
-import AddGiftPage from './pages/AddGiftPage'
-import EditGiftsPage from './pages/EditGiftsPage'
-import PortfolioPage from './pages/PortfolioPage'
-import EditPortfolioPage from './pages/EditPortfolioPage'
-import TransactionsPage from './pages/TransactionsPage'
-import TransactionsDetailPage from './pages/TransactionsDetailPage'
-import FaqPage from './pages/FaqPage'
-import PrivacyPage from './pages/PrivacyPage'
-import TermsPage from './pages/TermsPage'
-import ManageMemberPage from './pages/ManageMemberPage'
-import ManageCategoryPage from './pages/ManageCategoryPage'
-import ManageFaqPage from './pages/ManageFaqPage'
-import ManageFaqPageAdd from './pages/ManageFaqPageAdd'
-import ManageFaqPageEdit from './pages/ManageFaqPageEdit'
-import ManageGivingPage from './pages/ManageGivingPage'
+
+const HomePage = lazy(() => import('./pages/HomePage'))
+const LoginPage = lazy(() => import('./pages/LoginPage'))
+const RegisterPage = lazy(() => import('./pages/RegisterPage'))
+const AboutPage = lazy(() => import('./pages/AboutPage'))
+const GivingsPage = lazy(() => {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(import('./pages/GivingsPage')), 5000)
+  })
+})
+const ItemPage = lazy(() => import('./pages/ItemPage'))
+const AddGiftPage = lazy(() => import('./pages/AddGiftPage'))
+const EditGiftsPage = lazy(() => import('./pages/EditGiftsPage'))
+const PortfolioPage = lazy(() => import('./pages/PortfolioPage'))
+const EditPortfolioPage = lazy(() => import('./pages/EditPortfolioPage'))
+const TransactionsPage = lazy(() => import('./pages/TransactionsPage'))
+const TransactionsDetailPage = lazy(() =>
+  import('./pages/TransactionsDetailPage')
+)
+const FaqPage = lazy(() => import('./pages/FaqPage'))
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage'))
+const TermsPage = lazy(() => import('./pages/TermsPage'))
+const ManageMemberPage = lazy(() => import('./pages/ManageMemberPage'))
+const ManageCategoryPage = lazy(() => import('./pages/ManageCategoryPage'))
+const ManageFaqPage = lazy(() => import('./pages/ManageFaqPage'))
+const ManageFaqPageAdd = lazy(() => import('./pages/ManageFaqPageAdd'))
+const ManageFaqPageEdit = lazy(() => import('./pages/ManageFaqPageEdit'))
+const ManageGivingPage = lazy(() => import('./pages/ManageGivingPage'))
 
 const ScrollToTop = () => {
   const { pathname } = useLocation()
@@ -44,7 +51,6 @@ const ScrollToTop = () => {
 const Home = () => {
   return (
     <>
-      <ScrollToTop />
       <FrontNavbar />
       <Switch>
         <Route exact path="/" component={HomePage} />
@@ -73,7 +79,6 @@ const Backstage = () => {
   return (
     <>
       <BackstageNavbar />
-      <ScrollToTop />
       <Switch>
         <Route path="/backstage/member" component={ManageMemberPage} />
         <Route path="/backstage/category" component={ManageCategoryPage} />
@@ -90,10 +95,13 @@ const Backstage = () => {
 export default function App() {
   return (
     <Router>
-      <Switch>
-        <Route path="/backstage" component={Backstage} />
-        <Route path="/" component={Home} />
-      </Switch>
+      <Suspense fallback={<div>Loading...</div>}>
+        <ScrollToTop />
+        <Switch>
+          <Route path="/backstage" component={Backstage} />
+          <Route path="/" component={Home} />
+        </Switch>
+      </Suspense>
     </Router>
   )
 }
