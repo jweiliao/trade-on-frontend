@@ -5,7 +5,7 @@ import { PageTitle } from '../../components/heading'
 import { SubTitle } from '../../components/heading'
 
 // 引入 axios 來帶後端的資料
-import axios from '../../WebAPI'
+import { instance as axios } from '../../WebAPI'
 
 /* 所有問答內容的整個區塊 */
 const FaqContent = styled.div`

@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import Container from './Container'
 import { Input, Textarea } from './textField'
@@ -5,6 +6,9 @@ import { BackstageTitle } from './heading'
 import { SmallButton } from './buttons'
 import Swal from 'sweetalert2'
 import { MEDIA_QUERY_SM } from '../styles/breakpoints'
+
+// 引入 updateFaq 來串接後端的資料
+import { getFaq, updateFaq } from '../WebAPI'
 
 /* 彈窗出現時的遮罩背景 */
 const BackDrop = styled.div`
@@ -108,20 +112,54 @@ const FaqUpdateButton = styled(SmallButton)`
     margin-left: 0px;
   }
 `
-// 將從父層傳入的 setEditPopUp、closeModal 這些 props 帶入
-export default function ManageFaqPageAdd({ setEditPopUp, closeModal }) {
-  // 當點擊 "更新" 按鈕時，執行 handleEdit
-  const handleEdit = () => {
-    // 1. 更新 editPopUp 的 state 為 false （不顯示設定新密碼的彈窗）
-    setEditPopUp(false)
+// 將從父層傳入的 setEditPopUp、closeModal、faqId 這些 props 帶入
+export default function ManageFaqPageAdd({
+  setEditPopUp,
+  closeModal,
+  item,
+  faqId,
+}) {
+  console.log('item', item)
+  // console.log(faqId)
+  const [updateFaqData, setUpdateFaqData] = useState({
+    question: item.question,
+    answer: item.answer,
+  })
+  console.log('updateFaq', updateFaqData)
 
-    // 2. 跳出 "更新成功"的彈窗提示
-    Swal.fire({
-      icon: 'success',
-      title: '更新成功',
-      showConfirmButton: false,
-      timer: 1500,
+  // 當在輸入框內輸入內容時
+  const handleEditInput = (e) => {
+    const { name, value } = e.target
+
+    setUpdateFaqData({
+      ...updateFaqData,
+      [name]: value,
     })
+  }
+
+  // 當點擊 "更新" 按鈕時，執行 handleEdit
+  const handleEdit = (e) => {
+    e.preventDefault()
+
+    try {
+      updateFaq(faqId, updateFaqData).then((res) => {
+        console.log(res)
+        if (res.data.success) {
+          //跳出 "更新成功"的彈窗提示
+          Swal.fire({
+            icon: 'success',
+            title: '更新成功',
+            showConfirmButton: false,
+            timer: 1500,
+          })
+        }
+      })
+    } catch (err) {
+      console.log(err)
+      Swal.fire('請稍候再試一次!', 'error')
+    }
+    // 更新 editPopUp 的 state 為 false （不顯示設定新密碼的彈窗）
+    setEditPopUp(false)
   }
 
   // 當點擊 "取消" 的按鈕時，執行 handleCancelClick
@@ -146,13 +184,15 @@ export default function ManageFaqPageAdd({ setEditPopUp, closeModal }) {
             <FaqQuestion
               name="question"
               placeholder="請輸入問題"
-              value="aaa"
+              value={updateFaqData.question}
+              onChange={handleEditInput}
             ></FaqQuestion>
             回答
             <FaqAnswer
               name="answer"
               placeholder="請輸入回答"
-              value="bbb"
+              value={updateFaqData.answer}
+              onChange={handleEditInput}
             ></FaqAnswer>
           </EditFaq>
 
