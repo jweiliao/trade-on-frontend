@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import styled from 'styled-components'
 import Container from './Container'
 import { Input, Textarea } from './textField'
@@ -5,6 +6,9 @@ import { BackstageTitle } from './heading'
 import { SmallButton } from './buttons'
 import Swal from 'sweetalert2'
 import { MEDIA_QUERY_SM } from '../styles/breakpoints'
+
+// 引入 addFaq 來串接後端的資料
+import { addFaq } from '../WebAPI'
 
 /* 彈窗出現時的遮罩背景 */
 const BackDrop = styled.div`
@@ -116,22 +120,50 @@ const FaqAddButton = styled(SmallButton)`
 
 // 將從父層傳入的 setAddPopUp、closeModal 這些 props 帶入
 export default function ManageFaqPageAdd({ setAddPopUp, closeModal }) {
-  // 當點擊 "新增" 按鈕時，執行 handleAdd
-  const handleAdd = () => {
-    // 1. 更新 addPopUp 的 state 為 false （不顯示設定新密碼的彈窗）
-    setAddPopUp(false)
+  const [newFaqData, setNewFaqData] = useState({
+    question: '',
+    answer: '',
+  })
 
-    // 2. 跳出 "新增成功"的彈窗提示
-    Swal.fire({
-      icon: 'success',
-      title: '新增成功',
-      showConfirmButton: false,
-      timer: 1500,
+  // 當在輸入框內輸入內容時
+  const handleInput = (e) => {
+    const { name, value } = e.target
+    setNewFaqData({
+      ...newFaqData,
+      [name]: value,
     })
+    console.log(newFaqData)
   }
 
   // 當點擊 "取消" 的按鈕時，執行 handleCancelClick
   const handleCancelClick = () => {
+    // 更新 addPopUp 的 state 為 false （不顯示設定新密碼的彈窗）
+    setAddPopUp(false)
+  }
+
+  // 當點擊 "新增" 按鈕時，執行 handleAdd
+  const handleAdd = (e) => {
+    e.preventDefault()
+    // todo： 先驗證輸入值是否為空，若為空值，跳出提示，且不執行任何動作，停在 pop up 視窗
+
+    try {
+      addFaq(newFaqData).then((res) => {
+        console.log(res)
+        if (res.data.success) {
+          // 跳出 "新增成功"的彈窗提示
+          Swal.fire({
+            icon: 'success',
+            title: '新增成功',
+            showConfirmButton: false,
+            timer: 1500,
+          })
+        }
+      })
+    } catch (err) {
+      console.log(err)
+      Swal.fire('請稍候再試一次!', 'error')
+    }
+
     // 更新 addPopUp 的 state 為 false （不顯示設定新密碼的彈窗）
     setAddPopUp(false)
   }
@@ -149,8 +181,17 @@ export default function ManageFaqPageAdd({ setAddPopUp, closeModal }) {
           {/* 新增問答輸入框的整個區塊 */}
           <AddFaq>
             問題
-            <FaqQuestion name="question" placeholder="請輸入問題"></FaqQuestion>
-            回答<FaqAnswer name="answer" placeholder="請輸入回答"></FaqAnswer>
+            <FaqQuestion
+              name="question"
+              placeholder="請輸入問題"
+              onChange={handleInput}
+            ></FaqQuestion>
+            回答
+            <FaqAnswer
+              name="answer"
+              placeholder="請輸入回答"
+              onChange={handleInput}
+            ></FaqAnswer>
           </AddFaq>
 
           {/*所有按鈕操作的整個區塊 */}
