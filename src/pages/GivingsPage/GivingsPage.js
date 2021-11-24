@@ -84,17 +84,17 @@ const GivingTitle = styled.div`
   height: 60px;
   background: ${(props) => props.theme.primary_100};
   font-size: 26px;
-  line-height: 1.5
+  line-height: 1.5;
   letter-spacing: 0.5px;
   text-align: center;
-  line-height:60px
+  line-height: 60px;
 `
 
 /* 禮物頁中間 "禮物區" - 副標題 */
 const GivingSubtitle = styled.div`
   margin-top: 22px;
   font-size: 16px;
-  line-height: 1.5
+  line-height: 1.5;
   letter-spacing: 0.5px;
 `
 
