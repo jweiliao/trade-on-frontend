@@ -1,60 +1,57 @@
 import React from 'react'
 import { Field, ErrorMessage } from 'formik'
-import TextError from './TextError'
 import {
-  StyledLabel,
-  StyledInput,
-  StyledSelect,
-  StyledTextarea,
-  StyledRadio,
-  StyledCheckbox,
+  InputLabel,
+  InputErrorMessage,
+  Input as StyledInput,
+  Select as StyledSelect,
+  Textarea as StyledTextarea,
+  CheckBox as StyledCheckbox,
+  CheckBoxLabel,
+  CheckBoxSpan,
 } from './textField'
 
 /* label: 欄位標籤 name: 欄位名稱 rest: */
 export const Input = (props) => {
-  const { label, name, touched, errors, ...rest } = props
+  const { label, name, touched, errors, placeholder, ...rest } = props
   return (
-    <div>
-      <StyledLabel htmlFor={name}>{label}</StyledLabel>
+    <>
+      {label ? <InputLabel htmlFor={name}>{label}</InputLabel> : null}
       {/* <Field id={name} name={name} {...rest} /> */}
       <Field name={name}>
         {({ field, meta }) => {
           return (
             <>
               <StyledInput
-                type="text"
                 id={name}
+                placeholder={placeholder}
                 {...field}
                 {...rest}
-                inputColor={
-                  meta.touched && meta.error ? 'rgb(255, 0, 0)' : 'rgb(0, 0, 0)'
-                }
               />
             </>
           )
         }}
       </Field>
-      <ErrorMessage name={name} component={TextError} />
-    </div>
+      <ErrorMessage name={name}>
+        {(msg) => <InputErrorMessage>{msg}</InputErrorMessage>}
+      </ErrorMessage>
+    </>
   )
 }
 export const Select = (props) => {
   const { label, name, options, ...rest } = props
   return (
-    <div>
-      <StyledLabel htmlFor={name}>{label}</StyledLabel>
+    <>
+      {label ? <InputLabel htmlFor={name}>{label}</InputLabel> : null}
       {/* <Field id={name} name={name} {...rest}> */}
       <Field name={name}>
         {({ field, meta }) => {
           return (
             <>
-              <StyledSelect
-                type="select"
-                id={name}
-                name={name}
-                {...field}
-                {...rest}
-              >
+              <StyledSelect id={name} name={name} {...field} {...rest}>
+                <option value="" selected disabled>
+                  選擇{label}
+                </option>
                 {options.map((option) => {
                   return (
                     <option key={option.value} value={option.value}>
@@ -67,8 +64,10 @@ export const Select = (props) => {
           )
         }}
       </Field>
-      <ErrorMessage name={name} component={TextError} />
-    </div>
+      <ErrorMessage name={name}>
+        {(msg) => <InputErrorMessage>{msg}</InputErrorMessage>}
+      </ErrorMessage>
+    </>
   )
 }
 
@@ -76,85 +75,50 @@ export const Textarea = (props) => {
   const { label, name, ...rest } = props
   return (
     <div>
-      <StyledLabel htmlFor={name}>{label}</StyledLabel>
+      <InputLabel htmlFor={name}>{label}</InputLabel>
       {/* <Field as="textarea" id={name} name={name} {...rest} /> */}
       <Field name={name}>
         {({ field, meta }) => {
           return (
             <>
-              <StyledTextarea
-                type="textarea"
-                id={name}
-                {...field}
-                {...rest}
-                inputColor={
-                  meta.touched && meta.error ? 'rgb(255, 0, 0)' : 'rgb(0, 0, 0)'
-                }
-              />
+              <StyledTextarea id={name} {...field} {...rest} />
             </>
           )
         }}
       </Field>
-      <ErrorMessage name={name} component={TextError} />
-    </div>
-  )
-}
-
-export const RadioButtons = (props) => {
-  const { label, name, options, ...rest } = props
-  return (
-    <div>
-      <StyledLabel>{label}</StyledLabel>
-      <Field name={name}>
-        {({ field }) => {
-          return options.map((option) => {
-            return (
-              <React.Fragment key={option.key}>
-                <StyledRadio
-                  type="radio"
-                  id={option.value}
-                  {...field}
-                  {...rest}
-                  value={option.value}
-                  checked={field.value === option.value}
-                />
-                <label htmlFor={option.value}>{option.key}</label>
-              </React.Fragment>
-            )
-          })
-        }}
-      </Field>
-      <ErrorMessage name={name} component={TextError} />
+      <ErrorMessage name={name}>
+        {(msg) => <InputErrorMessage>{msg}</InputErrorMessage>}
+      </ErrorMessage>
     </div>
   )
 }
 
 export const CheckboxGroup = (props) => {
   const { label, name, options, errors, ...rest } = props
-  console.log(props)
   return (
     <div>
-      {label ? <StyledLabel>{label}</StyledLabel> : null}
       <Field name={name}>
         {({ field }) => {
           return options.map((option) => {
             return (
-              <React.Fragment key={option.key}>
+              <CheckBoxLabel key={option.key}>
+                {option.key}
                 <StyledCheckbox
-                  type="checkbox"
                   id={option.value}
                   {...field}
                   {...rest}
                   value={option.value}
                   checked={field.value.includes(option.value)}
                 />
-                <label htmlFor={option.value}>{option.key}</label>
-              </React.Fragment>
+                <CheckBoxSpan />
+              </CheckBoxLabel>
             )
           })
         }}
       </Field>
-      <ErrorMessage component={TextError} name={name} />
+      <ErrorMessage name={name}>
+        {(msg) => <InputErrorMessage>{msg}</InputErrorMessage>}
+      </ErrorMessage>
     </div>
   )
 }

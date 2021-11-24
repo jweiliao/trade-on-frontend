@@ -74,11 +74,6 @@ export const SuperLargeButton = styled(SmallButton)`
   letter-spacing: 0.5px;
 `
 
-export const CenterLargeButton = styled(SuperLargeButton)`
-  max-width: 120px;
-  margin: 30px auto;
-`
-
 export const PageButton = styled.li`
   width: 3rem;
   height: 3rem;

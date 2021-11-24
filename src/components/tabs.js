@@ -4,11 +4,11 @@ import { Link } from 'react-router-dom'
 export const TextTab = styled(Link)`
   font-style: normal;
   font-weight: 500;
-  font-size: 16px;
+  font-size: 1.5rem;
   line-height: 24px;
   letter-spacing: 0.5px;
   :not(:last-child) {
-    margin-right: 1rem;
+    margin-right: 1.5rem;
   }
   color: ${({ $isActive }) => {
     return $isActive
