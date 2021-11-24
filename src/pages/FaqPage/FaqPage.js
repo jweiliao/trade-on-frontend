@@ -4,8 +4,10 @@ import Container from '../../components/Container'
 import { PageTitle } from '../../components/heading'
 import { SubTitle } from '../../components/heading'
 
-// 引入 axios 來帶後端的資料
-import { instance as axios } from '../../WebAPI'
+// 引入 axios 與 deleteFaq 來串接後端的資料
+import { getAllFaqs, getLimitFaq } from '../../WebAPI'
+
+import { getPages } from '../../utils'
 
 /* 所有問答內容的整個區塊 */
 const FaqContent = styled.div`
@@ -35,20 +37,56 @@ const FaAnswer = styled.div`
   line-height: 1.5;
   letter-spacing: 0.5px;
 `
+/* "分頁" - 整個元件 */
+const PaginationContainer = styled.ul`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 50px;
+  color: ${(props) => props.theme.primary_200};
+`
+
+/* "分頁" - 分頁按鈕 */
+const PageButton = styled.li`
+  width: 48px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  cursor: pointer;
+  border: solid 1px ${(props) => props.theme.general_500};
+
+  &:hover {
+    background-color: ${(props) => props.theme.primary_100};
+  }
+`
 
 export default function FaqPage() {
   // 設定問答資料 state
   const [faqData, setFaqData] = useState([])
 
+  const [pages, setPages] = useState([])
+  const limit = 5
+
   // 第一次進入頁面時，撈後端資料，並帶入 faqData 的 state
   useEffect(() => {
-    axios
-      .get('/commonqnas/all')
-      .then((result) => {
-        setFaqData(result.data.allQAs)
-        // console.log(result.data.allQAs)
+    // axios
+    //   .get('/commonqnas/all')
+    //   .then((result) => {
+    //     setFaqData(result.data.allQAs)
+    //     // console.log(result.data.allQAs)
+    //   })
+    //   .catch((err) => console.log(err))
+    getAllFaqs(limit)
+      .then((res) => {
+        let totalPages = res.data.paginate.allPages
+        setPages(getPages(totalPages))
+        // setManageFaqData(res.data.allQAs)
       })
-      .catch((err) => console.log(err))
+      .then((data) => {
+        getLimitFaq(1, limit).then((faqs) => setFaqData(faqs.data.allQAs))
+      })
   }, [])
 
   // 點擊 "問題" 後，執行 handleQuestionClick，更新 faqData 的 state ，
@@ -68,6 +106,12 @@ export default function FaqPage() {
       })
     )
   }
+
+  // 執行 handlePageClick()
+  const handlePageClick = (page) => {
+    getLimitFaq(page, limit).then((faqs) => setFaqData(faqs.data.allQAs))
+  }
+
   return (
     <>
       <Container>
@@ -93,6 +137,18 @@ export default function FaqPage() {
             )
           })}
         </FaqContent>
+
+        {/* 顯示頁數 */}
+        <PaginationContainer>
+          {/* 顯示頁數按鈕 */}
+          {faqData.length > 0 &&
+            pages.map((page) => (
+              // 點擊頁碼按鈕時，執行 handlePageClick()
+              <PageButton key={page} onClick={() => handlePageClick(page)}>
+                {page}
+              </PageButton>
+            ))}
+        </PaginationContainer>
       </Container>
     </>
   )
