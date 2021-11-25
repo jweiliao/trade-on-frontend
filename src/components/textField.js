@@ -20,7 +20,7 @@ export const Input = styled.input`
   margin-top: 1.2rem;
   padding: 0 0.5rem;
   color: ${(props) => props.theme.secondary};
-  border: 0.1rem solid ${(props) => props.theme.general_300};
+  border: 1px solid ${(props) => props.borderColor};
   border-radius: 0.25rem;
   outline: none;
   ::placeholder,
@@ -31,6 +31,11 @@ export const Input = styled.input`
   :-ms-input-placeholder {
     color: ${(props) => props.theme.general_300};
     font-weight: 100;
+  }
+  $:focus,
+  &:active {
+    outline: none;
+    border: 1px solid #f00;
   }
 `
 
@@ -47,7 +52,7 @@ export const Textarea = styled.textarea`
   width: 100%;
   padding: 0.5rem;
   margin-top: 1.2rem;
-  border: 0.1rem solid ${(props) => props.theme.general_300};
+  border: 1px solid ${(props) => props.borderColor};
   border-radius: 0.25rem;
   resize: none;
   outline: none;
@@ -68,7 +73,7 @@ export const Select = styled.select`
   width: 100%;
   margin-top: 1.2rem;
   padding: 0 0.5rem;
-  border: 0.1rem solid ${(props) => props.theme.general_300};
+  border: 1px solid ${(props) => props.borderColor};
   border-radius: 0.25rem;
   outline: none;
   color: ${(props) => props.theme.secondary};
