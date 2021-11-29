@@ -65,6 +65,13 @@ const ButtonsWrapper = styled.div`
   display: flex;
   justify-content: center;
 `
+const PageButtonsWrapper = styled(ButtonsWrapper)`
+  // margin: 5rem auto 3rem;
+  ${MEDIA_QUERY_SM} {
+    flex-direction: column-reverse;
+    align-items: center;
+  }
+`
 
 const EditBtn = styled.button`
   border: none;
@@ -75,25 +82,64 @@ const EditBtn = styled.button`
 
 const DeleteBtn = styled(EditBtn)``
 
+const EditInput = styled.input`
+  font-size: 14px;
+  &:focus {
+    outline: none;
+  }
+  border: ${(props) => props.theme.general_200} solid 2px;
+  border-radius: 4px;
+  margin-top: 10px;
+  line-height: 1.5em;
+  // padding-left: 5px;
+  // min-width: 80%;
+  padding: 5px;
+  background: ${(props) => props.theme.general_100};
+  ${MEDIA_QUERY_SM} {
+    min-width: 40%;
+  }
+`
+
+const EditWrapper = styled.div`
+  display: flex;
+  // flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  ${MEDIA_QUERY_SM} {
+    flex-direction: column;
+  }
+`
+
+const Content = styled.div`
+  margin: 5px 0 8px 0;
+  font-size: 16px;
+  line-height: 1.5;
+  text-align: justify;
+  white-space: pre-line;
+`
+
+const SaveBtn = styled(BackstageSmallButton)`
+  // margin: 1rem 2rem;
+  margin: 1rem;
+  ${MEDIA_QUERY_SM} {
+    width: 100%;
+  }
+`
+
+const CancelBtn = styled(SaveBtn)`
+  background-color: ${(props) => props.theme.general_100};
+  &:hover {
+    background-color: ${(props) => props.theme.general_200};
+  }
+  ${MEDIA_QUERY_SM} {
+    width: 100%;
+  }
+`
 // const PageButtonsWrapper = styled(ButtonsWrapper)`
 //   margin: 5rem auto 3rem;
 //   ${MEDIA_QUERY_SM} {
 //     flex-direction: column-reverse;
 //     align-items: center;
-//   }
-// `
-
-// const SaveBtn = styled(BackstageSmallButton)`
-//   margin: 1rem 2rem;
-//   ${MEDIA_QUERY_SM} {
-//     width: 50%;
-//   }
-// `
-
-// const CancelBtn = styled(SaveBtn)`
-//   background-color: ${(props) => props.theme.general_100};
-//   &:hover {
-//     background-color: ${(props) => props.theme.general_200};
 //   }
 // `
 
@@ -106,13 +152,15 @@ export default function ManageCategoryPage() {
     handleNewCategory,
     categoryCotentRef,
     newCategory,
+    handleEditClick,
+    handleEditMessage,
+    isUpdating,
+    setIsUpdating,
+    editValue,
+    setEditValue,
   } = useCategories()
 
   console.log(categories)
-
-  // 儲存是否正在 edit 的狀態
-  const [isUpdating, setIsUpdating] = useState(false)
-  const [editValue, setEditValue] = useState('')
 
   return (
     <Form>
@@ -131,23 +179,52 @@ export default function ManageCategoryPage() {
       {categories.map((category) => {
         return (
           <Category key={category.id}>
-            {category.categoryName}
-            <ButtonsWrapper>
-              <EditBtn>
+            {/* {category.categoryName} */}
+            {isUpdating ? (
+              <EditWrapper>
+                <EditInput
+                  id={category.id}
+                  onChange={(e) => {
+                    setEditValue(e.target.value)
+                  }}
+                  defaultValue={editValue ? editValue : category.categoryName}
+                  type="text"
+                />
+                <ButtonsWrapper>
+                  <SaveBtn
+                    editValue={editValue}
+                    id={category.id}
+                    onClick={(e) => {
+                      handleEditMessage(e)
+                    }}
+                  >
+                    送出
+                  </SaveBtn>
+                  <CancelBtn
+                    editValue={!editValue}
+                    onClick={() => {
+                      setIsUpdating(false)
+                      setEditValue('')
+                    }}
+                  >
+                    取消編輯
+                  </CancelBtn>
+                </ButtonsWrapper>
+              </EditWrapper>
+            ) : (
+              <Content id={category.id}>{category.categoryName}</Content>
+            )}
+            <PageButtonsWrapper>
+              <EditBtn onClick={handleEditClick}>
                 <FaPen />
               </EditBtn>
               <DeleteBtn onClick={() => handleDeleteCategory(category.id)}>
                 <FaTrash />
               </DeleteBtn>
-            </ButtonsWrapper>
+            </PageButtonsWrapper>
           </Category>
         )
       })}
-
-      {/* <PageButtonsWrapper>
-        <CancelBtn>取消</CancelBtn>
-        <SaveBtn>儲存</SaveBtn>
-      </PageButtonsWrapper> */}
 
       {/* <Pagination
         dataPerPage={faqsPerPage}
@@ -157,101 +234,3 @@ export default function ManageCategoryPage() {
     </Form>
   )
 }
-
-//   // 點擊 '編輯' 後，更新 isUpdating 的編輯狀態為 true
-//   const handleEditClick = () => {
-//     setIsUpdating(true)
-//   }
-//   const handleEditMessage = async (e) => {
-//     const categoryId = e.target.id
-//     console.log(categoryId)
-//     if (editValue === '') {
-//       e.preventDefault()
-//     }
-//     const editData = {
-//       categoryName: editValue,
-//       compareId: categoryId,
-//     }
-//     console.log(editData)
-//     try {
-//       await updateCategory(editData.compareId, editData).then((res) => {
-//         console.log(res)
-//         console.log(res.data)
-//         if (res.data.message === 'success') {
-//           //跳出 "更新成功"的彈窗提示
-//           Swal.fire({
-//             icon: 'success',
-//             title: '更新成功',
-//             showConfirmButton: false,
-//             timer: 1500,
-//           })
-//           setIsUpdating(false)
-//         }
-//       })
-//     } catch (err) {
-//       console.log(err)
-//       Swal.fire('請稍候再試一次!', 'error')
-//     }
-//     setEditValue('')
-//   }
-
-//       {/* todo: 如何默認為 "未分類" */}
-//       {/* <Category>未分類</Category> */}
-//       {manageCategories.map((category) => {
-//         return (
-//           <>
-//             <Category key={category.id}>
-//               {/* {category.categoryName} */}
-//               {isUpdating ? (
-//                 <EditWrapper>
-//                   <EditInput
-//                     id={category.id}
-//                     onChange={(e) => {
-//                       setEditValue(e.target.value)
-//                     }}
-//                     defaultValue={editValue ? editValue : category.categoryName}
-//                     type="text"
-//                   />
-//                   <ButtonsWrapper>
-//                     <SaveBtn
-//                       editValue={editValue}
-//                       id={category.id}
-//                       onClick={(e) => {
-//                         handleEditMessage(e)
-//                       }}
-//                     >
-//                       送出
-//                     </SaveBtn>
-//                     <CancelBtn
-//                       editValue={!editValue}
-//                       onClick={() => {
-//                         setIsUpdating(false)
-//                         setEditValue('')
-//                       }}
-//                     >
-//                       取消編輯
-//                     </CancelBtn>
-//                   </ButtonsWrapper>
-//                 </EditWrapper>
-//               ) : (
-//                 <Content id={category.id}>{category.categoryName}</Content>
-//               )}
-//               <PageButtonsWrapper>
-//                 <EditBtn onClick={handleEditClick}>
-//                   <FaPen />
-//                 </EditBtn>
-//                 <DeleteBtn onClick={() => handleDeleteClick(category.id)}>
-//                   <FaTrash />
-//                 </DeleteBtn>
-//               </PageButtonsWrapper>
-//             </Category>
-//           </>
-//         )
-//       })}
-//       {/* <PageButtonsWrapper>
-//         <CancelBtn>取消</CancelBtn>
-//         <SaveBtn>儲存</SaveBtn>
-//       </PageButtonsWrapper> */}
-//     </Form>
-//   )
-// }
