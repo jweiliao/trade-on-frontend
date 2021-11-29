@@ -1,17 +1,13 @@
 import { useState } from 'react'
 import styled from 'styled-components'
-import Container from './Container'
 import { Input, Textarea } from './textField'
 import { BackstageTitle } from './heading'
 import { SmallButton } from './buttons'
 import Swal from 'sweetalert2'
 import { MEDIA_QUERY_SM } from '../styles/breakpoints'
-
-// 引入 addFaq 來串接後端的資料
 import { addFaq } from '../WebAPI'
 
-/* 彈窗出現時的遮罩背景 */
-const BackDrop = styled.div`
+export const BackDrop = styled.div`
   width: 100%;
   height: 100%;
   position: fixed;
@@ -21,8 +17,7 @@ const BackDrop = styled.div`
   background-color: rgba(0, 0, 0, 0.3);
 `
 
-/* 彈窗的整個區塊 */
-const AddFaqWrapper = styled.div`
+export const AddFaqWrapper = styled.div`
   z-index: 100;
   width: 500px;
   padding: 10px 50px;
@@ -35,21 +30,19 @@ const AddFaqWrapper = styled.div`
   border-radius: 4px;
   box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
   transition: all 0.5s ease-out;
-
   ${MEDIA_QUERY_SM} {
     margin-top: 20px;
     max-width: 80%;
   }
 `
 
-/* 標題 */
-const Title = styled(BackstageTitle)`
+export const Title = styled(BackstageTitle)`
   ${MEDIA_QUERY_SM} {
     margin-top: 3rem;
   }
 `
-/* 新增問答輸入框的整個區塊 */
-const AddFaq = styled.div`
+
+export const AddFaq = styled.form`
   max-width: 100%;
   display: flex;
   flex-direction: column;
@@ -59,31 +52,17 @@ const AddFaq = styled.div`
   margin-bottom: 30px;
 `
 
-/* 問題 */
-const FaqQuestion = styled(Input)`
+export const QuestionInput = styled(Input)`
   width: 100%;
   margin-bottom: 50px;
-  &:focus {
-    outline: none;
-    border: 2px solid ${(props) => props.theme.general_500};
-    background-color: ${(props) => props.theme.general_000};
-    box-shadow: none;
-  }
 `
 
-/* 回答 */
-const FaqAnswer = styled(Textarea)`
+export const AnswerInput = styled(Textarea)`
   width: 100%;
   height: 7.5rem;
-  &:focus {
-    outline: none;
-    border: 2px solid ${(props) => props.theme.general_500};
-    background-color: ${(props) => props.theme.general_000};
-    box-shadow: none;
-  }
 `
-/* 所有按鈕操作的整個區塊 */
-const FaqConfirmWrapper = styled.div`
+
+export const ConfirmButtonsWrapper = styled.div`
   display: flex;
   justify-content: center;
   margin-bottom: 50px;
@@ -93,8 +72,7 @@ const FaqConfirmWrapper = styled.div`
   }
 `
 
-/* "取消" 按鈕 */
-const FaqCancelButton = styled(SmallButton)`
+export const CancelButton = styled(SmallButton)`
   background-color: ${(props) => props.theme.general_200};
   &:hover {
     background-color: ${(props) => props.theme.general_300};
@@ -104,8 +82,7 @@ const FaqCancelButton = styled(SmallButton)`
   }
 `
 
-/* "新增" 按鈕 */
-const FaqAddButton = styled(SmallButton)`
+export const AddButton = styled(SmallButton)`
   margin-left: 27px;
   background-color: ${(props) => props.theme.secondary_100};
   :hover {
@@ -118,91 +95,80 @@ const FaqAddButton = styled(SmallButton)`
   }
 `
 
-// 將從父層傳入的 setAddPopUp、closeModal 這些 props 帶入
-export default function ManageFaqPageAdd({ setAddPopUp, closeModal }) {
+export default function ManageFaqPageAdd({
+  setFaqs,
+  faqs,
+  handleToggleAddPopUp,
+}) {
   const [newFaqData, setNewFaqData] = useState({
     question: '',
     answer: '',
   })
 
-  // 當在輸入框內輸入內容時
   const handleInput = (e) => {
     const { name, value } = e.target
     setNewFaqData({
       ...newFaqData,
       [name]: value,
     })
-    console.log(newFaqData)
   }
 
-  // 當點擊 "取消" 的按鈕時，執行 handleCancelClick
-  const handleCancelClick = () => {
-    // 更新 addPopUp 的 state 為 false （不顯示設定新密碼的彈窗）
-    setAddPopUp(false)
-  }
-
-  // 當點擊 "新增" 按鈕時，執行 handleAdd
-  const handleAdd = (e) => {
+  const handleAddFaq = (e) => {
     e.preventDefault()
-    // todo： 先驗證輸入值是否為空，若為空值，跳出提示，且不執行任何動作，停在 pop up 視窗
-
-    try {
-      addFaq(newFaqData).then((res) => {
-        console.log(res)
-        if (res.data.success) {
-          // 跳出 "新增成功"的彈窗提示
+    addFaq(newFaqData)
+      .then((res) => {
+        const newFaq = res.data.new
+        console.log(res.data)
+        if (res.data.message === 'success') {
           Swal.fire({
             icon: 'success',
             title: '新增成功',
             showConfirmButton: false,
             timer: 1500,
           })
+          setFaqs([
+            {
+              id: newFaq.id,
+              question: newFaq.question,
+              answer: newFaq.answer,
+            },
+            ...faqs,
+          ])
         }
       })
-    } catch (err) {
-      console.log(err)
-      Swal.fire('請稍候再試一次!', 'error')
-    }
-
-    // 更新 addPopUp 的 state 為 false （不顯示設定新密碼的彈窗）
-    setAddPopUp(false)
+      .catch((err) => {
+        console.log(err)
+        Swal.fire('發生錯誤！')
+      })
+    handleToggleAddPopUp()
   }
 
   return (
     <>
-      {/* 如果 setAddPopUp  的 state 為 true，顯示 BackDrop 遮罩*/}
-      {/* 將 closeModal 帶入 BackDrop，設定當出現彈窗時，點擊彈窗外的區塊，會收回彈窗 */}
-      {setAddPopUp && <BackDrop onClick={closeModal}></BackDrop>}
-      <Container>
-        <AddFaqWrapper>
-          {/* 標題 */}
-          <Title>新增常見問題</Title>
-
-          {/* 新增問答輸入框的整個區塊 */}
-          <AddFaq>
-            問題
-            <FaqQuestion
-              name="question"
-              placeholder="請輸入問題"
-              onChange={handleInput}
-            ></FaqQuestion>
-            回答
-            <FaqAnswer
-              name="answer"
-              placeholder="請輸入回答"
-              onChange={handleInput}
-            ></FaqAnswer>
-          </AddFaq>
-
-          {/*所有按鈕操作的整個區塊 */}
-          <FaqConfirmWrapper>
-            <FaqCancelButton onClick={handleCancelClick}>取消</FaqCancelButton>
-            <FaqAddButton type="submit" onClick={handleAdd}>
-              新增
-            </FaqAddButton>
-          </FaqConfirmWrapper>
-        </AddFaqWrapper>
-      </Container>
+      <BackDrop onClick={handleToggleAddPopUp}></BackDrop>
+      <AddFaqWrapper>
+        <Title>新增常見問題</Title>
+        <AddFaq>
+          問題
+          <QuestionInput
+            name="question"
+            placeholder="請輸入問題"
+            onChange={handleInput}
+          ></QuestionInput>
+          回答
+          <AnswerInput
+            name="answer"
+            placeholder="請輸入回答"
+            onChange={handleInput}
+          ></AnswerInput>
+        </AddFaq>
+        <ConfirmButtonsWrapper>
+          <CancelButton onClick={handleToggleAddPopUp}>取消</CancelButton>
+          <AddButton type="submit" onClick={handleAddFaq}>
+            新增
+          </AddButton>
+        </ConfirmButtonsWrapper>
+      </AddFaqWrapper>
     </>
   )
 }
