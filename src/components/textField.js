@@ -47,6 +47,7 @@ export const Textarea = styled.textarea`
   width: 100%;
   padding: 0.5rem;
   margin-top: 1.2rem;
+  color: ${(props) => props.theme.secondary};
   border: 0.1rem solid ${(props) => props.theme.general_300};
   border-radius: 0.25rem;
   resize: none;

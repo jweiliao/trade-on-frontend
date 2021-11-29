@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { FrontSubnavMemberData } from './FrontnavData'
 
-import useRWD from '../useRWD'
+import useRWD from '../../hooks/useRWD'
 
 export default function useSubmenu() {
   // 監控瀏覽器的長寬
