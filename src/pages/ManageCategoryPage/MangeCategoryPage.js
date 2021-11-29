@@ -1,8 +1,11 @@
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { BackstageTitle } from '../../components/heading'
 import { BackstageSmallButton } from '../../components/buttons'
 import { FaPlus, FaPen, FaTrash } from 'react-icons/fa'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
+import Pagination from '../../components/Pagination/BackstagePagination'
+import useCategories from '../../hooks/useCategories'
 
 const Form = styled.form``
 
@@ -64,29 +67,33 @@ const EditBtn = styled.button`
 
 const DeleteBtn = styled(EditBtn)``
 
-const PageButtonsWrapper = styled(ButtonsWrapper)`
-  margin: 5rem auto 3rem;
-  ${MEDIA_QUERY_SM} {
-    flex-direction: column-reverse;
-    align-items: center;
-  }
-`
+// const PageButtonsWrapper = styled(ButtonsWrapper)`
+//   margin: 5rem auto 3rem;
+//   ${MEDIA_QUERY_SM} {
+//     flex-direction: column-reverse;
+//     align-items: center;
+//   }
+// `
 
-const SaveBtn = styled(BackstageSmallButton)`
-  margin: 1rem 2rem;
-  ${MEDIA_QUERY_SM} {
-    width: 50%;
-  }
-`
+// const SaveBtn = styled(BackstageSmallButton)`
+//   margin: 1rem 2rem;
+//   ${MEDIA_QUERY_SM} {
+//     width: 50%;
+//   }
+// `
 
-const CancelBtn = styled(SaveBtn)`
-  background-color: ${(props) => props.theme.general_100};
-  &:hover {
-    background-color: ${(props) => props.theme.general_200};
-  }
-`
+// const CancelBtn = styled(SaveBtn)`
+//   background-color: ${(props) => props.theme.general_100};
+//   &:hover {
+//     background-color: ${(props) => props.theme.general_200};
+//   }
+// `
 
-export default function ManageFaqPage() {
+export default function ManageCategoryPage() {
+  const { categories, setCategories, handleDeleteCategory } = useCategories()
+
+  console.log(categories)
+
   return (
     <Form>
       <Title>物品分類管理</Title>
@@ -96,7 +103,24 @@ export default function ManageFaqPage() {
         </AddBtn>
         <AddCategory></AddCategory>
       </InputWrapper>
-      <Category>未分類</Category>
+      {categories.map((category) => {
+        return (
+          <Category key={category.id}>
+            {category.categoryName}
+            <ButtonsWrapper>
+              <EditBtn>
+                <FaPen />
+              </EditBtn>
+              <DeleteBtn onClick={() => handleDeleteCategory(category.id)}>
+                <FaTrash />
+              </DeleteBtn>
+            </ButtonsWrapper>
+          </Category>
+        )
+      })}
+
+      {/* <Category>未分類</Category>
+
       <Category>
         居家用品
         <ButtonsWrapper>
@@ -107,11 +131,18 @@ export default function ManageFaqPage() {
             <FaTrash />
           </DeleteBtn>
         </ButtonsWrapper>
-      </Category>
-      <PageButtonsWrapper>
+      </Category> */}
+
+      {/* <PageButtonsWrapper>
         <CancelBtn>取消</CancelBtn>
         <SaveBtn>儲存</SaveBtn>
-      </PageButtonsWrapper>
+      </PageButtonsWrapper> */}
+
+      {/* <Pagination
+        dataPerPage={faqsPerPage}
+        totalData={faqs.length}
+        handleChangePage={handleChangePage}
+      /> */}
     </Form>
   )
 }
