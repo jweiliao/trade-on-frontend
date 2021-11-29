@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Swal from 'sweetalert2'
 import {
   getAllCategories,
@@ -11,10 +11,14 @@ export default function useCategories() {
   const [categories, setCategories] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
   const categoriesPerPage = 5
-  // const [addPopUp, setAddPopUp] = useState(false)
-  // const [editPopUp, setEditPopUp] = useState(false)
+
   const [editedCategory, setEditedCategory] = useState()
 
+  //  儲存 input 欄中輸入的值
+  const categoryCotentRef = useRef()
+  const [newCategory, setNewCategory] = useState({
+    categoryName: '',
+  })
   useEffect(() => {
     const fetchCategories = async () => {
       const res = await getAllCategories(100)
@@ -33,43 +37,54 @@ export default function useCategories() {
   //   setAddPopUp(!addPopUp)
   // }
 
-  // const [newFaqData, setNewFaqData] = useState({
-  //   question: '',
-  //   answer: '',
-  // })
-
-  // const handleAddFaq = (e) => {
-  //   e.preventDefault()
-  //   addCategory(newFaqData)
-  //     .then((res) => {
-  //       const newFaq = res.data.new
-  //       console.log(res.data)
-  //       if (res.data.message === 'success') {
-  //         Swal.fire({
-  //           icon: 'success',
-  //           title: '新增成功',
-  //           showConfirmButton: false,
-  //           timer: 1500,
-  //         })
-  //         setCategories([
-  //           {
-  //             categoryName: newFaq.question,
-  //           },
-  //           ...categories,
-  //         ])
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       console.log(err)
-  //       Swal.fire('發生錯誤！')
-  //     })
-  //   handleToggleAddPopUp()
-  // }
-
   // const handleToggleEditPopUp = (id, content) => {
   //   // setEditPopUp(!editPopUp)
   //   setEditedCategory({ id, content })
   // }
+
+  const handleNewCategory = (e) => {
+    setNewCategory({
+      categoryName: e.target.value,
+    })
+  }
+  // 當點擊 "新增" 按鈕時，執行 handleAddCategory
+  const handleAddCategory = (e) => {
+    e.preventDefault()
+
+    // 如果 input  為空，不進行任何動作
+    if (categoryCotentRef.current.value === '') return
+
+    try {
+      addCategory(newCategory).then((res) => {
+        console.log(res.data)
+        const newCategory = res.data.new
+        if (res.data.message === 'success') {
+          Swal.fire({
+            icon: 'success',
+            title: '新增成功',
+            showConfirmButton: false,
+            timer: 1500,
+          })
+          setCategories([
+            {
+              id: newCategory.id,
+              categoryName: newCategory.categoryName,
+              createdAt: newCategory.createdAt,
+              lastModified: newCategory.lastModified,
+            },
+            ...categories,
+          ])
+        }
+      })
+    } catch (err) {
+      console.log(err)
+      Swal.fire('請稍候再試一次!', 'error')
+    }
+    // 然後將 input 欄位清空
+    setNewCategory({
+      categoryName: '',
+    })
+  }
 
   const handleDeleteCategory = (id) => {
     Swal.fire({
@@ -110,6 +125,10 @@ export default function useCategories() {
   return {
     categories,
     setCategories,
+    handleNewCategory,
+    handleAddCategory,
+    categoryCotentRef,
+    newCategory,
     // currentCategories,
     // addPopUp,
     // handleToggleAddPopUp,
