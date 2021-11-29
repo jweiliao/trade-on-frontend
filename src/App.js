@@ -27,8 +27,6 @@ import TermsPage from './pages/TermsPage'
 import ManageMemberPage from './pages/ManageMemberPage'
 import ManageCategoryPage from './pages/ManageCategoryPage'
 import ManageFaqPage from './pages/ManageFaqPage'
-import ManageFaqPageAdd from './pages/ManageFaqPageAdd'
-import ManageFaqPageEdit from './pages/ManageFaqPageEdit'
 import ManageGivingPage from './pages/ManageGivingPage'
 
 const ScrollToTop = () => {
@@ -78,8 +76,6 @@ const Backstage = () => {
         <Route path="/backstage/member" component={ManageMemberPage} />
         <Route path="/backstage/category" component={ManageCategoryPage} />
         <Route exact path="/backstage/faq" component={ManageFaqPage} />
-        <Route path="/backstage/faq/add" component={ManageFaqPageAdd} />
-        <Route path="/backstage/faq/edit" component={ManageFaqPageEdit} />
         <Route path="/backstage/giving" component={ManageGivingPage} />
         <Redirect from="*" to="/backstage/member" />
       </Switch>
