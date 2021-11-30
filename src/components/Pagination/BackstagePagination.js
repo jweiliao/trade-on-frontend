@@ -7,9 +7,19 @@ const BackstagePageItem = styled(PageItem)`
   &:hover {
     background-color: ${(props) => props.theme.secondary_100};
   }
+  background-color: ${({ $isCurrent }) => {
+    return $isCurrent
+      ? (props) => props.theme.secondary_200
+      : (props) => props.theme.general_000
+  }};
 `
 
-export const Pagination = ({ dataPerPage, totalData, handleChangePage }) => {
+export const Pagination = ({
+  dataPerPage,
+  totalData,
+  handleChangePage,
+  currentPage,
+}) => {
   const pageNumbers = []
 
   for (let i = 1; i <= Math.ceil(totalData / dataPerPage); i++) {
@@ -17,10 +27,11 @@ export const Pagination = ({ dataPerPage, totalData, handleChangePage }) => {
   }
 
   return (
-    <PaginationContainer>
+    <PaginationContainer $isShow={pageNumbers.length > 1 ? true : false}>
       {pageNumbers.map((number) => {
         return (
           <BackstagePageItem
+            $isCurrent={number === currentPage ? true : false}
             key={number}
             onClick={() => {
               handleChangePage(number)

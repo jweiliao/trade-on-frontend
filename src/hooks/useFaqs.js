@@ -80,6 +80,7 @@ export default function useFaqs() {
     handleToggleEditPopUp,
     handleDeleteFaq,
     faqsPerPage,
+    currentPage,
     handleChangePage,
   }
 }

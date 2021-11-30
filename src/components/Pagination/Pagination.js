@@ -6,6 +6,9 @@ export const PaginationContainer = styled.ul`
   justify-content: center;
   margin-bottom: 3rem;
   color: ${(props) => props.theme.secondary_300};
+  display: ${({ $isShow }) => {
+    return $isShow ? 'static' : 'none'
+  }};
 `
 
 export const PageItem = styled.li`
@@ -17,6 +20,14 @@ export const PageItem = styled.li`
   align-items: center;
   cursor: pointer;
   border: solid 1px ${(props) => props.theme.general_500};
+  :first-child {
+    border-radius: 0.25rem 0 0 0.25rem;
+  }
+
+  :last-child {
+    border-radius: 0 0.25rem 0.25rem 0;
+  }
+
   :not(:first-child) {
     border-left: 0px;
   }
@@ -24,9 +35,19 @@ export const PageItem = styled.li`
   &:hover {
     background-color: ${(props) => props.theme.primary_100};
   }
+  background-color: ${({ $isCurrent }) => {
+    return $isCurrent
+      ? (props) => props.theme.primary_150
+      : (props) => props.theme.general_000
+  }};
 `
 
-export const Pagination = ({ postsPerPage, totalPosts, handleChangePage }) => {
+export const Pagination = ({
+  postsPerPage,
+  totalPosts,
+  handleChangePage,
+  currentPage,
+}) => {
   const pageNumbers = []
 
   for (let i = 1; i <= Math.ceil(totalPosts / postsPerPage); i++) {
@@ -34,10 +55,11 @@ export const Pagination = ({ postsPerPage, totalPosts, handleChangePage }) => {
   }
 
   return (
-    <PaginationContainer>
+    <PaginationContainer $isShow={pageNumbers.length > 1 ? true : false}>
       {pageNumbers.map((number) => {
         return (
           <PageItem
+            $isCurrent={number === currentPage ? true : false}
             key={number}
             onClick={() => {
               handleChangePage(number)
