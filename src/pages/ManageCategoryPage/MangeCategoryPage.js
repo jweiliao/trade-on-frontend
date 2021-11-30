@@ -147,9 +147,8 @@ export default function ManageCategoryPage() {
   const {
     categories,
     setCategories,
-    handleDeleteCategory,
-    handleAddCategory,
     handleNewCategory,
+    handleAddCategory,
     categoryCotentRef,
     newCategory,
     handleEditClick,
@@ -158,6 +157,10 @@ export default function ManageCategoryPage() {
     setIsUpdating,
     editValue,
     setEditValue,
+    handleDeleteCategory,
+    currentCategories,
+    categoriesPerPage,
+    handleChangeCategoryPage,
   } = useCategories()
 
   console.log(categories)
@@ -176,7 +179,7 @@ export default function ManageCategoryPage() {
           onChange={handleNewCategory}
         ></AddCategory>
       </InputWrapper>
-      {categories.map((category) => {
+      {currentCategories.map((category) => {
         return (
           <Category key={category.id}>
             {/* {category.categoryName} */}
@@ -226,11 +229,11 @@ export default function ManageCategoryPage() {
         )
       })}
 
-      {/* <Pagination
-        dataPerPage={faqsPerPage}
-        totalData={faqs.length}
-        handleChangePage={handleChangePage}
-      /> */}
+      <Pagination
+        dataPerPage={categoriesPerPage}
+        totalData={categories.length}
+        handleChangePage={handleChangeCategoryPage}
+      />
     </Form>
   )
 }

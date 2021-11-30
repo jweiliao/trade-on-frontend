@@ -9,7 +9,7 @@ import {
 
 export default function useCategories() {
   const [categories, setCategories] = useState([])
-  const [currentPage, setCurrentPage] = useState(1)
+  const [currentCategoryPage, setCurrentCategoryPage] = useState(1)
   const categoriesPerPage = 5
 
   //  儲存新增分類的input 欄中輸入的值
@@ -31,19 +31,13 @@ export default function useCategories() {
     fetchCategories()
   }, [])
 
-  // Get current faqs
-  const indexOfLastFaq = currentPage * categoriesPerPage
-  const indexOfFirstFaq = indexOfLastFaq - categoriesPerPage
-  const currentCategories = categories.slice(indexOfFirstFaq, indexOfLastFaq)
-
-  // const handleToggleAddPopUp = () => {
-  //   setAddPopUp(!addPopUp)
-  // }
-
-  // const handleToggleEditPopUp = (id, content) => {
-  //   // setEditPopUp(!editPopUp)
-  //   setEditedCategory({ id, content })
-  // }
+  // Get current Categories
+  const indexOfLastCategory = currentCategoryPage * categoriesPerPage
+  const indexOfFirstCategory = indexOfLastCategory - categoriesPerPage
+  const currentCategories = categories.slice(
+    indexOfFirstCategory,
+    indexOfLastCategory
+  )
 
   const handleNewCategory = (e) => {
     setNewCategory({
@@ -170,7 +164,8 @@ export default function useCategories() {
     })
   }
 
-  // const handleChangePage = (pageNumber) => setCurrentPage(pageNumber)
+  const handleChangeCategoryPage = (pageNumber) =>
+    setCurrentCategoryPage(pageNumber)
 
   return {
     categories,
@@ -185,15 +180,9 @@ export default function useCategories() {
     setIsUpdating,
     editValue,
     setEditValue,
-    // currentCategories,
-    // addPopUp,
-    // handleToggleAddPopUp,
-    // editPopUp,
-    // editedCategory,
-    // handleToggleEditPopUp,
     handleDeleteCategory,
-
-    // categoriesPerPage,
-    // handleChangePage,
+    currentCategories,
+    categoriesPerPage,
+    handleChangeCategoryPage,
   }
 }
