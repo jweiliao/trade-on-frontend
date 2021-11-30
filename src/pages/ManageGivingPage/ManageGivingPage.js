@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { BackstageTitle } from '../../components/heading'
 import {
@@ -9,11 +10,19 @@ import {
   Data,
   ButtonTableCell,
 } from '../../components/table'
+
 import {
   DangerSmallButton,
   BackstagePageButton,
 } from '../../components/buttons'
+
 import Swal from 'sweetalert2'
+
+import Pagination from '../../components/Pagination/BackstagePagination'
+
+import usePosts from '../../hooks/usePosts'
+
+import { getAllPosts } from '../../WebAPI'
 
 const Title = styled(BackstageTitle)``
 
@@ -29,6 +38,17 @@ const PaginationWrapper = styled.ul`
 `
 
 export default function ManageGivingPage() {
+  const {
+    posts,
+    setPosts,
+    currentPosts,
+    handleDeletePost,
+    postsPerPage,
+    handleChangePostPage,
+  } = usePosts()
+
+  console.log(posts)
+
   const handleDelete = () => {
     Swal.fire({
       title: '刪除',
@@ -68,36 +88,31 @@ export default function ManageGivingPage() {
           </Row>
         </Head>
         <Body>
-          <Row>
-            <Data data-label="帳號">jane0901</Data>
-            <Data data-label="暱稱">Jane</Data>
-            <Data data-label="物品名稱">蒸氣清潔拖</Data>
-            <Data data-label="物品介紹">
-              家裡閒置的雜物，希望可以讓物品被使用 很好用哦～打掃好幫手！
-            </Data>
-            <Data data-label="上架時間">2021/10/11 23:31</Data>
-            <ButtonTableCell>
-              <DeleteBtn onClick={handleDelete}>刪除</DeleteBtn>
-            </ButtonTableCell>
-          </Row>
-          <Row>
-            <Data data-label="帳號">jane0901</Data>
-            <Data data-label="暱稱">Jane</Data>
-            <Data data-label="物品名稱">花瓶</Data>
-            <Data data-label="物品介紹">就是個花瓶</Data>
-            <Data data-label="上架時間">2021/10/11 23:31</Data>
-            <ButtonTableCell>
-              <DeleteBtn onClick={handleDelete}>刪除</DeleteBtn>
-            </ButtonTableCell>
-          </Row>
+          {currentPosts.map((post) => {
+            return (
+              <>
+                <Row key={post.owner._id}>
+                  <Data data-label="帳號">{post.owner.email}</Data>
+                  <Data data-label="暱稱">{post.owner.name}</Data>
+                  <Data data-label="物品名稱">{post.itemName}</Data>
+                  <Data data-label="物品介紹">{post.description}</Data>
+                  <Data data-label="上架時間">{post.createdAt}</Data>
+                  <ButtonTableCell>
+                    <DeleteBtn onClick={() => handleDelete(post.owner._id)}>
+                      刪除
+                    </DeleteBtn>
+                  </ButtonTableCell>
+                </Row>
+              </>
+            )
+          })}
         </Body>
       </Table>
-      <PaginationWrapper>
-        <BackstagePageButton>&lt;</BackstagePageButton>
-        <BackstagePageButton>1</BackstagePageButton>
-        <BackstagePageButton>2</BackstagePageButton>
-        <BackstagePageButton>&gt;</BackstagePageButton>
-      </PaginationWrapper>
+      <Pagination
+        dataPerPage={postsPerPage}
+        totalData={posts.length}
+        handleChangePage={handleChangePostPage}
+      />
     </>
   )
 }
