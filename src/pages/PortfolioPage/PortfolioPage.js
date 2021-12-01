@@ -4,6 +4,14 @@ import Container from '../../components/Container'
 import { SubTitle } from '../../components/heading'
 import { SmallButton, PageButton } from '../../components/buttons'
 import { TextTab, BorderTab } from '../../components/tabs'
+import {
+  Cards,
+  Card,
+  CardImage,
+  CardContent,
+  CardTitle,
+  EmptyCard,
+} from '../../components/card'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 import { Link } from 'react-router-dom'
 
@@ -161,54 +169,13 @@ const FilterTab = styled(BorderTab)`
   overflow: auto;
 `
 
-const TransactionsWrapper = styled(PersonalInfo)`
+const TransactionsWrapper = styled(Cards)`
+  border: ${(props) => props.theme.general_300} solid 1px;
   border-top: 0px;
-  padding: 4rem 1.5rem;
-  display: flex;
-  justify-content: center;
-  flex-wrap: wrap;
+  padding: 4rem 1rem;
   min-height: 40vh;
 `
 
-const Card = styled.div`
-  width: 12.5rem;
-  height: 15.625rem;
-  border-radius: 1.25rem;
-  overflow: hidden;
-  margin: 1rem;
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-`
-
-const CardImage = styled.img`
-  width: 100%;
-  height: 12.5rem;
-  display: block;
-  margin: auto;
-  object-fit: cover;
-  &:hover {
-    opacity: 0.5;
-    transition: all 0.5s ease 0s;
-  }
-`
-
-const CardContent = styled.div`
-  height: 3.125rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`
-
-const CardTitle = styled.p`
-  font-size: 1rem;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  color: ${(props) => props.theme.secondary};
-`
-
-const EmptyCard = styled.div`
-  width: 12.5rem;
-  margin: 1rem;
-`
 const PaginationWrapper = styled.ul`
   width: 100%;
   display: flex;
