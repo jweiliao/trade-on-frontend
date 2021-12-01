@@ -123,6 +123,7 @@ export default function usePosts() {
     currentPosts,
     postsPerPage,
     handleToggleIsPublic,
+    currentPostsPage,
     handleChangePostPage,
   }
 }

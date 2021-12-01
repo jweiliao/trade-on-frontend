@@ -106,8 +106,8 @@ export default function ManageFaqPage() {
       <FaqWrapper>
         {currentFaqs.map((faq) => {
           return (
-            <FaqContent>
-              <FaqItem key={faq.id}>
+            <FaqContent key={faq.id}>
+              <FaqItem>
                 <Question>{faq.question}</Question>
                 <Answer>{faq.answer}</Answer>
               </FaqItem>

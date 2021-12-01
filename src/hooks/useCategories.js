@@ -182,6 +182,7 @@ export default function useCategories() {
     setEditValue,
     handleDeleteCategory,
     currentCategories,
+    currentCategoryPage,
     categoriesPerPage,
     handleChangeCategoryPage,
   }

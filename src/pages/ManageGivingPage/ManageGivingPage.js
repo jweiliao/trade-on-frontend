@@ -36,6 +36,7 @@ export default function ManageGivingPage() {
     currentPosts,
     postsPerPage,
     handleToggleIsPublic,
+    currentPostsPage,
     handleChangePostPage,
   } = usePosts()
 
@@ -58,25 +59,21 @@ export default function ManageGivingPage() {
         <Body>
           {currentPosts.map((post) => {
             return (
-              <>
-                <Row key={post.id}>
-                  <Data data-label="帳號">{post.owner.email}</Data>
-                  <Data data-label="暱稱">{post.owner.nickname}</Data>
-                  <Data data-label="物品名稱">{post.itemName}</Data>
-                  <Data data-label="物品介紹">{post.description}</Data>
-                  <Data data-label="上架時間">{post.createdAt}</Data>
-                  <ButtonTableCell>
-                    <PublishBtn
-                      onClick={() =>
-                        handleToggleIsPublic(post.id, post.isPublic)
-                      }
-                      isPublic={post.isPublic}
-                    >
-                      {post.isPublic ? '下架' : '上架'}
-                    </PublishBtn>
-                  </ButtonTableCell>
-                </Row>
-              </>
+              <Row key={post.id}>
+                <Data data-label="帳號">{post.owner.email}</Data>
+                <Data data-label="暱稱">{post.owner.nickname}</Data>
+                <Data data-label="物品名稱">{post.itemName}</Data>
+                <Data data-label="物品介紹">{post.description}</Data>
+                <Data data-label="上架時間">{post.createdAt}</Data>
+                <ButtonTableCell>
+                  <PublishBtn
+                    onClick={() => handleToggleIsPublic(post.id, post.isPublic)}
+                    isPublic={post.isPublic}
+                  >
+                    {post.isPublic ? '下架' : '上架'}
+                  </PublishBtn>
+                </ButtonTableCell>
+              </Row>
             )
           })}
         </Body>
@@ -85,6 +82,7 @@ export default function ManageGivingPage() {
         dataPerPage={postsPerPage}
         totalData={posts.length}
         handleChangePage={handleChangePostPage}
+        currentPage={currentPostsPage}
       />
     </>
   )
