@@ -2,13 +2,11 @@ import axios from 'axios'
 const config = {
   apiHost1: 'http://localhost:8081',
   apiHost2: 'https:/cosdelus.tw/tradeon/api',
-
 }
 
 export const instance = axios.create({
   baseURL: config.apiHost2,
 })
-
 
 /***************
    常見問題相關
@@ -28,7 +26,6 @@ export const deleteFaq = (id) => instance.delete(`/commonqnas/${id}`)
 
 export const getLimitFaq = (page, limit) =>
   instance.get(`/commonqnas/all?page=${page}&size=${limit}`)
-
 
 /***************
    分類相關
@@ -50,7 +47,6 @@ export const updateCategory = (id, data) =>
 
 // 刪除分類
 export const deleteCategory = (id) => instance.delete(`/category/${id}`)
-
 
 /***************
    贈物文相關
@@ -80,7 +76,4 @@ export const deletePost = (id) => instance.delete(`/posts/${id}`)
 // 上架或下架贈物文
 export const PostPublishStatus = (id) => instance.put(`/posts/${id}/status`)
 
-
-
 // export default instance
-=======
