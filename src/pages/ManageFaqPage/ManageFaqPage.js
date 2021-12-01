@@ -88,6 +88,7 @@ export default function ManageFaqPage() {
     handleToggleEditPopUp,
     handleDeleteFaq,
     faqsPerPage,
+    currentPage,
     handleChangePage,
   } = useFaqs()
 
@@ -138,6 +139,7 @@ export default function ManageFaqPage() {
         dataPerPage={faqsPerPage}
         totalData={faqs.length}
         handleChangePage={handleChangePage}
+        currentPage={currentPage}
       />
     </Container>
   )
