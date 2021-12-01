@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import Container from '../../components/Container'
 import { SubTitle } from '../../components/heading'
@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom'
 import { Formik, Form } from 'formik'
 import * as Yup from 'yup'
 import FormikControl from '../../components/FormikControl'
+import { ImageUpload } from '../../components/FileUpload/ImageUpload'
 
 const ItemInfoTitle = styled(SubTitle)`
   margin: 3rem 0;
@@ -161,10 +162,17 @@ export default function AddGiftPage() {
     }),
   })
 
+  // 暫放圖片
+  const [imageUrl, setImageUrl] = useState([])
+  // 取得圖片
+  let getImageUrl = (data) => {
+    setImageUrl(data)
+  }
+  console.log(imageUrl)
   // 送出資料
   const onSubmit = (values) => {
-    console.log('Form data', values)
     console.log('Save data', JSON.parse(JSON.stringify(values)))
+    console.log({ ...values, imageUrl })
   }
 
   return (
@@ -209,6 +217,7 @@ export default function AddGiftPage() {
                 placeholder="輸入物品介紹"
               />
             </Description>
+            <ImageUpload func={getImageUrl} />
             <Imgs>
               <InputLabel>物品圖片</InputLabel>
               <UploadImg />

@@ -56,7 +56,7 @@ export const Select = (props) => {
                 {...rest}
                 borderColor={meta.touched && meta.error ? '#e25151' : '#D3D4D6'}
               >
-                <option value="" selected disabled>
+                <option value="" disabled>
                   選擇{label}
                 </option>
                 {options.map((option) => {
