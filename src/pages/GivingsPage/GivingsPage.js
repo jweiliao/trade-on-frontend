@@ -13,6 +13,7 @@ import {
   EmptyCard,
 } from '../../components/card'
 import Pagination from '../../components/Pagination/Pagination'
+
 import givingsbanner from '../../images/givingsBanner.svg'
 import { getAllPosts } from '../../WebAPI'
 
@@ -109,8 +110,8 @@ export default function GivingsPage() {
         <EmptyCard />
       </Cards>
       <Pagination
-        postsPerPage={postsPerPage}
-        totalPosts={posts.length}
+        dataPerPage={postsPerPage}
+        totalData={posts.length}
         handleChangePage={handleChangePage}
         currentPage={currentPage}
       />

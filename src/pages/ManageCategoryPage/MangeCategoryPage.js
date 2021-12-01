@@ -1,4 +1,3 @@
-import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { BackstageTitle } from '../../components/heading'
 import { BackstageSmallButton } from '../../components/buttons'
@@ -8,13 +7,6 @@ import Pagination from '../../components/Pagination/BackstagePagination'
 
 import useCategories from '../../hooks/useCategories'
 
-import {
-  getAllCategories,
-  addCategory,
-  updateCategory,
-  deleteCategory,
-} from '../../WebAPI'
-import Swal from 'sweetalert2'
 const Form = styled.form``
 
 const Title = styled(BackstageTitle)``
@@ -135,13 +127,6 @@ const CancelBtn = styled(SaveBtn)`
     width: 100%;
   }
 `
-// const PageButtonsWrapper = styled(ButtonsWrapper)`
-//   margin: 5rem auto 3rem;
-//   ${MEDIA_QUERY_SM} {
-//     flex-direction: column-reverse;
-//     align-items: center;
-//   }
-// `
 
 export default function ManageCategoryPage() {
   const {
@@ -160,6 +145,7 @@ export default function ManageCategoryPage() {
     handleDeleteCategory,
     currentCategories,
     categoriesPerPage,
+    currentCategoryPage,
     handleChangeCategoryPage,
   } = useCategories()
 
@@ -233,6 +219,7 @@ export default function ManageCategoryPage() {
         dataPerPage={categoriesPerPage}
         totalData={categories.length}
         handleChangePage={handleChangeCategoryPage}
+        currentPage={currentCategoryPage}
       />
     </Form>
   )

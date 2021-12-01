@@ -43,14 +43,14 @@ export const PageItem = styled.li`
 `
 
 export const Pagination = ({
-  postsPerPage,
-  totalPosts,
+  dataPerPage,
+  totalData,
   handleChangePage,
   currentPage,
 }) => {
   const pageNumbers = []
 
-  for (let i = 1; i <= Math.ceil(totalPosts / postsPerPage); i++) {
+  for (let i = 1; i <= Math.ceil(totalData / dataPerPage); i++) {
     pageNumbers.push(i)
   }
 
