@@ -74,6 +74,6 @@ export const updatePost = (id, data) => instance.put(`/posts/${id}`, data)
 export const deletePost = (id) => instance.delete(`/posts/${id}`)
 
 // 上架或下架贈物文
-export const PostPublishStatus = (id) => instance.delete(`/posts/${id}/status`)
+export const PostPublishStatus = (id) => instance.put(`/posts/${id}/status`)
 
 // export default instance

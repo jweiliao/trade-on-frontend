@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { BackstageTitle } from '../../components/heading'
 import {
@@ -11,67 +10,36 @@ import {
   ButtonTableCell,
 } from '../../components/table'
 
-import {
-  DangerSmallButton,
-  BackstagePageButton,
-} from '../../components/buttons'
-
-import Swal from 'sweetalert2'
+import { BackstageSmallButton } from '../../components/buttons'
 
 import Pagination from '../../components/Pagination/BackstagePagination'
 
 import usePosts from '../../hooks/usePosts'
 
-import { getAllPosts } from '../../WebAPI'
-
 const Title = styled(BackstageTitle)``
 
-const DeleteBtn = styled(DangerSmallButton)`
+const PublishBtn = styled(BackstageSmallButton)`
   margin: 0 auto;
-`
-
-const PaginationWrapper = styled.ul`
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  margin: 2rem 0 4rem;
+  background-color: ${(props) =>
+    props.isPublic ? props.theme.secondary_100 : props.theme.secondary};
+  color: ${(props) =>
+    props.isPublic ? props.theme.secondary : props.theme.general_000};
+  &:hover {
+    background-color: ${(props) =>
+      props.isPublic ? props.theme.secondary_200 : props.theme.secondary};
+  }
 `
 
 export default function ManageGivingPage() {
   const {
     posts,
-    setPosts,
     currentPosts,
-    handleDeletePost,
     postsPerPage,
+    handleToggleIsPublic,
     handleChangePostPage,
   } = usePosts()
 
   console.log(posts)
-
-  const handleDelete = () => {
-    Swal.fire({
-      title: '刪除',
-      text: '確定要刪除嗎？',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#e25151',
-      cancelButtonColor: '#B7B7B7',
-      cancelButtonText: '不，取消刪除',
-      confirmButtonText: '是的，我要刪除',
-      reverseButtons: true,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          title: '刪除成功',
-          text: '此筆資料已被刪除',
-          icon: 'success',
-          confirmButtonColor: '#bae8e8',
-          confirmButtonText: '完成',
-        })
-      }
-    })
-  }
 
   return (
     <>
@@ -91,16 +59,21 @@ export default function ManageGivingPage() {
           {currentPosts.map((post) => {
             return (
               <>
-                <Row key={post.owner._id}>
+                <Row key={post.id}>
                   <Data data-label="帳號">{post.owner.email}</Data>
-                  <Data data-label="暱稱">{post.owner.name}</Data>
+                  <Data data-label="暱稱">{post.owner.nickname}</Data>
                   <Data data-label="物品名稱">{post.itemName}</Data>
                   <Data data-label="物品介紹">{post.description}</Data>
                   <Data data-label="上架時間">{post.createdAt}</Data>
                   <ButtonTableCell>
-                    <DeleteBtn onClick={() => handleDelete(post.owner._id)}>
-                      刪除
-                    </DeleteBtn>
+                    <PublishBtn
+                      onClick={() =>
+                        handleToggleIsPublic(post.id, post.isPublic)
+                      }
+                      isPublic={post.isPublic}
+                    >
+                      {post.isPublic ? '下架' : '上架'}
+                    </PublishBtn>
                   </ButtonTableCell>
                 </Row>
               </>
