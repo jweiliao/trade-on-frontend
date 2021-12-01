@@ -2,11 +2,14 @@ import axios from 'axios'
 const config = {
   apiHost1: 'http://localhost:8081',
   apiHost2: 'https:/cosdelus.tw/tradeon/api',
+
 }
 
 export const instance = axios.create({
   baseURL: config.apiHost2,
 })
+
+
 
 // post
 export const getAllPosts = (limit) => instance.get(`/posts/all?size=${limit}`)
@@ -24,6 +27,10 @@ export const getLimitPost = (page, limit, owner, isPublic) =>
     `/posts/all?page=${page}&size=${limit}&user=${owner}&isPublic=${isPublic}`
   )
 
+/***************
+   常見問題相關
+***************/
+
 // faq
 export const getAllFaqs = (limit) =>
   instance.get(`/commonqnas/all?size=${limit}`)
@@ -38,3 +45,27 @@ export const deleteFaq = (id) => instance.delete(`/commonqnas/${id}`)
 
 export const getLimitFaq = (page, limit) =>
   instance.get(`/commonqnas/all?page=${page}&size=${limit}`)
+
+
+/***************
+   分類相關
+***************/
+
+// 取得分類
+export const getAllCategories = (limit) =>
+  instance.get(`/category/all?size=${limit}`)
+
+// 取得特定一筆分類
+export const getCategory = (id) => instance.get(`/category/${id}`)
+
+// 新增分類
+export const addCategory = (data) => instance.post('/category/new', data)
+
+// 編輯分類
+export const updateCategory = (id, data) =>
+  instance.put(`/category/${id}`, data)
+
+// 刪除分類
+export const deleteCategory = (id) => instance.delete(`/category/${id}`)
+
+// export default instance

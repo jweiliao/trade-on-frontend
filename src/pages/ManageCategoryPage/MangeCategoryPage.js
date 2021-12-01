@@ -1,9 +1,20 @@
+import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { BackstageTitle } from '../../components/heading'
 import { BackstageSmallButton } from '../../components/buttons'
 import { FaPlus, FaPen, FaTrash } from 'react-icons/fa'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
+import Pagination from '../../components/Pagination/BackstagePagination'
 
+import useCategories from '../../hooks/useCategories'
+
+import {
+  getAllCategories,
+  addCategory,
+  updateCategory,
+  deleteCategory,
+} from '../../WebAPI'
+import Swal from 'sweetalert2'
 const Form = styled.form``
 
 const Title = styled(BackstageTitle)``
@@ -54,6 +65,13 @@ const ButtonsWrapper = styled.div`
   display: flex;
   justify-content: center;
 `
+const PageButtonsWrapper = styled(ButtonsWrapper)`
+  // margin: 5rem auto 3rem;
+  ${MEDIA_QUERY_SM} {
+    flex-direction: column-reverse;
+    align-items: center;
+  }
+`
 
 const EditBtn = styled.button`
   border: none;
@@ -64,18 +82,47 @@ const EditBtn = styled.button`
 
 const DeleteBtn = styled(EditBtn)``
 
-const PageButtonsWrapper = styled(ButtonsWrapper)`
-  margin: 5rem auto 3rem;
+const EditInput = styled.input`
+  font-size: 14px;
+  &:focus {
+    outline: none;
+  }
+  border: ${(props) => props.theme.general_200} solid 2px;
+  border-radius: 4px;
+  margin-top: 10px;
+  line-height: 1.5em;
+  // padding-left: 5px;
+  // min-width: 80%;
+  padding: 5px;
+  background: ${(props) => props.theme.general_100};
   ${MEDIA_QUERY_SM} {
-    flex-direction: column-reverse;
-    align-items: center;
+    min-width: 40%;
   }
 `
 
-const SaveBtn = styled(BackstageSmallButton)`
-  margin: 1rem 2rem;
+const EditWrapper = styled.div`
+  display: flex;
+  // flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
   ${MEDIA_QUERY_SM} {
-    width: 50%;
+    flex-direction: column;
+  }
+`
+
+const Content = styled.div`
+  margin: 5px 0 8px 0;
+  font-size: 16px;
+  line-height: 1.5;
+  text-align: justify;
+  white-space: pre-line;
+`
+
+const SaveBtn = styled(BackstageSmallButton)`
+  // margin: 1rem 2rem;
+  margin: 1rem;
+  ${MEDIA_QUERY_SM} {
+    width: 100%;
   }
 `
 
@@ -84,34 +131,109 @@ const CancelBtn = styled(SaveBtn)`
   &:hover {
     background-color: ${(props) => props.theme.general_200};
   }
+  ${MEDIA_QUERY_SM} {
+    width: 100%;
+  }
 `
+// const PageButtonsWrapper = styled(ButtonsWrapper)`
+//   margin: 5rem auto 3rem;
+//   ${MEDIA_QUERY_SM} {
+//     flex-direction: column-reverse;
+//     align-items: center;
+//   }
+// `
 
-export default function ManageFaqPage() {
+export default function ManageCategoryPage() {
+  const {
+    categories,
+    setCategories,
+    handleNewCategory,
+    handleAddCategory,
+    categoryCotentRef,
+    newCategory,
+    handleEditClick,
+    handleEditMessage,
+    isUpdating,
+    setIsUpdating,
+    editValue,
+    setEditValue,
+    handleDeleteCategory,
+    currentCategories,
+    categoriesPerPage,
+    handleChangeCategoryPage,
+  } = useCategories()
+
+  console.log(categories)
+
   return (
     <Form>
       <Title>物品分類管理</Title>
       <InputWrapper>
-        <AddBtn>
+        <AddBtn onClick={handleAddCategory}>
           <FaPlus />
         </AddBtn>
-        <AddCategory></AddCategory>
+        <AddCategory
+          ref={categoryCotentRef}
+          value={newCategory.categoryName}
+          placeholder="輸入新分類"
+          onChange={handleNewCategory}
+        ></AddCategory>
       </InputWrapper>
-      <Category>未分類</Category>
-      <Category>
-        居家用品
-        <ButtonsWrapper>
-          <EditBtn>
-            <FaPen />
-          </EditBtn>
-          <DeleteBtn>
-            <FaTrash />
-          </DeleteBtn>
-        </ButtonsWrapper>
-      </Category>
-      <PageButtonsWrapper>
-        <CancelBtn>取消</CancelBtn>
-        <SaveBtn>儲存</SaveBtn>
-      </PageButtonsWrapper>
+      {currentCategories.map((category) => {
+        return (
+          <Category key={category.id}>
+            {/* {category.categoryName} */}
+            {isUpdating ? (
+              <EditWrapper>
+                <EditInput
+                  id={category.id}
+                  onChange={(e) => {
+                    setEditValue(e.target.value)
+                  }}
+                  defaultValue={editValue ? editValue : category.categoryName}
+                  type="text"
+                />
+                <ButtonsWrapper>
+                  <SaveBtn
+                    editValue={editValue}
+                    id={category.id}
+                    onClick={(e) => {
+                      handleEditMessage(e)
+                    }}
+                  >
+                    送出
+                  </SaveBtn>
+                  <CancelBtn
+                    editValue={!editValue}
+                    onClick={() => {
+                      setIsUpdating(false)
+                      setEditValue('')
+                    }}
+                  >
+                    取消編輯
+                  </CancelBtn>
+                </ButtonsWrapper>
+              </EditWrapper>
+            ) : (
+              <Content id={category.id}>{category.categoryName}</Content>
+            )}
+            <PageButtonsWrapper>
+              <EditBtn onClick={handleEditClick}>
+                <FaPen />
+              </EditBtn>
+              <DeleteBtn onClick={() => handleDeleteCategory(category.id)}>
+                <FaTrash />
+              </DeleteBtn>
+            </PageButtonsWrapper>
+          </Category>
+        )
+      })}
+
+      <Pagination
+        dataPerPage={categoriesPerPage}
+        totalData={categories.length}
+        handleChangePage={handleChangeCategoryPage}
+      />
     </Form>
   )
 }
