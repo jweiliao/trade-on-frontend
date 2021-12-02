@@ -127,12 +127,12 @@ export default function ManageFaqPageAdd({
             timer: 1500,
           })
           setFaqs([
+            ...faqs,
             {
               id: newFaq.id,
               question: newFaq.question,
               answer: newFaq.answer,
             },
-            ...faqs,
           ])
         }
       })

@@ -6,7 +6,7 @@ import useRWD from '../../hooks/useRWD'
 export default function useSubmenu() {
   // 監控瀏覽器的長寬
   const device = useRWD()
-  console.log(device)
+  // console.log(device)
 
   // 下拉選單內容的 state
   const [submenuData, setSubMenuData] = useState([])

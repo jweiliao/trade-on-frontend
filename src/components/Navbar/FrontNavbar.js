@@ -133,7 +133,7 @@ export default function FrontNavbar() {
 
   // 從 useSubmenu.js 拿到 submenu 的資料
   const { submenuData } = useSubmenu()
-  console.log(submenuData)
+  // console.log(submenuData)
 
   return (
     <HeaderContainer>

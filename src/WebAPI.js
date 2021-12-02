@@ -12,9 +12,7 @@ export const instance = axios.create({
    常見問題相關
 ***************/
 
-// faq
-export const getAllFaqs = (limit) =>
-  instance.get(`/commonqnas/all?size=${limit}`)
+export const getAllFaqs = instance.get(`/commonqnas/all`)
 
 export const getFaq = (id) => instance.get(`/commonqnas/${id}`)
 
@@ -32,8 +30,7 @@ export const getLimitFaq = (page, limit) =>
 ***************/
 
 // 取得分類
-export const getAllCategories = (limit) =>
-  instance.get(`/category/all?size=${limit}`)
+export const getAllCategories = instance.get(`/category/all`)
 
 // 取得特定一筆分類
 export const getCategory = (id) => instance.get(`/category/${id}`)

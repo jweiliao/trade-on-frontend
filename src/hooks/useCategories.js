@@ -24,7 +24,7 @@ export default function useCategories() {
 
   useEffect(() => {
     const fetchCategories = async () => {
-      const res = await getAllCategories(100)
+      const res = await getAllCategories
       setCategories(res.data.categories)
     }
 
@@ -63,13 +63,13 @@ export default function useCategories() {
             timer: 1500,
           })
           setCategories([
+            ...categories,
             {
               id: newCategory.id,
               categoryName: newCategory.categoryName,
               createdAt: newCategory.createdAt,
               lastModified: newCategory.lastModified,
             },
-            ...categories,
           ])
         }
       })

@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import Container from '../../components/Container'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 import { LargeButton } from '../../components/buttons'
@@ -16,6 +16,8 @@ import AsNavFor from './AsNavFor'
 import Comments from './comments'
 // 引入填寫留言的區塊
 import LargeTextArea from './textArea'
+
+import { getPost } from '../../WebAPI'
 
 /* 禮物詳情頁最上方 "物品" 資訊的全部區塊 */
 const GiftDetails = styled.div`
@@ -137,8 +139,8 @@ const ShippingFee = styled.li`
   margin-bottom: 20px;
 `
 
-/* "編輯禮物" 按鈕 */
-const EditGiftButton = styled(LargeButton)`
+/* "編輯禮物" 、"想要禮物" 按鈕 */
+const HandleGiftButton = styled(LargeButton)`
   margin-top: 25px;
 `
 
@@ -170,6 +172,28 @@ const IntroContent = styled.div`
 `
 
 export default function ItemPage() {
+  // 設定 post 的 state
+  const [post, setPost] = useState({})
+
+  // let post = []
+  // 取得 URL 上 id 的參數
+  const { id } = useParams()
+
+  console.log('id', id)
+  useEffect(() => {
+    const fetchPost = async () => {
+      const res = await getPost(id)
+      console.log('res', res.data.post)
+      if (res.data.message === 'success') {
+        setPost(res.data.post)
+      }
+      console.log('insidepost', post)
+    }
+
+    fetchPost()
+  }, [])
+
+  console.log('outsidepost', post)
   return (
     <>
       <Container>
@@ -184,17 +208,22 @@ export default function ItemPage() {
           {/* "物品" 資訊：右側 */}
           <DetailRight>
             {/* "物品" 資訊右側：贈物者資訊 */}
-            <Donor>
-              {/* 贈物者頭像 */}
-              <DonorAvatar></DonorAvatar>
+            {post.owner && (
+              <Donor>
+                {/* 贈物者頭像 */}
+                <DonorAvatar></DonorAvatar>
 
-              {/* 贈物者暱稱 */}
-              {/* todo: 連結到贈物者的個人主頁 */}
-              <DonorNickname to="#">Kimi</DonorNickname>
-            </Donor>
+                {/* 贈物者暱稱 */}
+                {/* todo: 連結到贈物者的個人主頁 */}
+
+                <DonorNickname to={`/portfolio/${post.owner._id}`}>
+                  {post.owner.nickname}
+                </DonorNickname>
+              </Donor>
+            )}
 
             {/* "物品" 資訊右側：物品名稱 */}
-            <GiftTitle>2022 輕便方格手帳 </GiftTitle>
+            <GiftTitle> {post.itemName}</GiftTitle>
 
             {/* "物品" 資訊右側：物品細節 */}
             <GiftDetail>
@@ -203,23 +232,37 @@ export default function ItemPage() {
                 <Icon>
                   <FaIcons.FaTags />
                 </Icon>
-                <Label>辦公用品</Label>
+                <Label>{post.category && post.category.categoryName}</Label>
               </Category>
 
               {/* 寄送地點 */}
-              <Location>
-                <Icon>
-                  <ImIcons.ImLocation />
-                </Icon>
-                <Label>新北市板橋區</Label>
-              </Location>
+              {post.tradingOptions && post.tradingOptions.faceToFace.region && (
+                <Location>
+                  <Icon>
+                    <ImIcons.ImLocation />
+                  </Icon>
+                  <Label>
+                    {post.tradingOptions.faceToFace.region}
+                    {post.tradingOptions.faceToFace.district}
+                  </Label>
+                </Location>
+              )}
 
               {/* 寄送方式 */}
               <Delivery>
                 <Icon>
                   <FaIcons.FaTruckLoading />
                 </Icon>
-                <Label>寄送方式：面交 / 郵件寄送</Label>
+                <Label>
+                  寄送方式：
+                  {post.tradingOptions &&
+                    post.tradingOptions.faceToFace.region &&
+                    '面交 /'}
+                  {/* 店到店會分成小七跟全家嗎？ */}
+                  {post.tradingOptions &&
+                    post.tradingOptions.convenientStore &&
+                    '店到店'}
+                </Label>
               </Delivery>
 
               {/* 物品狀態 */}
@@ -227,7 +270,7 @@ export default function ItemPage() {
                 <Icon>
                   <FaIcons.FaInfoCircle />
                 </Icon>
-                <Label>物品狀態：二手</Label>
+                <Label>物品狀態： {post.itemStatus}</Label>
               </GiftState>
 
               {/* 運費支付 */}
@@ -235,14 +278,15 @@ export default function ItemPage() {
                 <Icon>
                   <MdIcons.MdMonetizationOn />
                 </Icon>
-                <Label>運費支付：匯運費給贈送者</Label>
+                <Label>運費支付：{post.payer}支付運費</Label>
               </ShippingFee>
             </GiftDetail>
-
+            {/* 判斷是否為發文者，顯示不同的按鈕 */}
             {/* "編輯禮物" 按鈕 */}
-            <Link to="/givings/edit">
-              <EditGiftButton>編輯禮物</EditGiftButton>
-            </Link>
+            <HandleGiftButton as={Link} to="/givings/edit">
+              編輯禮物
+            </HandleGiftButton>
+            {/* <HandleGiftButton as={Link} to="#">想要禮物</HandleGiftButton> */}
           </DetailRight>
         </GiftDetails>
 
@@ -253,10 +297,7 @@ export default function ItemPage() {
           {/* 物品介紹的內文 */}
           <IntroContent>
             {/* todo: 顯示輸入的文字格式及樣式 */}
-            裝訂：線裝裝訂 頁數：76 頁 尺寸：B6 （W128×H186×D6mm） 筆記頁：30 頁
-            產地：日本 英國插畫 PIENI 系列聯名，
-            可隨身攜帶的輕薄尺寸，隨時記錄下重要預定及備忘。
-            因有多的手帳，所以只用過幾次
+            {post.description}
           </IntroContent>
         </GiftIntro>
 
@@ -283,6 +324,7 @@ export default function ItemPage() {
           <LargeTextArea></LargeTextArea>
         </GiftIntro>
       </Container>
+      )}
     </>
   )
 }
