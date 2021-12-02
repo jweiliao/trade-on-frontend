@@ -7,47 +7,47 @@ import * as ImIcons from 'react-icons/im'
 
 const iconSize = 30
 
-export const FrontSubnavMemberData = [
+export const NavbarData = [
   {
     title: '禮物',
     path: '/givings',
     icon: <IoIcons.IoGiftSharp size={iconSize} />,
-    rwd: 767,
     isShow: true,
   },
   {
     title: '關於我們',
     path: '/about',
     icon: <ImIcons.ImInfo size={iconSize} />,
-    rwd: 767,
+    isShow: true,
+  },
+  {
+    title: '登入',
+    path: '/login',
+    icon: <FaIcons.FaSignInAlt size={iconSize} />,
     isShow: true,
   },
   {
     title: '個人主頁',
     path: '/portfolio',
     icon: <BsIcons.BsPersonCircle size={iconSize} />,
-    rwd: 768,
     isShow: true,
   },
   {
     title: '交易記錄',
     path: '/transactions',
     icon: <FaIcons.FaRegFileAlt size={iconSize} />,
-    rwd: 768,
     isShow: true,
   },
   {
     title: '後台管理',
     path: '/backstage',
     icon: <RiIcons.RiKey2Fill size={iconSize} />,
-    rwd: 768,
-    isShow: false,
+    isShow: true,
   },
   {
     title: '登出',
-    path: '/logout',
+    path: '/',
     icon: <FaIcons.FaSignOutAlt size={iconSize} />,
-    rwd: 768,
     isShow: true,
   },
 ]
