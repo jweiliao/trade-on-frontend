@@ -1,12 +1,16 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import AuthContext from '../../contexts'
+import { register } from '../../WebAPI'
+import { useHistory } from 'react-router'
 import styled from 'styled-components'
+import Container from '../../components/Container'
 import { Link } from 'react-router-dom'
 import { TextTab } from '../../components/tabs'
-import { InputErrorMessage } from '../../components/textField'
 import { SuperLargeButton } from '../../components/buttons'
 import { Formik, Form } from 'formik'
 import * as Yup from 'yup'
 import FormikControl from '../../components/FormikControl'
+import Swal from 'sweetalert2'
 
 const Wrapper = styled(Form)`
   width: 500px;
@@ -29,10 +33,6 @@ const Divider = styled.hr`
 
 const InputWrapper = styled.div``
 
-const ErrorMessage = styled(InputErrorMessage)`
-  display: none;
-`
-
 const RegisterBtn = styled(SuperLargeButton)`
   margin-top: 1.25rem;
 `
@@ -49,6 +49,9 @@ const AgreeItemLink = styled(Link)`
 `
 
 export default function RegisterPage() {
+  const history = useHistory()
+  const { setUser } = useContext(AuthContext)
+
   const initialValues = {
     email: '',
     name: '',
@@ -59,74 +62,107 @@ export default function RegisterPage() {
   const validationSchema = Yup.object({
     email: Yup.string().email('信箱格式不正確').required('此欄位為必填'),
     name: Yup.string().required('此欄位為必填'),
-    password: Yup.string().min(6, '長度至少為 6 位').required('此欄位為必填'),
+    password: Yup.string()
+      .matches(
+        /^(?=.*[A-Za-z])(?=.*[0-9])(?=.{6,})/,
+        '長度至少 6 位，包含英文、數字'
+      )
+      .required('此欄位為必填'),
     confirmPassword: Yup.string()
-      .oneOf([Yup.ref('newPassword'), null], '請再次確認密碼')
+      .oneOf([Yup.ref('password'), null], '請再次確認密碼')
       .required('此欄位為必填'),
   })
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    console.log('You clicked submit.')
+  const handleRegister = async (values) => {
+    try {
+      const { data } = await register(
+        values.email,
+        values.name,
+        values.password,
+        values.confirmPassword
+      )
+      if (data.message === 'success') {
+        setUser(data.user)
+        history.push('/givings')
+      }
+    } catch (err) {
+      if (err.response.data.error === 'User already exist') {
+        Swal.fire({
+          icon: 'error',
+          text: '信箱已被註冊',
+          showConfirmButton: false,
+          timer: 1500,
+        })
+        return
+      }
+      Swal.fire({
+        icon: 'error',
+        title: '錯誤',
+        text: '系統問題，請稍候',
+        showConfirmButton: false,
+        timer: 1500,
+      })
+    }
   }
 
   return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={handleSubmit}
-    >
-      {(formik) => (
-        <Wrapper>
-          <TabWrapper>
-            <TextTab to="/login">登入</TextTab>
-            <TextTab to="/register" $isActive="true">
-              註冊
-            </TextTab>
-          </TabWrapper>
-          <Divider />
-          <InputWrapper>
-            <FormikControl
-              control="input"
-              label="信箱"
-              name="email"
-              placeholder="輸入信箱"
-            />
-            <ErrorMessage>此信箱已經註冊</ErrorMessage>
-            <FormikControl
-              control="input"
-              label="暱稱"
-              name="name"
-              placeholder="輸入暱稱"
-            />
-            <FormikControl
-              control="input"
-              type="password"
-              label="密碼"
-              placeholder="輸入密碼"
-              name="password"
-            />
-            <FormikControl
-              control="input"
-              type="password"
-              label="確認密碼"
-              placeholder="再次輸入密碼"
-              name="confirmPassword"
-            />
-          </InputWrapper>
-          <RegisterBtn type="submit">註冊</RegisterBtn>
-          <WarnText>
-            註冊即代表您同意遵守 TRADE ON <span> </span>
-            <AgreeItemLink to="/terms" target="_blank">
-              服務條款
-            </AgreeItemLink>
-            <span> </span>與<span> </span>
-            <AgreeItemLink to="/privacy" target="_blank">
-              隱私權政策
-            </AgreeItemLink>
-          </WarnText>
-        </Wrapper>
-      )}
-    </Formik>
+    <Container>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleRegister}
+      >
+        {(formik) => (
+          <Wrapper>
+            <TabWrapper>
+              <TextTab to="/login">登入</TextTab>
+              <TextTab to="/register" $isActive="true">
+                註冊
+              </TextTab>
+            </TabWrapper>
+            <Divider />
+            <InputWrapper>
+              <FormikControl
+                control="input"
+                label="信箱"
+                name="email"
+                placeholder="輸入信箱"
+              />
+              <FormikControl
+                control="input"
+                label="暱稱"
+                name="name"
+                placeholder="輸入暱稱"
+              />
+              <FormikControl
+                control="input"
+                type="password"
+                label="密碼"
+                placeholder="輸入密碼"
+                name="password"
+              />
+              <FormikControl
+                control="input"
+                type="password"
+                label="確認密碼"
+                placeholder="再次輸入密碼"
+                name="confirmPassword"
+              />
+            </InputWrapper>
+            <RegisterBtn type="submit">註冊</RegisterBtn>
+            <WarnText>
+              註冊即代表您同意遵守 TRADE ON <span> </span>
+              <AgreeItemLink to="/terms" target="_blank">
+                服務條款
+              </AgreeItemLink>
+              <span> </span>與<span> </span>
+              <AgreeItemLink to="/privacy" target="_blank">
+                隱私權政策
+              </AgreeItemLink>
+            </WarnText>
+          </Wrapper>
+        )}
+      </Formik>
+    </Container>
   )
 }
