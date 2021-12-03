@@ -2,17 +2,15 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 
-/* Style - 下拉選單中的每一欄 */
 const SubmenuLink = styled(Link)`
-  width: 150px;
-  height: 52px;
+  width: 100%;
+  height: 3.6rem;
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  padding: 7px 16px;
+  padding: 1.5rem;
   color: ${(props) => props.theme.primary_200};
   background: ${(props) => props.theme.general_200};
-  font-size: 16px;
   text-decoration: none;
   list-style: none;
 
@@ -22,26 +20,23 @@ const SubmenuLink = styled(Link)`
     cursor: pointer;
   }
 `
-/* Style - 下拉選單中每一欄的 icon */
+
 const SubmenuIcon = styled.span``
 
-/* Style - 下拉選單中每一欄的文字 */
 const SubmenuLabel = styled.span`
-  margin-left: 16px;
-  font-weight: normal;
-  line-height: 24px;
-  /* or 150% */
   color: ${(props) => props.theme.secondary};
-  letter-spacing: 0.5px;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 1.125rem;
+  letter-spacing: 0.05rem;
+  margin-left: 1rem;
 `
 
-export default function FrontnavbarSubmenu({ item }) {
+export default function NavbarSubmenu({ item, onClick }) {
   return (
-    <>
-      <SubmenuLink to={item.path}>
-        <SubmenuIcon>{item.icon}</SubmenuIcon>
-        <SubmenuLabel>{item.title}</SubmenuLabel>
-      </SubmenuLink>
-    </>
+    <SubmenuLink to={item.path} onClick={onClick}>
+      <SubmenuIcon>{item.icon}</SubmenuIcon>
+      <SubmenuLabel>{item.title}</SubmenuLabel>
+    </SubmenuLink>
   )
 }

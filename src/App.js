@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react'
-import FrontNavbar from './components/Navbar/FrontNavbar'
+import React, { useEffect, useState } from 'react'
+import AuthContext from './contexts'
+import Navbar from './components/Navbar/Navbar'
 import { Footer } from './components/Footer/Footer'
 import BackstageNavbar from './components/Navbar/BackstageNavbar'
 import {
@@ -42,8 +43,8 @@ const ScrollToTop = () => {
 const Home = () => {
   return (
     <>
+      <Navbar />
       <ScrollToTop />
-      <FrontNavbar />
       <Switch>
         <Route exact path="/" component={HomePage} />
         <Route path="/login" component={LoginPage} />
@@ -84,12 +85,16 @@ const Backstage = () => {
 }
 
 export default function App() {
+  const [user, setUser] = useState(null)
+
   return (
-    <Router>
-      <Switch>
-        <Route path="/backstage" component={Backstage} />
-        <Route path="/" component={Home} />
-      </Switch>
-    </Router>
+    <AuthContext.Provider value={{ user, setUser }}>
+      <Router>
+        <Switch>
+          <Route path="/backstage" component={Backstage} />
+          <Route path="/" component={Home} />
+        </Switch>
+      </Router>
+    </AuthContext.Provider>
   )
 }
