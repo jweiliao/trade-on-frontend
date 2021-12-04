@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useState, useEffect } from 'react'
 import ReactDOM from 'react-dom'
 import ImageUploading from 'react-images-uploading'
 import axios from 'axios'
@@ -8,6 +8,7 @@ export const ImageUpload = (props) => {
   const [images, setImages] = useState([])
   const [imgUrl, setImgUrl] = useState([])
   const [error, setError] = useState(null)
+  const [deleteId, setDeleteId] = useState([])
   const maxNumber = 5
   const acceptType = ['jpg', 'gif', 'png']
   let arr = []
@@ -58,9 +59,9 @@ export const ImageUpload = (props) => {
         .then(function ({ data }) {
           // console.log(JSON.stringify(response.data))
           const {
-            data: { link },
+            data: { link, deletehash },
           } = data
-
+          setDeleteId((preHash) => [...preHash, deletehash])
           setImgUrl((oldImgUrl) => [...oldImgUrl, link])
           arr.push(link)
           // props.func(arr)
@@ -70,81 +71,72 @@ export const ImageUpload = (props) => {
         })
     })
     props.func({ arr })
-    // let [{ data_url }] = imageList
-    // let [{ file }] = imageList
-
-    // const albumId = 'GG8ZMKb'
-    // const token = 'b23339c66ad5d10577964b20a0c4b847422a4726'
-    // let formData = new FormData()
-    // formData.append('image', data_url.replace('data:', '').replace(/^.+,/, ''))
-    // formData.append('title', file.name)
-    // formData.append('description', renderSize(file.size))
-    // formData.append('album', albumId)
-
-    // const config = {
-    //   method: 'post',
-    //   async: true,
-    //   crossDomain: true,
-    //   processData: false,
-    //   contentType: false,
-    //   url: 'https://api.imgur.com/3/image',
-    //   data: formData,
-    //   headers: {
-    //     Authorization: 'Bearer ' + token,
-    //   },
-    //   mimeType: 'multipart/form-data',
-    // }
-
-    // axios(config)
-    //   .then(function ({ data }) {
-    //     // console.log(JSON.stringify(response.data))
-    //     console.log('response', data.data.link)
-    //     setImgUrl(data.data.link)
-    //     props.func(imgUrl)
-    //   })
-    //   .catch(function (error) {
-    //     console.log(error)
-    //   })
   }
-  const deleteFile = (image, index) => {
-    console.log(image, index)
+  const deleteImage = (index) => {
+    const token = 'b23339c66ad5d10577964b20a0c4b847422a4726'
+    const config = {
+      method: 'delete',
+      async: true,
+      crossDomain: true,
+      processData: false,
+      contentType: false,
+      url: `https://api.imgur.com/3/image/${deleteId[index]}`,
+      headers: {
+        Authorization: 'Bearer ' + token,
+      },
+      mimeType: 'multipart/form-data',
+    }
+
+    axios(config)
+      .then(function (res) {
+        console.log(res)
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
   }
   const uploadFile = (image) => {
-    // let { data_url } = image
-    // let { file } = image
-    // setError(null)
-    // const albumId = 'GG8ZMKb'
-    // const token = 'b23339c66ad5d10577964b20a0c4b847422a4726'
-    // let formData = new FormData()
-    // formData.append('image', data_url.replace('data:', '').replace(/^.+,/, ''))
-    // formData.append('title', file.name)
-    // formData.append('description', renderSize(file.size))
-    // formData.append('album', albumId)
-    // const config = {
-    //   method: 'post',
-    //   async: true,
-    //   crossDomain: true,
-    //   processData: false,
-    //   contentType: false,
-    //   url: 'https://api.imgur.com/3/image',
-    //   data: formData,
-    //   headers: {
-    //     Authorization: 'Bearer ' + token,
-    //   },
-    //   mimeType: 'multipart/form-data',
-    // }
-    // axios(config)
-    //   .then(function ({ data }) {
-    //     // console.log(JSON.stringify(response.data))
-    //     console.log('response', data.data.link)
-    //     setImgUrl((oldImgUrl) => [...oldImgUrl, data.data.link])
-    //     arr.push(data.data.link)
-    //     // props.func(arr)
-    //   })
-    //   .catch(function (error) {
-    //     console.log(error)
-    //   })
+    let { data_url } = image
+    let { file } = image
+    setError(null)
+    const albumId = 'GG8ZMKb'
+    const token = 'b23339c66ad5d10577964b20a0c4b847422a4726'
+    let formData = new FormData()
+    formData.append('image', data_url.replace('data:', '').replace(/^.+,/, ''))
+    formData.append('title', file.name)
+    formData.append('description', renderSize(file.size))
+    formData.append('album', albumId)
+    const config = {
+      method: 'post',
+      async: true,
+      crossDomain: true,
+      processData: false,
+      contentType: false,
+      url: 'https://api.imgur.com/3/image',
+      data: formData,
+      headers: {
+        Authorization: 'Bearer ' + token,
+      },
+      mimeType: 'multipart/form-data',
+    }
+    axios(config)
+      .then(function ({ data }) {
+        // console.log(JSON.stringify(response.data))
+        const {
+          data: { link, deletehash },
+        } = data
+        setDeleteId((preHash) => [...preHash, deletehash])
+        // setImgUrl((oldImgUrl) => [...oldImgUrl, data.data.link])
+        // arr.push(data.data.link)
+        // props.func(arr)
+      })
+      .catch(function (error) {
+        console.log(error)
+      })
   }
+  useEffect(() => {
+    console.log(deleteId)
+  }, [deleteId])
 
   return (
     <ImageUploading
@@ -182,17 +174,18 @@ export const ImageUpload = (props) => {
           {error}
           {imageList.map((image, index) => (
             <div key={index} className="image-item">
-              <img
-                src={image.data_url}
-                alt=""
-                width="100"
-                href={image.data_url}
-              />
+              <img src={image.data_url} alt="" width="100" />
               <div className="image-item__btn-wrapper">
                 <button type="button" onClick={() => onImageUpdate(index)}>
                   Update
                 </button>
-                <button type="button" onClick={() => onImageRemove(index)}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onImageRemove(index)
+                    deleteImage(index)
+                  }}
+                >
                   Remove
                 </button>
                 <button type="button" onClick={() => uploadFile(image)}>
