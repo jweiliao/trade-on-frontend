@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 import { SmallButton } from '../../components/buttons'
 import LargeTextArea from './textArea'
+
+import { getPost, getAllMessages, getPostMessage } from '../../WebAPI'
 
 /* CommentsContainer - 留言的整個區塊 */
 const CommentsContainer = styled.div`
@@ -110,45 +112,185 @@ const SubComment = styled.div`
   margin-bottom: 25px;
 `
 
-function comments() {
+export default function useComments({ postMessageId }) {
+  console.log('postMessageId', postMessageId)
+  const [questionMsgs, setQuestionMsgs] = useState({})
+  const [mainMsgs, setMainMsgs] = useState({})
+  const [relatedMsgs, setRelatedMsgs] = useState({})
+  const [applyMsgs, setApplyMsgs] = useState({})
+  const [showTextArea, setShowTextArea] = useState(false)
+
+  // useEffect(() => {
+  //   const fetchMessages = async () => {
+  //     if (postMessageId) {
+  //       const res = await getPostMessage(postMessageId)
+  //       console.log('resMessage', res.data.postMessages)
+  //       const messages = res.data.postMessages
+  //       if (messages && messages[0]) {
+  //         // console.log(messages[0].messages)
+  //         // console.log(messages[0]._id)
+  //         if (messages[0]._id === 'question') {
+  //           setQuestionMsgs(messages[0].messages)
+  //           setApplyMsgs(messages[1].messages)
+  //         } else if (messages[0]._id === 'question') {
+  //           setQuestionMsgs(messages[0].messages)
+  //           setApplyMsgs(messages[1].messages)
+  //         }
+  //       }
+  //     }
+  //   }
+  //   fetchMessages()
+  // }, [postMessageId])
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+      if (postMessageId) {
+        const res = await getPostMessage(postMessageId)
+        console.log('resMessage', res.data.postMessages)
+        const messages = res.data.postMessages
+        if (messages && messages[0]) {
+          messages.map((msg) => {
+            if (msg._id === 'question') {
+              setQuestionMsgs(msg.messages)
+            }
+          })
+        }
+      }
+    }
+    fetchMessages()
+  }, [postMessageId])
+
+  useEffect(() => {
+    if (questionMsgs.length > 0) {
+      setMainMsgs(
+        questionMsgs.filter((msg) => {
+          return typeof msg.relatedMsg === 'undefined'
+        })
+      )
+      setRelatedMsgs(
+        questionMsgs.filter((msg) => {
+          return typeof msg.relatedMsg !== 'undefined'
+        })
+      )
+    }
+  }, [questionMsgs])
+
+  console.log('mainMsgs', mainMsgs)
+  console.log('relatedMsgs', relatedMsgs)
+
   return (
     <CommentsContainer>
       {/* 主留言 */}
-      <Comment>
-        {/* 留言最上方 */}
-        <CommentTop>
-          {/* 留言最上方的留言者暱稱 */}
-          <CommentNickname>Willy</CommentNickname>
+      {mainMsgs.length > 0 &&
+        mainMsgs.map((msg) => (
+          <>
+            <Comment key={msg._id}>
+              {/* 留言最上方 */}
+              <CommentTop>
+                {/* 留言最上方的留言者暱稱 */}
+                <CommentNickname>{msg.ownerInfo[0].nickname}</CommentNickname>
 
-          {/* "送他禮物" 按鈕 */}
-          <GivingGift>送他禮物</GivingGift>
-        </CommentTop>
+                {/* "送他禮物" 按鈕 */}
+                <GivingGift>送他禮物</GivingGift>
+              </CommentTop>
 
-        {/* 留言的留言內容 */}
-        <CommentContent>
+              {/* 留言的留言內容 */}
+              <CommentContent>{msg.content}</CommentContent>
+
+              {/* 留言的最下方 */}
+              <CommentBottom>
+                <CommentTime>2021/10/14 14:01</CommentTime>
+
+                {/* 留言的最下方的留言更新區塊 */}
+                <CommentUpdates>
+                  <CommentReply>回覆</CommentReply>
+                  <CommentEdit> | 編輯留言</CommentEdit>
+                  <CommentDelete> | 刪除留言</CommentDelete>
+                </CommentUpdates>
+              </CommentBottom>
+
+              {/* 輸入留言的區塊 */}
+              {showTextArea && <LargeTextArea></LargeTextArea>}
+            </Comment>
+
+            {/* 子留言全部區塊 */}
+            <SubCommentContainer>
+              {/* 子留言 */}
+              {relatedMsgs.length > 0 &&
+                relatedMsgs.map((subMsg) =>
+                  msg._id === subMsg.relatedMsg ? (
+                    <SubComment key={subMsg._id}>
+                      <CommentTop>
+                        <CommentNickname>
+                          {subMsg.ownerInfo[0].nickname}
+                        </CommentNickname>
+                      </CommentTop>
+                      <CommentContent>{subMsg.content}</CommentContent>
+                      <CommentBottom>
+                        <CommentTime>2021/10/14 14:07</CommentTime>
+                        <CommentUpdates>
+                          <CommentReply>回覆</CommentReply>
+                          <CommentEdit> | 編輯留言</CommentEdit>
+                          <CommentDelete> | 刪除留言</CommentDelete>
+                        </CommentUpdates>
+                      </CommentBottom>
+                      <LargeTextArea></LargeTextArea>
+                    </SubComment>
+                  ) : null
+                )}
+            </SubCommentContainer>
+          </>
+        ))}
+
+      {/* 子留言全部區塊 */}
+      {/* <SubCommentContainer> */}
+      {/* 子留言 */}
+      {/* <SubComment>
+          <CommentTop>
+            <CommentNickname></CommentNickname>
+          </CommentTop>
+          <CommentContent></CommentContent>
+          <CommentBottom>
+            <CommentTime>2021/10/14 14:07</CommentTime>
+            <CommentUpdates>
+              <CommentReply>回覆</CommentReply>
+              <CommentEdit> | 編輯留言</CommentEdit>
+              <CommentDelete> | 刪除留言</CommentDelete>
+            </CommentUpdates>
+          </CommentBottom>
+          <LargeTextArea></LargeTextArea>
+        </SubComment> */}
+      {/* </SubCommentContainer> */}
+
+      {/* <Comment> */}
+      {/* 留言最上方 */}
+      {/* <CommentTop> */}
+      {/* 留言最上方的留言者暱稱 */}
+      {/* <CommentNickname>Willy</CommentNickname> */}
+      {/* "送他禮物" 按鈕 */}
+      {/* <GivingGift>送他禮物</GivingGift>
+        </CommentTop> */}
+      {/* 留言的留言內容 */}
+      {/* <CommentContent>
           您好，我平常有隨手筆記的習慣，很喜歡這個手帳，盼能獲贈。謝謝分享！
-        </CommentContent>
-
-        {/* 留言的最下方 */}
-        <CommentBottom>
-          <CommentTime>2021/10/14 14:01</CommentTime>
-
-          {/* 留言的最下方的留言更新區塊 */}
-          <CommentUpdates>
+        </CommentContent> */}
+      {/* 留言的最下方 */}
+      {/* <CommentBottom>
+          <CommentTime>2021/10/14 14:01</CommentTime> */}
+      {/* 留言的最下方的留言更新區塊 */}
+      {/* <CommentUpdates>
             <CommentReply>回覆</CommentReply>
             <CommentEdit> | 編輯留言</CommentEdit>
             <CommentDelete> | 刪除留言</CommentDelete>
           </CommentUpdates>
-        </CommentBottom>
-
-        {/* 輸入留言的區塊 */}
-        <LargeTextArea></LargeTextArea>
-      </Comment>
-
+        </CommentBottom> */}
+      {/* 輸入留言的區塊 */}
+      {/* <LargeTextArea></LargeTextArea>
+      </Comment> */}
       {/* 子留言全部區塊 */}
-      <SubCommentContainer>
-        {/* 子留言 */}
-        <SubComment>
+      {/* <SubCommentContainer> */}
+      {/* 子留言 */}
+      {/* <SubComment>
           <CommentTop>
             <CommentNickname>Kimi</CommentNickname>
           </CommentTop>
@@ -162,10 +304,9 @@ function comments() {
             </CommentUpdates>
           </CommentBottom>
           <LargeTextArea></LargeTextArea>
-        </SubComment>
-
-        {/* 子留言 */}
-        <SubComment>
+        </SubComment> */}
+      {/* 子留言 */}
+      {/* <SubComment>
           <CommentTop>
             <CommentNickname>Willy</CommentNickname>
           </CommentTop>
@@ -179,9 +320,21 @@ function comments() {
             </CommentUpdates>
           </CommentBottom>
         </SubComment>
-      </SubCommentContainer>
+      </SubCommentContainer> */}
     </CommentsContainer>
   )
 }
 
-export default comments
+// export default comments
+
+// mainMsgs = 沒有 relatedMsg 的留言們
+// relatedMsgs = 有 relatedMsg 的留言們
+
+// mainMsgs.map ( (mainMsg ) => {
+//    <主留言的 compontent>
+//    relatedMsgs.map( (relatedMsg) => {
+//      {mainMsg._id &&  relatedMsg
+//      return ( <回覆留言的 compontent>)
+//      }
+//   } )
+// } )

@@ -17,7 +17,7 @@ import Comments from './comments'
 // 引入填寫留言的區塊
 import LargeTextArea from './textArea'
 
-import { getPost } from '../../WebAPI'
+import { getPost, getAllMessages, getPostMessage } from '../../WebAPI'
 
 /* 禮物詳情頁最上方 "物品" 資訊的全部區塊 */
 const GiftDetails = styled.div`
@@ -76,6 +76,8 @@ const DonorNickname = styled(Link)`
   font-size: 16px;
   line-height: 1.5;
   letter-spacing: 0.5px;
+  color: inherit;
+  // text-decoration: none;
 `
 
 /* "物品" 資訊右側：物品名稱 */
@@ -175,7 +177,6 @@ export default function ItemPage() {
   // 設定 post 的 state
   const [post, setPost] = useState({})
 
-  // let post = []
   // 取得 URL 上 id 的參數
   const { id } = useParams()
 
@@ -183,17 +184,17 @@ export default function ItemPage() {
   useEffect(() => {
     const fetchPost = async () => {
       const res = await getPost(id)
-      console.log('res', res.data.post)
+      // console.log('res', res.data.post)
       if (res.data.message === 'success') {
         setPost(res.data.post)
       }
-      console.log('insidepost', post)
+      // console.log('insidepost', post)
     }
 
     fetchPost()
   }, [])
 
-  console.log('outsidepost', post)
+  // console.log('outsidepost', post)
   return (
     <>
       <Container>
@@ -319,12 +320,11 @@ export default function ItemPage() {
           {/* 留言的內文 */}
           <IntroContent>目前沒有資料</IntroContent>
           {/* 留言內容 */}
-          <Comments></Comments>
+          <Comments postMessageId={post.id}></Comments>
           {/* 填寫留言的區塊 */}
           <LargeTextArea></LargeTextArea>
         </GiftIntro>
       </Container>
-      )}
     </>
   )
 }
