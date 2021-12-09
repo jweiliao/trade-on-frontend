@@ -115,10 +115,10 @@ export default function RegisterPage() {
         {(formik) => (
           <Wrapper>
             <TabWrapper>
-              <TextTab to="/login">登入</TextTab>
-              <TextTab to="/register" $isActive="true">
-                註冊
+              <TextTab as={Link} to="/login">
+                登入
               </TextTab>
+              <TextTab $isActive={true}>註冊</TextTab>
             </TabWrapper>
             <Divider />
             <InputWrapper>
