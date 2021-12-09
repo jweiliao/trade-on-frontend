@@ -57,7 +57,7 @@ const Home = () => {
         <Route exact path="/portfolio" component={PortfolioPage} />
         <Route path="/portfolio/edit" component={EditPortfolioPage} />
         <Route exact path="/transactions" component={TransactionsPage} />
-        <Route path="/transactions/detail" component={TransactionsDetailPage} />
+        <Route path="/transactions/:id" component={TransactionsDetailPage} />
         <Route path="/faq" component={FaqPage} />
         <Route path="/privacy" component={PrivacyPage} />
         <Route path="/terms" component={TermsPage} />
