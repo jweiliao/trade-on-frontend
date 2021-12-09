@@ -309,8 +309,8 @@ export default function ItemPage() {
           {/* 想要禮物的內文 */}
           <IntroContent>目前沒有資料</IntroContent>
           {/* 留言內容 */}
-          <Comments></Comments>
-          <Comments></Comments>
+          {/* <Comments></Comments>
+          <Comments></Comments> */}
         </GiftIntro>
 
         {/* 禮物詳情頁的 "留言" 區塊 */}
@@ -318,7 +318,7 @@ export default function ItemPage() {
           {/* 留言的標題 */}
           <IntroTitle>留言</IntroTitle>
           {/* 留言的內文 */}
-          <IntroContent>目前沒有資料</IntroContent>
+          {/* <IntroContent>目前沒有資料</IntroContent> */}
           {/* 留言內容 */}
           <Comments postMessageId={post.id}></Comments>
           {/* 填寫留言的區塊 */}

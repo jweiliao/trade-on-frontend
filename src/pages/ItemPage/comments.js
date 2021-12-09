@@ -1,10 +1,17 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
+import Swal from 'sweetalert2'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 import { SmallButton } from '../../components/buttons'
 import LargeTextArea from './textArea'
-
-import { getPost, getAllMessages, getPostMessage } from '../../WebAPI'
+import { BackstageSmallButton } from '../../components/buttons'
+import {
+  getPost,
+  getAllMessages,
+  getPostMessage,
+  deleteMessage,
+  updateMessage,
+} from '../../WebAPI'
 
 /* CommentsContainer - 留言的整個區塊 */
 const CommentsContainer = styled.div`
@@ -14,6 +21,10 @@ const CommentsContainer = styled.div`
     width: 90%;
   }
 `
+
+/* 物品介紹的內文 */
+const IntroContent = styled.div``
+
 /*  Comment - 主留言 */
 const Comment = styled.div`
   margin-bottom: 50px;
@@ -112,35 +123,75 @@ const SubComment = styled.div`
   margin-bottom: 25px;
 `
 
+const EditInput = styled.input`
+  font-size: 14px;
+  &:focus {
+    outline: none;
+  }
+  border: ${(props) => props.theme.general_200} solid 2px;
+  border-radius: 4px;
+  margin-top: 10px;
+  line-height: 1.5em;
+  // padding-left: 5px;
+  // min-width: 80%;
+  padding: 5px;
+  background: ${(props) => props.theme.general_100};
+  ${MEDIA_QUERY_SM} {
+    min-width: 40%;
+  }
+`
+
+const EditWrapper = styled.div`
+  display: flex;
+  // flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  ${MEDIA_QUERY_SM} {
+    flex-direction: column;
+  }
+`
+
+const ButtonsWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+`
+const SaveBtn = styled(BackstageSmallButton)`
+  // margin: 1rem 2rem;
+  margin: 1rem;
+  ${MEDIA_QUERY_SM} {
+    width: 100%;
+  }
+`
+
+const CancelBtn = styled(SaveBtn)`
+  background-color: ${(props) => props.theme.general_100};
+  &:hover {
+    background-color: ${(props) => props.theme.general_200};
+  }
+  ${MEDIA_QUERY_SM} {
+    width: 100%;
+  }
+`
+
+const Content = styled.div`
+  margin: 5px 0 8px 0;
+  font-size: 16px;
+  line-height: 1.5;
+  text-align: justify;
+  white-space: pre-line;
+`
+
 export default function useComments({ postMessageId }) {
   console.log('postMessageId', postMessageId)
   const [questionMsgs, setQuestionMsgs] = useState({})
   const [mainMsgs, setMainMsgs] = useState({})
   const [relatedMsgs, setRelatedMsgs] = useState({})
   const [applyMsgs, setApplyMsgs] = useState({})
-  const [showTextArea, setShowTextArea] = useState(false)
-
-  // useEffect(() => {
-  //   const fetchMessages = async () => {
-  //     if (postMessageId) {
-  //       const res = await getPostMessage(postMessageId)
-  //       console.log('resMessage', res.data.postMessages)
-  //       const messages = res.data.postMessages
-  //       if (messages && messages[0]) {
-  //         // console.log(messages[0].messages)
-  //         // console.log(messages[0]._id)
-  //         if (messages[0]._id === 'question') {
-  //           setQuestionMsgs(messages[0].messages)
-  //           setApplyMsgs(messages[1].messages)
-  //         } else if (messages[0]._id === 'question') {
-  //           setQuestionMsgs(messages[0].messages)
-  //           setApplyMsgs(messages[1].messages)
-  //         }
-  //       }
-  //     }
-  //   }
-  //   fetchMessages()
-  // }, [postMessageId])
+  const [showMainTextArea, setShowMainTextArea] = useState(false)
+  const [showSubTextArea, setShowSubTextArea] = useState(false)
+  // 儲存是否正在 edit 的狀態
+  const [isUpdating, setIsUpdating] = useState(null)
+  const [editValue, setEditValue] = useState('')
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -178,9 +229,105 @@ export default function useComments({ postMessageId }) {
   console.log('mainMsgs', mainMsgs)
   console.log('relatedMsgs', relatedMsgs)
 
+  const handleMainMsgReply = () => {
+    setShowMainTextArea(!showMainTextArea)
+  }
+
+  const handleSubMsgReply = () => {
+    setShowSubTextArea(!showSubTextArea)
+  }
+
+  const handleEditMsgClick = () => {
+    setIsUpdating(!isUpdating)
+  }
+
+  const handleEditMsg = (e) => {
+    const msgId = e.target.id
+    console.log(msgId)
+    if (editValue === '') {
+      e.preventDefault()
+    }
+    const editMsg = {
+      content: editValue,
+    }
+    console.log(editMsg)
+    try {
+      updateMessage(msgId, editMsg).then((res) => {
+        console.log(res.data.update)
+        const updatedMsg = res.data.update
+        if (res.data.message === 'success') {
+          setQuestionMsgs(
+            questionMsgs.map((msg) => {
+              if (msg.id !== msgId) return msg
+              return {
+                ...msg,
+                content: editMsg.content,
+              }
+            })
+          )
+          //跳出 "更新成功"的彈窗提示
+          Swal.fire({
+            icon: 'success',
+            title: '更新成功',
+            showConfirmButton: false,
+            timer: 1500,
+          })
+          setIsUpdating(false)
+        }
+      })
+    } catch (err) {
+      console.log(err)
+      Swal.fire('請稍候再試一次!', 'error')
+    }
+    setEditValue('')
+  }
+
+  const handleDeleteMessage = (id) => {
+    Swal.fire({
+      title: '刪除',
+      text: '確定要刪除嗎？',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#e25151',
+      cancelButtonColor: '#B7B7B7',
+      cancelButtonText: '不，取消刪除',
+      confirmButtonText: '是的，我要刪除',
+      reverseButtons: true,
+      backdrop: true,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteMessage(id)
+          .then((res) => {
+            if (res.data.message === 'success') {
+              console.log('qsm', questionMsgs)
+              console.log('qsmId', id)
+              setQuestionMsgs((questionMsgs) => {
+                questionMsgs
+                  .filter((questionMsg) => questionMsg._id !== id)
+                  .filter((questionMsg) => questionMsg.relatedMsg !== id)
+              })
+              Swal.fire({
+                icon: 'success',
+                title: '刪除成功',
+                showConfirmButton: false,
+                timer: 1500,
+              })
+            }
+          })
+          .catch((err) => {
+            console.log(err)
+            Swal.fire('發生錯誤！')
+          })
+      }
+    })
+  }
   return (
     <CommentsContainer>
       {/* 主留言 */}
+      {/* 判斷是否有留言 */}
+      {JSON.stringify(mainMsgs) === '{}' && (
+        <IntroContent>目前沒有資料</IntroContent>
+      )}
       {mainMsgs.length > 0 &&
         mainMsgs.map((msg) => (
           <>
@@ -191,11 +338,45 @@ export default function useComments({ postMessageId }) {
                 <CommentNickname>{msg.ownerInfo[0].nickname}</CommentNickname>
 
                 {/* "送他禮物" 按鈕 */}
-                <GivingGift>送他禮物</GivingGift>
+                {/* <GivingGift>送他禮物</GivingGift> */}
               </CommentTop>
 
               {/* 留言的留言內容 */}
-              <CommentContent>{msg.content}</CommentContent>
+              {isUpdating === msg._id ? (
+                <EditWrapper>
+                  <EditInput
+                    id={msg._id}
+                    onChange={(e) => {
+                      setEditValue(e.target.value)
+                    }}
+                    defaultValue={editValue ? editValue : msg.content}
+                    type="text"
+                  />
+                  <ButtonsWrapper>
+                    <SaveBtn
+                      editValue={editValue}
+                      id={msg._id}
+                      onClick={(e) => {
+                        handleEditMsg(e)
+                      }}
+                    >
+                      送出
+                    </SaveBtn>
+                    <CancelBtn
+                      editValue={!editValue}
+                      onClick={() => {
+                        setIsUpdating(false)
+                        setEditValue('')
+                      }}
+                    >
+                      取消編輯
+                    </CancelBtn>
+                  </ButtonsWrapper>
+                </EditWrapper>
+              ) : (
+                <CommentContent>{msg.content}</CommentContent>
+              )}
+              {/* <CommentContent>{msg.content}</CommentContent> */}
 
               {/* 留言的最下方 */}
               <CommentBottom>
@@ -203,14 +384,19 @@ export default function useComments({ postMessageId }) {
 
                 {/* 留言的最下方的留言更新區塊 */}
                 <CommentUpdates>
-                  <CommentReply>回覆</CommentReply>
-                  <CommentEdit> | 編輯留言</CommentEdit>
-                  <CommentDelete> | 刪除留言</CommentDelete>
+                  <CommentReply onClick={handleMainMsgReply}>回覆</CommentReply>
+                  <CommentEdit onClick={() => setIsUpdating(msg._id)}>
+                    {' '}
+                    | 編輯留言
+                  </CommentEdit>
+                  <CommentDelete onClick={() => handleDeleteMessage(msg._id)}>
+                    | 刪除留言
+                  </CommentDelete>
                 </CommentUpdates>
               </CommentBottom>
 
               {/* 輸入留言的區塊 */}
-              {showTextArea && <LargeTextArea></LargeTextArea>}
+              {showMainTextArea && <LargeTextArea></LargeTextArea>}
             </Comment>
 
             {/* 子留言全部區塊 */}
@@ -229,112 +415,24 @@ export default function useComments({ postMessageId }) {
                       <CommentBottom>
                         <CommentTime>2021/10/14 14:07</CommentTime>
                         <CommentUpdates>
-                          <CommentReply>回覆</CommentReply>
+                          <CommentReply onClick={handleSubMsgReply}>
+                            回覆
+                          </CommentReply>
                           <CommentEdit> | 編輯留言</CommentEdit>
-                          <CommentDelete> | 刪除留言</CommentDelete>
+                          <CommentDelete
+                            onClick={() => handleDeleteMessage(subMsg._id)}
+                          >
+                            | 刪除留言
+                          </CommentDelete>
                         </CommentUpdates>
                       </CommentBottom>
-                      <LargeTextArea></LargeTextArea>
+                      {showSubTextArea && <LargeTextArea></LargeTextArea>}
                     </SubComment>
                   ) : null
                 )}
             </SubCommentContainer>
           </>
         ))}
-
-      {/* 子留言全部區塊 */}
-      {/* <SubCommentContainer> */}
-      {/* 子留言 */}
-      {/* <SubComment>
-          <CommentTop>
-            <CommentNickname></CommentNickname>
-          </CommentTop>
-          <CommentContent></CommentContent>
-          <CommentBottom>
-            <CommentTime>2021/10/14 14:07</CommentTime>
-            <CommentUpdates>
-              <CommentReply>回覆</CommentReply>
-              <CommentEdit> | 編輯留言</CommentEdit>
-              <CommentDelete> | 刪除留言</CommentDelete>
-            </CommentUpdates>
-          </CommentBottom>
-          <LargeTextArea></LargeTextArea>
-        </SubComment> */}
-      {/* </SubCommentContainer> */}
-
-      {/* <Comment> */}
-      {/* 留言最上方 */}
-      {/* <CommentTop> */}
-      {/* 留言最上方的留言者暱稱 */}
-      {/* <CommentNickname>Willy</CommentNickname> */}
-      {/* "送他禮物" 按鈕 */}
-      {/* <GivingGift>送他禮物</GivingGift>
-        </CommentTop> */}
-      {/* 留言的留言內容 */}
-      {/* <CommentContent>
-          您好，我平常有隨手筆記的習慣，很喜歡這個手帳，盼能獲贈。謝謝分享！
-        </CommentContent> */}
-      {/* 留言的最下方 */}
-      {/* <CommentBottom>
-          <CommentTime>2021/10/14 14:01</CommentTime> */}
-      {/* 留言的最下方的留言更新區塊 */}
-      {/* <CommentUpdates>
-            <CommentReply>回覆</CommentReply>
-            <CommentEdit> | 編輯留言</CommentEdit>
-            <CommentDelete> | 刪除留言</CommentDelete>
-          </CommentUpdates>
-        </CommentBottom> */}
-      {/* 輸入留言的區塊 */}
-      {/* <LargeTextArea></LargeTextArea>
-      </Comment> */}
-      {/* 子留言全部區塊 */}
-      {/* <SubCommentContainer> */}
-      {/* 子留言 */}
-      {/* <SubComment>
-          <CommentTop>
-            <CommentNickname>Kimi</CommentNickname>
-          </CommentTop>
-          <CommentContent>準備寄送囉，記得先付運費哊！</CommentContent>
-          <CommentBottom>
-            <CommentTime>2021/10/14 14:07</CommentTime>
-            <CommentUpdates>
-              <CommentReply>回覆</CommentReply>
-              <CommentEdit> | 編輯留言</CommentEdit>
-              <CommentDelete> | 刪除留言</CommentDelete>
-            </CommentUpdates>
-          </CommentBottom>
-          <LargeTextArea></LargeTextArea>
-        </SubComment> */}
-      {/* 子留言 */}
-      {/* <SubComment>
-          <CommentTop>
-            <CommentNickname>Willy</CommentNickname>
-          </CommentTop>
-          <CommentContent>已付運費囉～ 感謝 </CommentContent>
-          <CommentBottom>
-            <CommentTime>2021/10/14 14:21</CommentTime>
-            <CommentUpdates>
-              <CommentReply>回覆</CommentReply>
-              <CommentEdit> | 編輯留言</CommentEdit>
-              <CommentDelete> | 刪除留言</CommentDelete>
-            </CommentUpdates>
-          </CommentBottom>
-        </SubComment>
-      </SubCommentContainer> */}
     </CommentsContainer>
   )
 }
-
-// export default comments
-
-// mainMsgs = 沒有 relatedMsg 的留言們
-// relatedMsgs = 有 relatedMsg 的留言們
-
-// mainMsgs.map ( (mainMsg ) => {
-//    <主留言的 compontent>
-//    relatedMsgs.map( (relatedMsg) => {
-//      {mainMsg._id &&  relatedMsg
-//      return ( <回覆留言的 compontent>)
-//      }
-//   } )
-// } )
