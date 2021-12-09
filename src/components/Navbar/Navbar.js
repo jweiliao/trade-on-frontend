@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 import { SmallButton } from '../buttons'
+import { Img, ImgCircleWrapper } from '../img'
 import NavbarSubmenu from './NavbarSubmenu'
 import ClickAwayListener from 'react-click-away-listener'
 import * as GiIcons from 'react-icons/gi'
@@ -57,31 +58,14 @@ const LoginLink = styled(SmallButton)`
   }
 `
 
-const Avatar = styled.div`
-  position: relative;
+const Avatar = styled(ImgCircleWrapper)`
   display: inline-block;
   width: 2.5rem;
   height: 2.5rem;
-  border-radius: 50%;
-  overflow: hidden;
   cursor: pointer;
-  border: solid 0.1rem ${(props) => props.theme.general_200};
   ${MEDIA_QUERY_SM} {
     display: none;
   }
-`
-
-const Img = styled.img`
-  max-height: 100%;
-  max-width: 100%;
-  width: auto;
-  height: auto;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: auto;
 `
 
 const HamburgerIcon = styled(GiIcons.GiHamburgerMenu)`

@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
 import AuthContext from '../../contexts'
 import { login } from '../../WebAPI'
+import { Link } from 'react-router-dom'
 import { useHistory } from 'react-router'
 import styled from 'styled-components'
 import Container from '../../components/Container'
@@ -84,10 +85,10 @@ export default function LoginPage() {
         {(formik) => (
           <Wrapper>
             <TabWrapper>
-              <TextTab to="/login" $isActive="true">
-                登入
+              <TextTab $isActive={true}>登入</TextTab>
+              <TextTab as={Link} to="/register">
+                註冊
               </TextTab>
-              <TextTab to="/register">註冊</TextTab>
             </TabWrapper>
             <Divider />
             <InputWrapper>
