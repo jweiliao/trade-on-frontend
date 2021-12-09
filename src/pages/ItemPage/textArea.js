@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import styled from 'styled-components'
 import { SmallButton } from '../../components/buttons'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
@@ -33,7 +34,12 @@ const TextArea = styled.textarea`
 const MessageSubmitButton = styled(SmallButton)`
   margin: 5px 0;
 `
-const LargeTextArea = () => {
+
+const LargeTextArea = ({
+  handleSubmit,
+  newMessageInput,
+  setNewMessageInput,
+}) => {
   return (
     <>
       <Form>
@@ -42,11 +48,16 @@ const LargeTextArea = () => {
           rows="3"
           maxlength="200"
           placeholder="請輸入您的留言 / 提問"
+          name="addNewMessage"
+          value={newMessageInput}
+          onChange={(e) => setNewMessageInput(e.target.value)}
           required
         ></TextArea>
 
         {/* 送出留言的按鈕 */}
-        <MessageSubmitButton type="submit">送出留言</MessageSubmitButton>
+        <MessageSubmitButton type="submit" onClick={handleSubmit}>
+          送出留言
+        </MessageSubmitButton>
       </Form>
     </>
   )

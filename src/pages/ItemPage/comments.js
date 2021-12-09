@@ -11,6 +11,8 @@ import {
   getPostMessage,
   deleteMessage,
   updateMessage,
+  replayMessage,
+  addMessage,
 } from '../../WebAPI'
 
 /* CommentsContainer - 留言的整個區塊 */
@@ -189,9 +191,13 @@ export default function useComments({ postMessageId }) {
   const [applyMsgs, setApplyMsgs] = useState({})
   const [showMainTextArea, setShowMainTextArea] = useState(false)
   const [showSubTextArea, setShowSubTextArea] = useState(false)
+
   // 儲存是否正在 edit 的狀態
   const [isUpdating, setIsUpdating] = useState(null)
   const [editValue, setEditValue] = useState('')
+
+  // 儲存是否正在 reply 的狀態
+  const [isReplying, setIsReplying] = useState(null)
 
   useEffect(() => {
     const fetchMessages = async () => {
@@ -237,13 +243,9 @@ export default function useComments({ postMessageId }) {
     setShowSubTextArea(!showSubTextArea)
   }
 
-  const handleEditMsgClick = () => {
-    setIsUpdating(!isUpdating)
-  }
-
   const handleEditMsg = (e) => {
     const msgId = e.target.id
-    console.log(msgId)
+    console.log('editMsgId', msgId)
     if (editValue === '') {
       e.preventDefault()
     }
@@ -258,10 +260,10 @@ export default function useComments({ postMessageId }) {
         if (res.data.message === 'success') {
           setQuestionMsgs(
             questionMsgs.map((msg) => {
-              if (msg.id !== msgId) return msg
+              if (msg._id !== updatedMsg.id) return msg
               return {
                 ...msg,
-                content: editMsg.content,
+                content: updatedMsg.content,
               }
             })
           )
@@ -380,7 +382,7 @@ export default function useComments({ postMessageId }) {
 
               {/* 留言的最下方 */}
               <CommentBottom>
-                <CommentTime>2021/10/14 14:01</CommentTime>
+                <CommentTime>{msg.updatedAt}</CommentTime>
 
                 {/* 留言的最下方的留言更新區塊 */}
                 <CommentUpdates>
@@ -413,7 +415,7 @@ export default function useComments({ postMessageId }) {
                       </CommentTop>
                       <CommentContent>{subMsg.content}</CommentContent>
                       <CommentBottom>
-                        <CommentTime>2021/10/14 14:07</CommentTime>
+                        <CommentTime>{subMsg.updatedAt}</CommentTime>
                         <CommentUpdates>
                           <CommentReply onClick={handleSubMsgReply}>
                             回覆

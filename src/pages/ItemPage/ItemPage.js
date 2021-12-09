@@ -17,7 +17,12 @@ import Comments from './comments'
 // 引入填寫留言的區塊
 import LargeTextArea from './textArea'
 
-import { getPost, getAllMessages, getPostMessage } from '../../WebAPI'
+import {
+  getPost,
+  getAllMessages,
+  getPostMessage,
+  addMessage,
+} from '../../WebAPI'
 
 /* 禮物詳情頁最上方 "物品" 資訊的全部區塊 */
 const GiftDetails = styled.div`
@@ -181,6 +186,9 @@ export default function ItemPage() {
   const { id } = useParams()
 
   console.log('id', id)
+
+  const [newMessageInput, setNewMessageInput] = useState('')
+
   useEffect(() => {
     const fetchPost = async () => {
       const res = await getPost(id)
@@ -195,6 +203,41 @@ export default function ItemPage() {
   }, [])
 
   // console.log('outsidepost', post)
+
+  // 執行提交功能
+  const handleSubmit = (e) => {
+    // e.preventDefault()
+    console.log('success!', newMessageInput)
+
+    // 串接新增留言的 API，並帶入參數 "content"、"messageType"
+    const newMessage = {
+      content: newMessageInput,
+      messageType: 'question',
+      relatedId: post.id,
+    }
+
+    try {
+      addMessage(newMessage).then((res) => {
+        console.log(res.data)
+        // const newMsg = res.data.update
+        // if (res.data.message === 'success') {
+        //   setQuestionMsgs(
+        //     questionMsgs.map((msg) => {
+        //       if (msg._id !== newMsg.id) return msg
+        //       return {
+        //         ...msg,
+        //         content: newMsg.content,
+        //       }
+        //     })
+        //   )
+        // }
+      })
+    } catch (err) {
+      console.log(err)
+    }
+    setNewMessageInput('')
+  }
+
   return (
     <>
       <Container>
@@ -322,7 +365,11 @@ export default function ItemPage() {
           {/* 留言內容 */}
           <Comments postMessageId={post.id}></Comments>
           {/* 填寫留言的區塊 */}
-          <LargeTextArea></LargeTextArea>
+          <LargeTextArea
+            newMessageInput={newMessageInput}
+            setNewMessageInput={setNewMessageInput}
+            handleSubmit={handleSubmit}
+          ></LargeTextArea>
         </GiftIntro>
       </Container>
     </>
