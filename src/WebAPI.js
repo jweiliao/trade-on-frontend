@@ -26,11 +26,16 @@ export const getMe = async () => await instance.get(`/users/me`)
 
 export const logout = async () => await instance.get('/users/logout')
 
+// transaction
+export const getAllTransactions = async (limit) =>
+  instance.get(`/transactions/all?size=${limit}`)
 
-/***************
-   常見問題相關
-***************/
+export const getTransaction = async (id) => instance.get(`/transactions/${id}`)
 
+export const cancelTransaction = async (id) =>
+  instance.put(`/transactions/${id}/cancel`)
+
+// faq
 export const getAllFaqs = (limit) =>
   instance.get(`/commonqnas/all?size=${limit}`)
 
