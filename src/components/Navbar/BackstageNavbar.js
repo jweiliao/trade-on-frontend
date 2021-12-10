@@ -1,10 +1,8 @@
-import React, { useLayoutEffect, useContext } from 'react'
-import { useHistory } from 'react-router'
+import React from 'react'
 import styled from 'styled-components'
 import { BackstageNavbarData } from './BackstageNavbarData'
 import { BackstageNavbarItem } from './BackstageNavbarItem'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
-import AuthContext from '../../contexts'
 import useNavbar from '../../hooks/useNavbar'
 
 const Nav = styled.div`
@@ -27,12 +25,6 @@ const NavbarWrap = styled.div``
 
 export default function BackstageNavbar() {
   const { handleLogout } = useNavbar()
-  const { user } = useContext(AuthContext)
-  const history = useHistory()
-
-  useLayoutEffect(() => {
-    if (!user || user.accountAuthority !== 'admin') history.push('/')
-  })
 
   return (
     <Nav>

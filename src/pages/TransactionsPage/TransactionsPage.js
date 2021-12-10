@@ -1,7 +1,6 @@
-import React, { useLayoutEffect, useContext } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
-import { useHistory } from 'react-router'
 import Container from '../../components/Container'
 import { PageTitle } from '../../components/heading'
 import { TextTab, BorderTab } from '../../components/tabs'
@@ -9,7 +8,6 @@ import { Img, ImgWrapper, ImgCircleWrapper } from '../../components/img'
 import { SmallButton, DangerSmallButton } from '../../components/buttons'
 import Pagination from '../../components/Pagination/Pagination'
 import { MEDIA_QUERY_SM, MEDIA_QUERY_MD } from '../../styles/breakpoints'
-import AuthContext from '../../contexts'
 import useTransactions from '../../hooks/useTransactions'
 
 const BehaviorTabsWrapper = styled.div`
@@ -54,7 +52,7 @@ const Transaction = styled.div`
   }
 `
 
-const User = styled.p`
+const User = styled.div`
   display: flex;
   margin-bottom: 0.75rem;
 `
@@ -176,13 +174,6 @@ const CancelDealBtn = styled(DangerSmallButton)`
 `
 
 export default function TransactionsPage() {
-  const { user } = useContext(AuthContext)
-  const history = useHistory()
-
-  useLayoutEffect(() => {
-    if (!user) history.push('/')
-  })
-
   const {
     filterTransactions,
     currentTransactions,
