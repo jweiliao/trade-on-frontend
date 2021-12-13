@@ -1,5 +1,6 @@
 import React, { useContext } from 'react'
 import AuthContext from '../../contexts'
+import { setAuthToken } from '../../utils'
 import { login } from '../../WebAPI'
 import { Link } from 'react-router-dom'
 import { useHistory } from 'react-router'
@@ -50,21 +51,21 @@ export default function LoginPage() {
 
   const handleLogin = async (values) => {
     try {
-      const { data } = await login(values.email, values.password)
-      if (data.message === 'success') {
-        setUser(data.user)
+      const res = await login(values.email, values.password)
+      if (res.data.message === 'success') {
+        setAuthToken(res.data.token)
+        setUser(res.data.userInfo)
         history.push('/givings')
       }
-    } catch (err) {
-      if (err.response.data === 'Unauthorized') {
+      if (res.data.error) {
         Swal.fire({
           icon: 'error',
           text: '帳號或密碼輸入錯誤',
           showConfirmButton: false,
           timer: 1500,
         })
-        return
       }
+    } catch (err) {
       Swal.fire({
         icon: 'error',
         title: '錯誤',

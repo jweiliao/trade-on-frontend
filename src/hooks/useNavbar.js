@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from 'react'
 import AuthContext from '../contexts'
+import { setAuthToken } from '../utils'
 import Swal from 'sweetalert2'
 import { logout } from '../WebAPI'
 import { NavbarData } from '../components/Navbar/NavbarData'
@@ -119,6 +120,7 @@ export default function useNavbar() {
       const { data } = await logout()
       if (data.message === 'success') {
         setUser(null)
+        setAuthToken('')
       }
     } catch (err) {
       Swal.fire({

@@ -1,13 +1,14 @@
 import axios from 'axios'
+import { getAuthToken } from './utils'
 
 const config = {
   apiHost1: 'http://localhost:8081',
   apiHost2: 'https:/cosdelus.tw/tradeon/api',
 }
 
-export const instance = axios.create({
+const instance = axios.create({
   baseURL: config.apiHost2,
-  headers: { withCredentials: true },
+  headers: { withCredentials: true, Authorization: `Bearer ${getAuthToken()}` },
 })
 
 // user

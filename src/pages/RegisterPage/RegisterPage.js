@@ -1,5 +1,6 @@
 import React, { useContext } from 'react'
 import AuthContext from '../../contexts'
+import { setAuthToken } from '../../utils'
 import { register } from '../../WebAPI'
 import { useHistory } from 'react-router'
 import styled from 'styled-components'
@@ -75,14 +76,15 @@ export default function RegisterPage() {
 
   const handleRegister = async (values) => {
     try {
-      const { data } = await register(
+      const res = await register(
         values.email,
         values.name,
         values.password,
         values.confirmPassword
       )
-      if (data.message === 'success') {
-        setUser(data.user)
+      if (res.status === 200) {
+        setAuthToken(res.data.token)
+        setUser(res.data.newUser)
         history.push('/givings')
       }
     } catch (err) {
