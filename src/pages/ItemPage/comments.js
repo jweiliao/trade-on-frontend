@@ -1,19 +1,21 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import styled from 'styled-components'
 import Swal from 'sweetalert2'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 import { SmallButton } from '../../components/buttons'
 import LargeTextArea from './textArea'
 import { BackstageSmallButton } from '../../components/buttons'
-import {
-  getPost,
-  getAllMessages,
-  getPostMessage,
-  deleteMessage,
-  updateMessage,
-  replayMessage,
-  addMessage,
-} from '../../WebAPI'
+// import {
+//   getPost,
+//   getAllMessages,
+//   getPostMessage,
+//   deleteMessage,
+//   updateMessage,
+//   replayMessage,
+//   addMessage,
+// } from '../../WebAPI'
+
+import useComments from '../../hooks/useComments'
 
 /* CommentsContainer - 留言的整個區塊 */
 const CommentsContainer = styled.div`
@@ -183,155 +185,44 @@ const Content = styled.div`
   white-space: pre-line;
 `
 
-export default function useComments({ postMessageId }) {
-  console.log('postMessageId', postMessageId)
-  const [questionMsgs, setQuestionMsgs] = useState({})
-  const [mainMsgs, setMainMsgs] = useState({})
-  const [relatedMsgs, setRelatedMsgs] = useState({})
-  const [applyMsgs, setApplyMsgs] = useState({})
-  const [showMainTextArea, setShowMainTextArea] = useState(false)
-  const [showSubTextArea, setShowSubTextArea] = useState(false)
+export function Comments({ isApplyMessage, postMessageId }) {
+  const {
+    questionMsgs,
+    setQuestionMsgs,
+    mainMsgs,
+    setMainMsgs,
+    applyMsgs,
+    relatedMsgs,
+    setRelatedMsgs,
+    setApplyMsgs,
+    applyMainMsgs,
+    setApplyMainMsgs,
+    applyRelatedMsgs,
+    setApplyRelatedMsgs,
+    isUpdating,
+    setIsUpdating,
+    editValue,
+    setEditValue,
+    handleEditMsg,
+    handleDeleteMessage,
+    handleMainMsgReply,
+    handleSubMsgReply,
+    showMainTextArea,
+    showSubTextArea,
+    isApplyMessageOrNot,
+    newMessageInput,
+    setNewMessageInput,
+    handleReplySubmit,
+  } = useComments(isApplyMessage, postMessageId)
 
-  // 儲存是否正在 edit 的狀態
-  const [isUpdating, setIsUpdating] = useState(null)
-  const [editValue, setEditValue] = useState('')
-
-  // 儲存是否正在 reply 的狀態
-  const [isReplying, setIsReplying] = useState(null)
-
-  useEffect(() => {
-    const fetchMessages = async () => {
-      if (postMessageId) {
-        const res = await getPostMessage(postMessageId)
-        console.log('resMessage', res.data.postMessages)
-        const messages = res.data.postMessages
-        if (messages && messages[0]) {
-          messages.map((msg) => {
-            if (msg._id === 'question') {
-              setQuestionMsgs(msg.messages)
-            }
-          })
-        }
-      }
-    }
-    fetchMessages()
-  }, [postMessageId])
-
-  useEffect(() => {
-    if (questionMsgs.length > 0) {
-      setMainMsgs(
-        questionMsgs.filter((msg) => {
-          return typeof msg.relatedMsg === 'undefined'
-        })
-      )
-      setRelatedMsgs(
-        questionMsgs.filter((msg) => {
-          return typeof msg.relatedMsg !== 'undefined'
-        })
-      )
-    }
-  }, [questionMsgs])
-
-  console.log('mainMsgs', mainMsgs)
-  console.log('relatedMsgs', relatedMsgs)
-
-  const handleMainMsgReply = () => {
-    setShowMainTextArea(!showMainTextArea)
-  }
-
-  const handleSubMsgReply = () => {
-    setShowSubTextArea(!showSubTextArea)
-  }
-
-  const handleEditMsg = (e) => {
-    const msgId = e.target.id
-    console.log('editMsgId', msgId)
-    if (editValue === '') {
-      e.preventDefault()
-    }
-    const editMsg = {
-      content: editValue,
-    }
-    console.log(editMsg)
-    try {
-      updateMessage(msgId, editMsg).then((res) => {
-        console.log(res.data.update)
-        const updatedMsg = res.data.update
-        if (res.data.message === 'success') {
-          setQuestionMsgs(
-            questionMsgs.map((msg) => {
-              if (msg._id !== updatedMsg.id) return msg
-              return {
-                ...msg,
-                content: updatedMsg.content,
-              }
-            })
-          )
-          //跳出 "更新成功"的彈窗提示
-          Swal.fire({
-            icon: 'success',
-            title: '更新成功',
-            showConfirmButton: false,
-            timer: 1500,
-          })
-          setIsUpdating(false)
-        }
-      })
-    } catch (err) {
-      console.log(err)
-      Swal.fire('請稍候再試一次!', 'error')
-    }
-    setEditValue('')
-  }
-
-  const handleDeleteMessage = (id) => {
-    Swal.fire({
-      title: '刪除',
-      text: '確定要刪除嗎？',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#e25151',
-      cancelButtonColor: '#B7B7B7',
-      cancelButtonText: '不，取消刪除',
-      confirmButtonText: '是的，我要刪除',
-      reverseButtons: true,
-      backdrop: true,
-    }).then((result) => {
-      if (result.isConfirmed) {
-        deleteMessage(id)
-          .then((res) => {
-            if (res.data.message === 'success') {
-              console.log('qsm', questionMsgs)
-              console.log('qsmId', id)
-              setQuestionMsgs((questionMsgs) => {
-                questionMsgs
-                  .filter((questionMsg) => questionMsg._id !== id)
-                  .filter((questionMsg) => questionMsg.relatedMsg !== id)
-              })
-              Swal.fire({
-                icon: 'success',
-                title: '刪除成功',
-                showConfirmButton: false,
-                timer: 1500,
-              })
-            }
-          })
-          .catch((err) => {
-            console.log(err)
-            Swal.fire('發生錯誤！')
-          })
-      }
-    })
-  }
   return (
     <CommentsContainer>
       {/* 主留言 */}
       {/* 判斷是否有留言 */}
-      {JSON.stringify(mainMsgs) === '{}' && (
-        <IntroContent>目前沒有資料</IntroContent>
-      )}
-      {mainMsgs.length > 0 &&
-        mainMsgs.map((msg) => (
+      {JSON.stringify(isApplyMessageOrNot(applyMainMsgs, mainMsgs)) ===
+        '{}' && <IntroContent>目前沒有資料</IntroContent>}
+      {isApplyMessageOrNot(applyMainMsgs, mainMsgs).length > 0 &&
+        isApplyMessageOrNot(applyMainMsgs, mainMsgs).map((msg) => (
           <>
             <Comment key={msg._id}>
               {/* 留言最上方 */}
@@ -340,7 +231,7 @@ export default function useComments({ postMessageId }) {
                 <CommentNickname>{msg.ownerInfo[0].nickname}</CommentNickname>
 
                 {/* "送他禮物" 按鈕 */}
-                {/* <GivingGift>送他禮物</GivingGift> */}
+                {isApplyMessage && <GivingGift>送他禮物</GivingGift>}
               </CommentTop>
 
               {/* 留言的留言內容 */}
@@ -378,7 +269,6 @@ export default function useComments({ postMessageId }) {
               ) : (
                 <CommentContent>{msg.content}</CommentContent>
               )}
-              {/* <CommentContent>{msg.content}</CommentContent> */}
 
               {/* 留言的最下方 */}
               <CommentBottom>
@@ -398,39 +288,99 @@ export default function useComments({ postMessageId }) {
               </CommentBottom>
 
               {/* 輸入留言的區塊 */}
-              {showMainTextArea && <LargeTextArea></LargeTextArea>}
+              {showMainTextArea && (
+                <LargeTextArea
+                  newMessageInput={newMessageInput}
+                  setNewMessageInput={setNewMessageInput}
+                  relatedMsg={msg._id}
+                  isApplyMessage={isApplyMessage}
+                  handleReplySubmit={handleReplySubmit}
+                ></LargeTextArea>
+              )}
             </Comment>
 
             {/* 子留言全部區塊 */}
             <SubCommentContainer>
               {/* 子留言 */}
-              {relatedMsgs.length > 0 &&
-                relatedMsgs.map((subMsg) =>
-                  msg._id === subMsg.relatedMsg ? (
-                    <SubComment key={subMsg._id}>
-                      <CommentTop>
-                        <CommentNickname>
-                          {subMsg.ownerInfo[0].nickname}
-                        </CommentNickname>
-                      </CommentTop>
-                      <CommentContent>{subMsg.content}</CommentContent>
-                      <CommentBottom>
-                        <CommentTime>{subMsg.updatedAt}</CommentTime>
-                        <CommentUpdates>
-                          <CommentReply onClick={handleSubMsgReply}>
-                            回覆
-                          </CommentReply>
-                          <CommentEdit> | 編輯留言</CommentEdit>
-                          <CommentDelete
-                            onClick={() => handleDeleteMessage(subMsg._id)}
-                          >
-                            | 刪除留言
-                          </CommentDelete>
-                        </CommentUpdates>
-                      </CommentBottom>
-                      {showSubTextArea && <LargeTextArea></LargeTextArea>}
-                    </SubComment>
-                  ) : null
+              {isApplyMessageOrNot(applyRelatedMsgs, relatedMsgs).length > 0 &&
+                isApplyMessageOrNot(applyRelatedMsgs, relatedMsgs).map(
+                  (subMsg) =>
+                    msg._id === subMsg.relatedMsg ? (
+                      <SubComment key={subMsg._id}>
+                        <CommentTop>
+                          <CommentNickname>
+                            {subMsg.ownerInfo[0].nickname}
+                          </CommentNickname>
+                        </CommentTop>
+
+                        {/* 留言的留言內容 */}
+                        {isUpdating === subMsg._id ? (
+                          <EditWrapper>
+                            <EditInput
+                              id={subMsg._id}
+                              onChange={(e) => {
+                                setEditValue(e.target.value)
+                              }}
+                              defaultValue={
+                                editValue ? editValue : subMsg.content
+                              }
+                              type="text"
+                            />
+                            <ButtonsWrapper>
+                              <SaveBtn
+                                editValue={editValue}
+                                id={subMsg._id}
+                                onClick={(e) => {
+                                  handleEditMsg(e)
+                                }}
+                              >
+                                送出
+                              </SaveBtn>
+                              <CancelBtn
+                                editValue={!editValue}
+                                onClick={() => {
+                                  setIsUpdating(false)
+                                  setEditValue('')
+                                }}
+                              >
+                                取消編輯
+                              </CancelBtn>
+                            </ButtonsWrapper>
+                          </EditWrapper>
+                        ) : (
+                          <CommentContent>{subMsg.content}</CommentContent>
+                        )}
+
+                        <CommentBottom>
+                          <CommentTime>{subMsg.updatedAt}</CommentTime>
+                          <CommentUpdates>
+                            <CommentReply onClick={handleSubMsgReply}>
+                              回覆
+                            </CommentReply>
+                            <CommentEdit
+                              onClick={() => setIsUpdating(subMsg._id)}
+                            >
+                              | 編輯留言
+                            </CommentEdit>
+                            <CommentDelete
+                              onClick={() => handleDeleteMessage(subMsg._id)}
+                            >
+                              | 刪除留言
+                            </CommentDelete>
+                          </CommentUpdates>
+                        </CommentBottom>
+
+                        {/* 輸入子留言的區塊 */}
+                        {showSubTextArea && (
+                          <LargeTextArea
+                            newMessageInput={newMessageInput}
+                            setNewMessageInput={setNewMessageInput}
+                            relatedMsg={subMsg._id}
+                            handleSubmit={handleReplySubmit}
+                          ></LargeTextArea>
+                        )}
+                      </SubComment>
+                    ) : null
                 )}
             </SubCommentContainer>
           </>

@@ -12,17 +12,16 @@ import * as ImIcons from 'react-icons/im'
 
 // 引入 AsNavFor （圖片輪播）
 import AsNavFor from './AsNavFor'
+
 // 引入 留言
-import Comments from './comments'
+import { Comments } from './comments'
+
 // 引入填寫留言的區塊
 import LargeTextArea from './textArea'
 
-import {
-  getPost,
-  getAllMessages,
-  getPostMessage,
-  addMessage,
-} from '../../WebAPI'
+import { getPost, addMessage } from '../../WebAPI'
+
+import useComments from '../../hooks/useComments'
 
 /* 禮物詳情頁最上方 "物品" 資訊的全部區塊 */
 const GiftDetails = styled.div`
@@ -184,27 +183,23 @@ export default function ItemPage() {
 
   // 取得 URL 上 id 的參數
   const { id } = useParams()
-
   console.log('id', id)
 
   const [newMessageInput, setNewMessageInput] = useState('')
 
+  // 拿到這筆贈物的資料
   useEffect(() => {
     const fetchPost = async () => {
       const res = await getPost(id)
-      // console.log('res', res.data.post)
       if (res.data.message === 'success') {
         setPost(res.data.post)
       }
-      // console.log('insidepost', post)
     }
 
     fetchPost()
   }, [])
 
-  // console.log('outsidepost', post)
-
-  // 執行提交功能
+  // 執行新增留言功能
   const handleSubmit = (e) => {
     // e.preventDefault()
     console.log('success!', newMessageInput)
@@ -218,18 +213,22 @@ export default function ItemPage() {
 
     try {
       addMessage(newMessage).then((res) => {
-        console.log(res.data)
-        // const newMsg = res.data.update
+        console.log('ItemPage', res.data.new)
+        const newMsg = res.data.new
         // if (res.data.message === 'success') {
-        //   setQuestionMsgs(
-        //     questionMsgs.map((msg) => {
-        //       if (msg._id !== newMsg.id) return msg
-        //       return {
-        //         ...msg,
-        //         content: newMsg.content,
-        //       }
-        //     })
-        //   )
+        //   setApplyMsgs([
+        //     ...applyMsgs,
+        //     {
+        //       content: replayMsg.content,
+        //       messageType: replayMsg.messageType,
+        //       owner: replayMsg.owner,
+        //       _id: replayMsg.id,
+        //       relatedMsg: replayMsg.relatedMsg,
+        //       updatedAt: replayMsg.lastModified,
+        //     },
+        //   ])
+        //   setShowMainTextArea(!showMainTextArea)
+        // }
         // }
       })
     } catch (err) {
@@ -280,7 +279,7 @@ export default function ItemPage() {
               </Category>
 
               {/* 寄送地點 */}
-              {post.tradingOptions && post.tradingOptions.faceToFace.region && (
+              {post.tradingOptions && post.tradingOptions.faceToFace && (
                 <Location>
                   <Icon>
                     <ImIcons.ImLocation />
@@ -300,12 +299,14 @@ export default function ItemPage() {
                 <Label>
                   寄送方式：
                   {post.tradingOptions &&
-                    post.tradingOptions.faceToFace.region &&
-                    '面交 /'}
-                  {/* 店到店會分成小七跟全家嗎？ */}
+                    post.tradingOptions.faceToFace &&
+                    '面交 / '}
+                  {/* 店到店分小七跟全家 */}
                   {post.tradingOptions &&
-                    post.tradingOptions.convenientStore &&
-                    '店到店'}
+                    post.tradingOptions.convenientStores &&
+                    post.tradingOptions.convenientStores.map((item) =>
+                      item === '7-11' ? '7-11 店到店 / ' : '全家店到店 / '
+                    )}
                 </Label>
               </Delivery>
 
@@ -350,26 +351,27 @@ export default function ItemPage() {
           {/* 想要禮物的標題 */}
           <IntroTitle>想要禮物</IntroTitle>
           {/* 想要禮物的內文 */}
-          <IntroContent>目前沒有資料</IntroContent>
           {/* 留言內容 */}
-          {/* <Comments></Comments>
-          <Comments></Comments> */}
+          <Comments isApplyMessage={true} postMessageId={post.id}></Comments>
+          {/* <ApplyComments postMessageId={post.id}></ApplyComments> */}
         </GiftIntro>
 
         {/* 禮物詳情頁的 "留言" 區塊 */}
         <GiftIntro>
           {/* 留言的標題 */}
           <IntroTitle>留言</IntroTitle>
-          {/* 留言的內文 */}
-          {/* <IntroContent>目前沒有資料</IntroContent> */}
-          {/* 留言內容 */}
-          <Comments postMessageId={post.id}></Comments>
           {/* 填寫留言的區塊 */}
           <LargeTextArea
             newMessageInput={newMessageInput}
             setNewMessageInput={setNewMessageInput}
+            addNewComment={true}
             handleSubmit={handleSubmit}
           ></LargeTextArea>
+
+          {/* 留言的內文 */}
+          {/* 留言內容 */}
+          <Comments isApplyMessage={false} postMessageId={post.id}></Comments>
+          {/* <QuestionComments postMessageId={post.id}></QuestionComments> */}
         </GiftIntro>
       </Container>
     </>

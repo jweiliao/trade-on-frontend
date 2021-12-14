@@ -94,7 +94,7 @@ export const getMessage = (id) => instance.get(`/messages/${id}`)
 export const addMessage = (data) => instance.post('/messages/new', data)
 
 // 新增回覆
-export const replayMessage = (id, data) =>
+export const replyMessage = (id, data) =>
   instance.post(`/messages/${id}/new`, data)
 
 // 編輯留言

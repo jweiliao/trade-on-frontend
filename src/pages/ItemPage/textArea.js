@@ -10,6 +10,7 @@ const Form = styled.div`
   justify-content: center;
   align-items: flex-start;
   margin-top: 50px;
+  margin-bottom: 50px;
 `
 
 /* TextArea - 輸入留言的地方 */
@@ -36,9 +37,13 @@ const MessageSubmitButton = styled(SmallButton)`
 `
 
 const LargeTextArea = ({
-  handleSubmit,
   newMessageInput,
   setNewMessageInput,
+  handleReplySubmit,
+  handleSubmit,
+  addNewComment,
+  relatedMsg,
+  isApplyMessage,
 }) => {
   return (
     <>
@@ -55,7 +60,14 @@ const LargeTextArea = ({
         ></TextArea>
 
         {/* 送出留言的按鈕 */}
-        <MessageSubmitButton type="submit" onClick={handleSubmit}>
+        <MessageSubmitButton
+          type="submit"
+          onClick={() =>
+            addNewComment
+              ? handleSubmit()
+              : handleReplySubmit(relatedMsg, isApplyMessage)
+          }
+        >
           送出留言
         </MessageSubmitButton>
       </Form>
