@@ -10,6 +10,7 @@ import { Formik, Form } from 'formik'
 import * as Yup from 'yup'
 import FormikControl from '../../components/FormikControl'
 import { ImageUpload } from '../../components/FileUpload/ImageUpload'
+import FileUploader from '../../components/FileUpload/FileUploader'
 
 const ItemInfoTitle = styled(SubTitle)`
   margin: 3rem 0;
@@ -218,18 +219,6 @@ export default function AddGiftPage() {
               />
             </Description>
             <ImageUpload func={getImageUrl} />
-            <Imgs>
-              <InputLabel>物品圖片</InputLabel>
-              <UploadImg />
-              <ImgWrapper>
-                {/* <Img>
-                  <Pic src={`https://source.unsplash.com/random/1`} />
-                </Img>
-                <Img>
-                  <Pic src={`https://source.unsplash.com/random/2`} />
-                </Img> */}
-              </ImgWrapper>
-            </Imgs>
             <DeliveryMethodTitle>交易方式</DeliveryMethodTitle>
             <Trading>
               <FormikControl

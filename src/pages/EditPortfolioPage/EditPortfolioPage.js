@@ -5,6 +5,7 @@ import { SmallButton, LargeButton } from '../../components/buttons'
 import { SubTitle } from '../../components/heading'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 import UpdatePortfolioPw from '../../components/UpdatePortfolioPw'
+import AvatarUploader from '../../components/AvatarUploader'
 import { Link } from 'react-router-dom'
 import { Formik, Form } from 'formik'
 import * as Yup from 'yup'
@@ -224,6 +225,8 @@ export default function EditPortfolioPage() {
   // 設定是否顯示更新密碼彈窗的 state，預設 false（不顯示彈窗）
   const [pwPopUp, setPwPopUp] = useState(false)
 
+  const [AvPopUp, AvPwPopUp] = useState(false)
+
   // 當點擊 "更改密碼" 的按鈕時，執行 handleEditPwClick
   // => 更新 pwPopUp 的 state 為 true （顯示彈窗）
   const handleEditPwClick = () => {
@@ -233,6 +236,14 @@ export default function EditPortfolioPage() {
   // closeModal => 更新 pwPopUp 的 state 為 false （不顯示彈窗）
   const closeModal = () => {
     setPwPopUp(false)
+  }
+
+  const handleAvatar = () => {
+    AvPwPopUp(true)
+  }
+
+  const AvCloseModal = () => {
+    AvPwPopUp(false)
   }
 
   return (
@@ -247,11 +258,19 @@ export default function EditPortfolioPage() {
             <PersonalInfo>
               <AvatarWrapper>
                 <Avatar src={`https://i.pravatar.cc/300`} />
-                <UploadAvatarBtn>編輯</UploadAvatarBtn>
+                <UploadAvatarBtn type="button" onClick={handleAvatar}>
+                  編輯
+                </UploadAvatarBtn>
+                {AvPopUp && (
+                  <AvatarUploader
+                    AvPwPopUp={AvPwPopUp}
+                    closeModal={AvCloseModal}
+                  />
+                )}
               </AvatarWrapper>
               <Email>janejane8491@gmail.com</Email>
               {/* 點擊 "更改密碼" 的按鈕時，執行 handleEditPwClick */}
-              <EditPasswordBtn onClick={handleEditPwClick}>
+              <EditPasswordBtn type="button" onClick={handleEditPwClick}>
                 更改密碼
               </EditPasswordBtn>
 

@@ -1,8 +1,47 @@
 import React, { useCallback, useState, useEffect } from 'react'
 import ReactDOM from 'react-dom'
+import styled from 'styled-components'
 import ImageUploading from 'react-images-uploading'
 import axios from 'axios'
 import { renderSize } from '../../utils'
+
+const DrpoUpdate = styled.div`
+  width: 100%;
+  border: 4px dotted #aaa;
+  cursor: pointer;
+  text-align: center;
+  padding: 40px;
+  margin: 20px 0;
+`
+const Flex = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+`
+const Imgs = styled.div``
+const ImgWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+`
+const Img = styled.div`
+  width: 10rem;
+  height: 10rem;
+  position: relative;
+  border: 0.1rem solid ${(props) => props.theme.secondary};
+  border-radius: 0.25rem;
+  margin: 1rem 1rem 0 0;
+`
+const Pic = styled.img`
+  max-height: 100%;
+  max-width: 100%;
+  width: auto;
+  height: auto;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+`
 
 export const ImageUpload = (props) => {
   const [images, setImages] = useState([])
@@ -24,6 +63,10 @@ export const ImageUpload = (props) => {
     // data for submit
     console.log(imageList, addUpdateIndex)
     setImages(imageList)
+
+    if (!addUpdateIndex) {
+      return
+    }
 
     imageList.forEach((item) => {
       let { data_url } = item
@@ -70,9 +113,17 @@ export const ImageUpload = (props) => {
           console.log(error)
         })
     })
-    props.func({ arr })
+    // props.func({ arr })
   }
   const deleteImage = (index) => {
+    console.log(index)
+    setDeleteId((preHash) =>
+      preHash.filter((hash) => preHash[hash] != preHash[index])
+    )
+    setImgUrl((oldImgUrl) =>
+      oldImgUrl.filter((link) => oldImgUrl[link] != oldImgUrl[index])
+    )
+    console.log(imgUrl)
     const token = 'b23339c66ad5d10577964b20a0c4b847422a4726'
     const config = {
       method: 'delete',
@@ -136,7 +187,8 @@ export const ImageUpload = (props) => {
   }
   useEffect(() => {
     console.log(deleteId)
-  }, [deleteId])
+    props.func(imgUrl)
+  }, [imgUrl, deleteId])
 
   return (
     <ImageUploading
@@ -159,23 +211,25 @@ export const ImageUpload = (props) => {
       }) => (
         // write your building UI
         <div className="upload__image-wrapper">
-          <button
-            type="button"
+          <DrpoUpdate
             style={isDragging ? { color: 'red' } : null}
             onClick={onImageUpload}
             {...dragProps}
           >
-            Click or Drop here
-          </button>
-          &nbsp;
-          <button type="button" onClick={onImageRemoveAll}>
+            點擊或拖曳檔案到此 (檔案格式支援 jpg, gif, png)
+          </DrpoUpdate>
+          {/* <button type="button" onClick={onImageRemoveAll}>
             Remove all images
-          </button>
+          </button> */}
           {error}
-          {imageList.map((image, index) => (
-            <div key={index} className="image-item">
-              <img src={image.data_url} alt="" width="100" />
-              <div className="image-item__btn-wrapper">
+          <Flex>
+            {imageList.map((image, index) => (
+              <Imgs key={index} className="image-item">
+                <ImgWrapper>
+                  <Img>
+                    <Pic src={image.data_url} alt="" width="100" />
+                  </Img>
+                </ImgWrapper>
                 <button type="button" onClick={() => onImageUpdate(index)}>
                   Update
                 </button>
@@ -188,12 +242,9 @@ export const ImageUpload = (props) => {
                 >
                   Remove
                 </button>
-                <button type="button" onClick={() => uploadFile(image)}>
-                  上傳檔案
-                </button>
-              </div>
-            </div>
-          ))}
+              </Imgs>
+            ))}
+          </Flex>
         </div>
       )}
     </ImageUploading>
