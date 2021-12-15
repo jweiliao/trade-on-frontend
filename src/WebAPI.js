@@ -1,16 +1,40 @@
 import axios from 'axios'
+import { getAuthToken } from './utils'
+
 const config = {
   apiHost1: 'http://localhost:8081',
   apiHost2: 'https:/cosdelus.tw/tradeon/api',
 }
 
-export const instance = axios.create({
+const instance = axios.create({
   baseURL: config.apiHost2,
+  headers: { withCredentials: true, Authorization: `Bearer ${getAuthToken()}` },
 })
 
-/***************
-   常見問題相關
-***************/
+// user
+export const register = async (email, nickname, password, confirmPassword) =>
+  await instance.post('/users/register', {
+    email,
+    nickname,
+    password,
+    confirmPassword,
+  })
+
+export const login = async (email, password) =>
+  await instance.post('/users/login', { email, password })
+
+export const getMe = async () => await instance.get(`/users/me`)
+
+export const logout = async () => await instance.get('/users/logout')
+
+// transaction
+export const getAllTransactions = async (limit) =>
+  instance.get(`/transactions/all?size=${limit}`)
+
+export const getTransaction = async (id) => instance.get(`/transactions/${id}`)
+
+export const cancelTransaction = async (id) =>
+  instance.put(`/transactions/${id}/cancel`)
 
 export const getAllFaqs = instance.get(`/commonqnas/all`)
 

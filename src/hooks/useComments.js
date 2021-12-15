@@ -24,6 +24,9 @@ export default function useComments(isApplyMessage, postMessageId) {
   const [isUpdating, setIsUpdating] = useState(null)
   const [editValue, setEditValue] = useState('')
 
+  // 儲存是否正在 reply 的狀態
+  const [isReplying, setIsReplying] = useState(null)
+
   // 判斷是索取留言，還是詢問留言
   const isApplyMessageOrNot = useCallback(
     (applyMessage, questionMessage) => {
@@ -85,12 +88,14 @@ export default function useComments(isApplyMessage, postMessageId) {
     }
   }, [questionMsgs, applyMsgs])
 
-  const handleMainMsgReply = () => {
+  const handleMainMsgReply = (id) => {
     setShowMainTextArea(!showMainTextArea)
+    setIsReplying(id)
   }
 
-  const handleSubMsgReply = () => {
+  const handleSubMsgReply = (id) => {
     setShowSubTextArea(!showSubTextArea)
+    setIsReplying(id)
   }
 
   // 執行新增回覆功能
@@ -248,5 +253,7 @@ export default function useComments(isApplyMessage, postMessageId) {
     newMessageInput,
     setNewMessageInput,
     handleReplySubmit,
+    isReplying,
+    setIsReplying,
   }
 }

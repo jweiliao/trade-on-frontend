@@ -1,5 +1,6 @@
-import React, { useEffect } from 'react'
-import FrontNavbar from './components/Navbar/FrontNavbar'
+import React, { useEffect, useState, useContext, lazy, Suspense } from 'react'
+import AuthContext from './contexts'
+import Navbar from './components/Navbar/Navbar'
 import { Footer } from './components/Footer/Footer'
 import BackstageNavbar from './components/Navbar/BackstageNavbar'
 import {
@@ -9,25 +10,31 @@ import {
   Redirect,
   useLocation,
 } from 'react-router-dom'
-import HomePage from './pages/HomePage'
-import LoginPage from './pages/LoginPage'
-import RegisterPage from './pages/RegisterPage'
-import AboutPage from './pages/AboutPage'
-import GivingsPage from './pages/GivingsPage'
-import ItemPage from './pages/ItemPage'
-import AddGiftPage from './pages/AddGiftPage'
-import EditGiftsPage from './pages/EditGiftsPage'
-import PortfolioPage from './pages/PortfolioPage'
-import EditPortfolioPage from './pages/EditPortfolioPage'
-import TransactionsPage from './pages/TransactionsPage'
-import TransactionsDetailPage from './pages/TransactionsDetailPage'
-import FaqPage from './pages/FaqPage'
-import PrivacyPage from './pages/PrivacyPage'
-import TermsPage from './pages/TermsPage'
-import ManageMemberPage from './pages/ManageMemberPage'
-import ManageCategoryPage from './pages/ManageCategoryPage'
-import ManageFaqPage from './pages/ManageFaqPage'
-import ManageGivingPage from './pages/ManageGivingPage'
+import { getMe } from './WebAPI'
+import { getAuthToken, setAuthToken } from './utils'
+import Loading from './components/Loading'
+import jwt_decode from 'jwt-decode'
+const HomePage = lazy(() => import('./pages/HomePage'))
+const LoginPage = lazy(() => import('./pages/LoginPage'))
+const RegisterPage = lazy(() => import('./pages/RegisterPage'))
+const AboutPage = lazy(() => import('./pages/AboutPage'))
+const GivingsPage = lazy(() => import('./pages/GivingsPage'))
+const ItemPage = lazy(() => import('./pages/ItemPage'))
+const AddGiftPage = lazy(() => import('./pages/AddGiftPage'))
+const EditGiftsPage = lazy(() => import('./pages/EditGiftsPage'))
+const PortfolioPage = lazy(() => import('./pages/PortfolioPage'))
+const EditPortfolioPage = lazy(() => import('./pages/EditPortfolioPage'))
+const TransactionsPage = lazy(() => import('./pages/TransactionsPage'))
+const TransactionsDetailPage = lazy(() =>
+  import('./pages/TransactionsDetailPage')
+)
+const FaqPage = lazy(() => import('./pages/FaqPage'))
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage'))
+const TermsPage = lazy(() => import('./pages/TermsPage'))
+const ManageMemberPage = lazy(() => import('./pages/ManageMemberPage'))
+const ManageCategoryPage = lazy(() => import('./pages/ManageCategoryPage'))
+const ManageFaqPage = lazy(() => import('./pages/ManageFaqPage'))
+const ManageGivingPage = lazy(() => import('./pages/ManageGivingPage'))
 
 const ScrollToTop = () => {
   const { pathname } = useLocation()
@@ -40,24 +47,32 @@ const ScrollToTop = () => {
 }
 
 const Home = () => {
+  const { user } = useContext(AuthContext)
   return (
     <>
+      <Navbar />
       <ScrollToTop />
-      <FrontNavbar />
       <Switch>
         <Route exact path="/" component={HomePage} />
         <Route path="/login" component={LoginPage} />
         <Route path="/register" component={RegisterPage} />
         <Route path="/about" component={AboutPage} />
         <Route exact path="/givings" component={GivingsPage} />
-        <Route path="/givings/add" component={AddGiftPage} />
-        <Route path="/givings/edit" component={EditGiftsPage} />
+        {user && <Route path="/givings/add" component={AddGiftPage} />}
+        {user && <Route path="/givings/edit" component={EditGiftsPage} />}
         <Route exact strict path="/givings/:id" component={ItemPage} />
         <Route exact path="/portfolio" component={PortfolioPage} />
         <Route exact strict path="/portfolio/:id" component={PortfolioPage} />
         <Route path="/portfolio/edit" component={EditPortfolioPage} />
         <Route exact path="/transactions" component={TransactionsPage} />
         <Route path="/transactions/detail" component={TransactionsDetailPage} />
+        {user && <Route path="/portfolio/edit" component={EditPortfolioPage} />}
+        {user && (
+          <Route exact path="/transactions" component={TransactionsPage} />
+        )}
+        {user && (
+          <Route path="/transactions/:id" component={TransactionsDetailPage} />
+        )}
         <Route path="/faq" component={FaqPage} />
         <Route path="/privacy" component={PrivacyPage} />
         <Route path="/terms" component={TermsPage} />
@@ -85,12 +100,43 @@ const Backstage = () => {
 }
 
 export default function App() {
+  const [user, setUser] = useState(
+    (getAuthToken() && jwt_decode(getAuthToken()).sub) || null
+  )
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      if (getAuthToken()) {
+        try {
+          const { data } = await getMe()
+          if (data.error) {
+            setUser(null)
+            setAuthToken('')
+            return
+          }
+          setUser(data.userInfo)
+        } catch (err) {
+          console.log(err.response)
+          setUser(null)
+          setAuthToken('')
+        }
+      }
+    }
+    fetchUser()
+  }, [])
+
   return (
-    <Router>
-      <Switch>
-        <Route path="/backstage" component={Backstage} />
-        <Route path="/" component={Home} />
-      </Switch>
-    </Router>
+    <AuthContext.Provider value={{ user, setUser }}>
+      <Suspense fallback={<Loading />}>
+        <Router>
+          <Switch>
+            {user && user.accountAuthority === 'admin' && (
+              <Route path="/backstage" component={Backstage} />
+            )}
+            <Route path="/" component={Home} />
+          </Switch>
+        </Router>
+      </Suspense>
+    </AuthContext.Provider>
   )
 }

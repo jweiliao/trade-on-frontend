@@ -213,6 +213,8 @@ export function Comments({ isApplyMessage, postMessageId }) {
     newMessageInput,
     setNewMessageInput,
     handleReplySubmit,
+    isReplying,
+    setIsReplying,
   } = useComments(isApplyMessage, postMessageId)
 
   return (
@@ -276,7 +278,9 @@ export function Comments({ isApplyMessage, postMessageId }) {
 
                 {/* 留言的最下方的留言更新區塊 */}
                 <CommentUpdates>
-                  <CommentReply onClick={handleMainMsgReply}>回覆</CommentReply>
+                  <CommentReply onClick={() => handleMainMsgReply(msg._id)}>
+                    回覆
+                  </CommentReply>
                   <CommentEdit onClick={() => setIsUpdating(msg._id)}>
                     {' '}
                     | 編輯留言
@@ -288,7 +292,7 @@ export function Comments({ isApplyMessage, postMessageId }) {
               </CommentBottom>
 
               {/* 輸入留言的區塊 */}
-              {showMainTextArea && (
+              {showMainTextArea && isReplying === msg._id && (
                 <LargeTextArea
                   newMessageInput={newMessageInput}
                   setNewMessageInput={setNewMessageInput}
@@ -354,7 +358,9 @@ export function Comments({ isApplyMessage, postMessageId }) {
                         <CommentBottom>
                           <CommentTime>{subMsg.updatedAt}</CommentTime>
                           <CommentUpdates>
-                            <CommentReply onClick={handleSubMsgReply}>
+                            <CommentReply
+                              onClick={() => handleSubMsgReply(subMsg._id)}
+                            >
                               回覆
                             </CommentReply>
                             <CommentEdit
@@ -371,7 +377,7 @@ export function Comments({ isApplyMessage, postMessageId }) {
                         </CommentBottom>
 
                         {/* 輸入子留言的區塊 */}
-                        {showSubTextArea && (
+                        {showSubTextArea && isReplying === subMsg._id && (
                           <LargeTextArea
                             newMessageInput={newMessageInput}
                             setNewMessageInput={setNewMessageInput}
