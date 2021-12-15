@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import AuthContext from '../../contexts'
 import styled from 'styled-components'
 import { Link, useParams } from 'react-router-dom'
 import Container from '../../components/Container'
@@ -67,12 +68,13 @@ const Donor = styled.div`
 `
 
 /* 贈物者頭像 */
-const DonorAvatar = styled.div`
+const DonorAvatar = styled.img`
   width: 50px;
   height: 50px;
   margin-right: 17px;
   border-radius: 50%;
   background-color: ${(props) => props.theme.primary_200};
+  cursor: pointer;
 `
 
 /* 贈物者暱稱 */
@@ -178,6 +180,7 @@ const IntroContent = styled.div`
 `
 
 export default function ItemPage() {
+  const { user } = useContext(AuthContext)
   // 設定 post 的 state
   const [post, setPost] = useState({})
 
@@ -251,14 +254,15 @@ export default function ItemPage() {
           {/* "物品" 資訊：右側 */}
           <DetailRight>
             {/* "物品" 資訊右側：贈物者資訊 */}
+            {/* todo: 連結到贈物者的個人主頁 */}
             {post.owner && (
               <Donor>
                 {/* 贈物者頭像 */}
-                <DonorAvatar></DonorAvatar>
+                <Link to={`/portfolio/${post.owner._id}`}>
+                  <DonorAvatar src={user.avatarUrl}></DonorAvatar>
+                </Link>
 
                 {/* 贈物者暱稱 */}
-                {/* todo: 連結到贈物者的個人主頁 */}
-
                 <DonorNickname to={`/portfolio/${post.owner._id}`}>
                   {post.owner.nickname}
                 </DonorNickname>
@@ -328,9 +332,18 @@ export default function ItemPage() {
             </GiftDetail>
             {/* 判斷是否為發文者，顯示不同的按鈕 */}
             {/* "編輯禮物" 按鈕 */}
-            <HandleGiftButton as={Link} to="/givings/edit">
+            {post.owner && user.id === post.owner._id ? (
+              <HandleGiftButton as={Link} to="/givings/edit">
+                編輯禮物
+              </HandleGiftButton>
+            ) : (
+              <HandleGiftButton as={Link} to="#">
+                想要禮物
+              </HandleGiftButton>
+            )}
+            {/* <HandleGiftButton as={Link} to="/givings/edit">
               編輯禮物
-            </HandleGiftButton>
+            </HandleGiftButton> */}
             {/* <HandleGiftButton as={Link} to="#">想要禮物</HandleGiftButton> */}
           </DetailRight>
         </GiftDetails>
@@ -352,7 +365,14 @@ export default function ItemPage() {
           <IntroTitle>想要禮物</IntroTitle>
           {/* 想要禮物的內文 */}
           {/* 留言內容 */}
-          <Comments isApplyMessage={true} postMessageId={post.id}></Comments>
+          {post.owner && (
+            <Comments
+              isApplyMessage={true}
+              postMessageId={post.id}
+              postOwnerId={post.owner._id}
+            ></Comments>
+          )}
+
           {/* <ApplyComments postMessageId={post.id}></ApplyComments> */}
         </GiftIntro>
 

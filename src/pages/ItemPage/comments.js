@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useContext } from 'react'
+import AuthContext from '../../contexts'
 import styled from 'styled-components'
 import Swal from 'sweetalert2'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
@@ -185,7 +186,7 @@ const Content = styled.div`
   white-space: pre-line;
 `
 
-export function Comments({ isApplyMessage, postMessageId }) {
+export function Comments({ isApplyMessage, postMessageId, postOwnerId }) {
   const {
     questionMsgs,
     setQuestionMsgs,
@@ -217,6 +218,8 @@ export function Comments({ isApplyMessage, postMessageId }) {
     setIsReplying,
   } = useComments(isApplyMessage, postMessageId)
 
+  const { user } = useContext(AuthContext)
+
   return (
     <CommentsContainer>
       {/* 主留言 */}
@@ -233,7 +236,9 @@ export function Comments({ isApplyMessage, postMessageId }) {
                 <CommentNickname>{msg.ownerInfo[0].nickname}</CommentNickname>
 
                 {/* "送他禮物" 按鈕 */}
-                {isApplyMessage && <GivingGift>送他禮物</GivingGift>}
+                {user.id === postOwnerId
+                  ? isApplyMessage && <GivingGift>送他禮物</GivingGift>
+                  : null}
               </CommentTop>
 
               {/* 留言的留言內容 */}
@@ -277,18 +282,20 @@ export function Comments({ isApplyMessage, postMessageId }) {
                 <CommentTime>{msg.updatedAt}</CommentTime>
 
                 {/* 留言的最下方的留言更新區塊 */}
-                <CommentUpdates>
-                  <CommentReply onClick={() => handleMainMsgReply(msg._id)}>
-                    回覆
-                  </CommentReply>
-                  <CommentEdit onClick={() => setIsUpdating(msg._id)}>
-                    {' '}
-                    | 編輯留言
-                  </CommentEdit>
-                  <CommentDelete onClick={() => handleDeleteMessage(msg._id)}>
-                    | 刪除留言
-                  </CommentDelete>
-                </CommentUpdates>
+                {user.id === msg.owner ? (
+                  <CommentUpdates>
+                    <CommentReply onClick={() => handleMainMsgReply(msg._id)}>
+                      回覆
+                    </CommentReply>
+                    <CommentEdit onClick={() => setIsUpdating(msg._id)}>
+                      {' '}
+                      | 編輯留言
+                    </CommentEdit>
+                    <CommentDelete onClick={() => handleDeleteMessage(msg._id)}>
+                      | 刪除留言
+                    </CommentDelete>
+                  </CommentUpdates>
+                ) : null}
               </CommentBottom>
 
               {/* 輸入留言的區塊 */}
@@ -357,23 +364,25 @@ export function Comments({ isApplyMessage, postMessageId }) {
 
                         <CommentBottom>
                           <CommentTime>{subMsg.updatedAt}</CommentTime>
-                          <CommentUpdates>
-                            <CommentReply
-                              onClick={() => handleSubMsgReply(subMsg._id)}
-                            >
-                              回覆
-                            </CommentReply>
-                            <CommentEdit
-                              onClick={() => setIsUpdating(subMsg._id)}
-                            >
-                              | 編輯留言
-                            </CommentEdit>
-                            <CommentDelete
-                              onClick={() => handleDeleteMessage(subMsg._id)}
-                            >
-                              | 刪除留言
-                            </CommentDelete>
-                          </CommentUpdates>
+                          {user.id === subMsg.owner ? (
+                            <CommentUpdates>
+                              <CommentReply
+                                onClick={() => handleSubMsgReply(subMsg._id)}
+                              >
+                                回覆
+                              </CommentReply>
+                              <CommentEdit
+                                onClick={() => setIsUpdating(subMsg._id)}
+                              >
+                                | 編輯留言
+                              </CommentEdit>
+                              <CommentDelete
+                                onClick={() => handleDeleteMessage(subMsg._id)}
+                              >
+                                | 刪除留言
+                              </CommentDelete>
+                            </CommentUpdates>
+                          ) : null}
                         </CommentBottom>
 
                         {/* 輸入子留言的區塊 */}
