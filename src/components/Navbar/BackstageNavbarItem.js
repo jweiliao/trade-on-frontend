@@ -32,9 +32,9 @@ const Label = styled.span`
   vertical-align: middle;
 `
 
-export const BackstageNavbarItem = ({ item }) => {
+export const BackstageNavbarItem = ({ item, onClick }) => {
   return (
-    <NavbarLink to={item.path}>
+    <NavbarLink to={item.path} onClick={onClick}>
       {item.icon && <Icon>{item.icon}</Icon>}
       <Label>{item.title}</Label>
     </NavbarLink>

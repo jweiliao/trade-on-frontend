@@ -1,11 +1,17 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import AuthContext from '../../contexts'
+import { setAuthToken } from '../../utils'
+import { login } from '../../WebAPI'
+import { Link } from 'react-router-dom'
+import { useHistory } from 'react-router'
 import styled from 'styled-components'
+import Container from '../../components/Container'
 import { TextTab } from '../../components/tabs'
-import { InputErrorMessage } from '../../components/textField'
 import { SuperLargeButton } from '../../components/buttons'
 import { Formik, Form } from 'formik'
 import * as Yup from 'yup'
 import FormikControl from '../../components/FormikControl'
+import Swal from 'sweetalert2'
 
 const Wrapper = styled(Form)`
   width: 500px;
@@ -28,15 +34,14 @@ const Divider = styled.hr`
 
 const InputWrapper = styled.div``
 
-const ErrorMessage = styled(InputErrorMessage)`
-  display: none;
-`
-
 const LoginBtn = styled(SuperLargeButton)`
   margin-top: 1.25rem;
 `
 
 export default function LoginPage() {
+  const history = useHistory()
+  const { setUser } = useContext(AuthContext)
+
   const initialValues = { email: '', password: '' }
 
   const validationSchema = Yup.object({
@@ -44,45 +49,68 @@ export default function LoginPage() {
     password: Yup.string().required('此欄位為必填'),
   })
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    console.log('You clicked submit.')
+  const handleLogin = async (values) => {
+    try {
+      const res = await login(values.email, values.password)
+      if (res.data.message === 'success') {
+        setAuthToken(res.data.token)
+        setUser(res.data.userInfo)
+        history.push('/givings')
+      }
+      if (res.data.error) {
+        Swal.fire({
+          icon: 'error',
+          text: '帳號或密碼輸入錯誤',
+          showConfirmButton: false,
+          timer: 1500,
+        })
+      }
+    } catch (err) {
+      Swal.fire({
+        icon: 'error',
+        title: '錯誤',
+        text: '系統問題，請稍候',
+        showConfirmButton: false,
+        timer: 1500,
+      })
+    }
   }
 
   return (
-    <Formik
-      initialValues={initialValues}
-      validationSchema={validationSchema}
-      onSubmit={handleSubmit}
-    >
-      {(formik) => (
-        <Wrapper>
-          <TabWrapper>
-            <TextTab to="/login" $isActive="true">
-              登入
-            </TextTab>
-            <TextTab to="/register">註冊</TextTab>
-          </TabWrapper>
-          <Divider />
-          <InputWrapper>
-            <FormikControl
-              control="input"
-              label="信箱"
-              name="email"
-              placeholder="輸入信箱"
-            />
-            <FormikControl
-              control="input"
-              type="password"
-              label="密碼"
-              name="password"
-              placeholder="輸入密碼"
-            />
-          </InputWrapper>
-          <ErrorMessage>帳號或密碼錯誤，請重新輸入</ErrorMessage>
-          <LoginBtn type="submit">登入</LoginBtn>
-        </Wrapper>
-      )}
-    </Formik>
+    <Container>
+      <Formik
+        initialValues={initialValues}
+        validationSchema={validationSchema}
+        onSubmit={handleLogin}
+      >
+        {(formik) => (
+          <Wrapper>
+            <TabWrapper>
+              <TextTab $isActive={true}>登入</TextTab>
+              <TextTab as={Link} to="/register">
+                註冊
+              </TextTab>
+            </TabWrapper>
+            <Divider />
+            <InputWrapper>
+              <FormikControl
+                control="input"
+                label="信箱"
+                name="email"
+                placeholder="輸入信箱"
+              />
+              <FormikControl
+                control="input"
+                type="password"
+                label="密碼"
+                name="password"
+                placeholder="輸入密碼"
+              />
+            </InputWrapper>
+            <LoginBtn type="submit">登入</LoginBtn>
+          </Wrapper>
+        )}
+      </Formik>
+    </Container>
   )
 }

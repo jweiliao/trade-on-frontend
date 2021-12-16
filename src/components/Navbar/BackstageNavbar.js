@@ -1,7 +1,9 @@
+import React from 'react'
 import styled from 'styled-components'
 import { BackstageNavbarData } from './BackstageNavbarData'
 import { BackstageNavbarItem } from './BackstageNavbarItem'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
+import useNavbar from '../../hooks/useNavbar'
 
 const Nav = styled.div`
   width: 100%;
@@ -22,6 +24,8 @@ const Nav = styled.div`
 const NavbarWrap = styled.div``
 
 export default function BackstageNavbar() {
+  const { handleLogout } = useNavbar()
+
   return (
     <Nav>
       <NavbarWrap>
@@ -31,7 +35,13 @@ export default function BackstageNavbar() {
       </NavbarWrap>
       <NavbarWrap>
         {BackstageNavbarData.FontPage.map((item, index) => {
-          return <BackstageNavbarItem item={item} key={index} />
+          return (
+            <BackstageNavbarItem
+              item={item}
+              key={index}
+              onClick={item.title === '登出' ? handleLogout : null}
+            />
+          )
         })}
       </NavbarWrap>
     </Nav>
