@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import styled from 'styled-components'
 import Container from '../../components/Container'
 import { SmallButton, LargeButton } from '../../components/buttons'
@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom'
 import { Formik, Form } from 'formik'
 import * as Yup from 'yup'
 import FormikControl from '../../components/FormikControl'
+import AuthContext from '../../contexts'
 
 const BorderWrapper = styled(Form)`
   border: ${(props) => props.theme.general_300} solid 1px;
@@ -135,8 +136,6 @@ const Note = styled.span`
 
 const BankCode = styled(Name)``
 
-const BankName = styled(Name)``
-
 const BankAccount = styled(Name)``
 
 const ButtonsWrapper = styled.div`
@@ -163,6 +162,13 @@ const CancelButton = styled(UpdateButton)`
 `
 
 export default function EditPortfolioPage() {
+  const {
+    user: { avatarUrl, email, nickname, id },
+  } = useContext(AuthContext)
+
+  const { user } = useContext(AuthContext)
+  console.log(user)
+
   const tradingOptions = [
     { key: '7-11 店到店', value: '7-11 店到店' },
     { key: '全家店到店', value: '全家店到店' },
@@ -172,13 +178,12 @@ export default function EditPortfolioPage() {
   const regionOptions = [{ key: '基隆市', value: '基隆市' }]
 
   const initialValues = {
-    name: '',
+    name: nickname || '',
     introduction: '',
     trading: [],
     region: '',
     district: '',
     bankCode: '',
-    bankName: '',
     bankAccount: '',
   }
 
@@ -210,16 +215,14 @@ export default function EditPortfolioPage() {
       .matches(/^[0-9]+$/, '請填寫數字')
       .min(3, '格式錯誤')
       .max(3, '格式錯誤'),
-    bankName: Yup.string(),
     bankAccount: Yup.string()
       .matches(/^[0-9]+$/, '請填寫數字')
       .min(10, '格式錯誤')
       .max(14, '格式錯誤'),
   })
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    console.log('You clicked submit.')
+  const handleSubmit = (values) => {
+    console.log(values)
   }
 
   // 設定是否顯示更新密碼彈窗的 state，預設 false（不顯示彈窗）
@@ -249,6 +252,7 @@ export default function EditPortfolioPage() {
   return (
     <Container>
       <Formik
+        enableReinitialize
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
@@ -257,7 +261,7 @@ export default function EditPortfolioPage() {
           <BorderWrapper>
             <PersonalInfo>
               <AvatarWrapper>
-                <Avatar src={`https://i.pravatar.cc/300`} />
+                <Avatar src={`${avatarUrl}` || null} />
                 <UploadAvatarBtn type="button" onClick={handleAvatar}>
                   編輯
                 </UploadAvatarBtn>
@@ -268,7 +272,7 @@ export default function EditPortfolioPage() {
                   />
                 )}
               </AvatarWrapper>
-              <Email>janejane8491@gmail.com</Email>
+              <Email>{email || null}</Email>
               {/* 點擊 "更改密碼" 的按鈕時，執行 handleEditPwClick */}
               <EditPasswordBtn type="button" onClick={handleEditPwClick}>
                 更改密碼
@@ -344,14 +348,6 @@ export default function EditPortfolioPage() {
                   placeholder="輸入銀行代碼"
                 />
               </BankCode>
-              <BankName>
-                <FormikControl
-                  control="input"
-                  label="銀行名稱"
-                  name="bankName"
-                  placeholder="輸入銀行名稱"
-                />
-              </BankName>
               <BankAccount>
                 <FormikControl
                   control="input"

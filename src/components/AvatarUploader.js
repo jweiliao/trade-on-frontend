@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useContext, useEffect } from 'react'
 import styled from 'styled-components'
 import Container from './Container'
 import { PageTitle } from './heading'
@@ -8,6 +8,8 @@ import { MEDIA_QUERY_SM } from '../styles/breakpoints'
 import axios from 'axios'
 import ReactCrop from 'react-image-crop'
 import 'react-image-crop/dist/ReactCrop.css'
+import { PutAvatar } from '../WebAPI'
+import AuthContext from '../contexts'
 
 /* 彈窗出現時的遮罩背景 */
 const BackDrop = styled.div`
@@ -101,6 +103,9 @@ const PreviewImg = styled.div`
 
 // 將從父層傳入的 setPwPopUp、closeModal 這些 props 帶入
 export default function UpdatePortfolioPw({ AvPwPopUp, closeModal }) {
+  const {
+    user: { avatarUrl, email, nickname, id },
+  } = useContext(AuthContext)
   // 當點擊 "更新" 的按鈕時，執行 handleUpdate
   const handleUpdate = () => {
     AvPwPopUp(false)
@@ -130,6 +135,20 @@ export default function UpdatePortfolioPw({ AvPwPopUp, closeModal }) {
     axios(config)
       .then(function ({ data }) {
         // console.log(JSON.stringify(response.data))
+        const {
+          data: { link },
+        } = data
+        const avatarLink = {
+          avatarUrl: link,
+        }
+        PutAvatar(id, avatarLink)
+          .then((res) => {
+            console.log(res)
+          })
+          .then((err) => {
+            console.log(err)
+          })
+        // PutAvatar
         Swal.fire({
           icon: 'success',
           title: '圖片上傳成功',
@@ -235,10 +254,7 @@ export default function UpdatePortfolioPw({ AvPwPopUp, closeModal }) {
   /** default image on load (optional) */
   useEffect(() => {
     if (!upImg)
-      fetch(
-        'https://images.unsplash.com/photo-1533919484729-be3fa3fa0325?w=400',
-        { mode: 'cors' }
-      )
+      fetch(avatarUrl, { mode: 'cors' })
         .then((response) => response.blob())
         .then((blob) => {
           const reader = new FileReader()

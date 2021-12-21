@@ -99,3 +99,6 @@ export const deletePost = (id) => instance.delete(`/posts/${id}`)
 
 // 上架或下架贈物文
 export const PostPublishStatus = (id) => instance.put(`/posts/${id}/status`)
+
+// 更新使用者頭像
+export const PutAvatar = (id, data) => instance.put(`/users/${id}/avatar`, data)
