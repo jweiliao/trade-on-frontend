@@ -22,6 +22,7 @@ export const TextTab = styled.p`
     return $isActive ? 'default' : 'pointer'
   }};
 `
+
 export const BorderTab = styled.div`
   display: inline-block;
   width: 100%;
@@ -48,4 +49,21 @@ export const BorderTab = styled.div`
         : (props) => props.theme.primary_250
     }};
   }
+`
+
+export const ChevronTab = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  white-space: nowrap;
+  padding: 0.75rem 1rem;
+  clip-path: polygon(92% 0, 100% 50%, 92% 100%, 0% 100%, 8% 50%, 0% 0%);
+  background-color: ${({ $status }) => {
+    return (
+      ($status === 'isActive' && ((props) => props.theme.primary_200)) ||
+      ($status === 'isPassed' && ((props) => props.theme.primary_100)) ||
+      ($status === 'none' && ((props) => props.theme.general_400))
+    )
+  }};
 `
