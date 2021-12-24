@@ -36,6 +36,10 @@ export default function useTransactions() {
 
   const fetchTransactions = async () => {
     const { data } = await getAllTransactions(1000)
+    if (data.error) {
+      Swal.fire('發生錯誤！')
+      return
+    }
     if (data.message === 'No deal submitted yet.') return
     setTransactions(data.allTransactions)
   }
@@ -44,11 +48,11 @@ export default function useTransactions() {
     if (transactionsData.length === 0) return []
     if (behaviorFilter === 'give') {
       return transactionsData.filter(
-        (transaction) => transaction.owner._id === user._id
+        (transaction) => transaction.owner._id === user.id
       )
     }
     return transactionsData.filter(
-      (transaction) => transaction.dealer._id === user._id
+      (transaction) => transaction.dealer._id === user.id
     )
   }
 
@@ -131,16 +135,11 @@ export default function useTransactions() {
       reverseButtons: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        cancelTransaction(id)
-          .then((res) => {
-            if (res.data.message === 'success') {
-              fetchTransactions()
-            }
-          })
-          .catch((err) => {
-            console.log(err)
-            Swal.fire('發生錯誤！')
-          })
+        cancelTransaction(id).then((res) => {
+          if (res.data.message === 'success') {
+            fetchTransactions()
+          }
+        })
       }
     })
   }

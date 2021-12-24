@@ -27,6 +27,7 @@ const BehaviorTab = styled(TextTab)`
 const Transactions = styled.div`
   border: ${(props) => props.theme.general_300} solid 1px;
   border-top: 0px;
+  border-radius: 0px 0px 4px 4px;
   padding: 2rem 8% 0;
   min-height: 50vh;
 `
@@ -70,6 +71,7 @@ const Email = styled.p`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: ${(props) => props.theme.primary_300};
 `
 
 const Nickname = styled.span`
@@ -77,6 +79,7 @@ const Nickname = styled.span`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: ${(props) => props.theme.primary_300};
 `
 
 const ContentAndButtons = styled.div`
@@ -118,6 +121,7 @@ const Detail = styled.div`
 
 const ItemName = styled.p`
   line-height: 1.5;
+  font-weight: 600;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
@@ -127,11 +131,13 @@ const ItemName = styled.p`
   }
 `
 
-const Quantity = styled(ItemName)``
+const Quantity = styled(ItemName)`
+  font-weight: normal;
+`
 
-const TradeMode = styled(ItemName)``
+const TradeMode = styled(Quantity)``
 
-const Number = styled(ItemName)``
+const Number = styled(Quantity)``
 
 const Buttons = styled.div`
   display: flex;
@@ -272,9 +278,9 @@ export default function TransactionsPage() {
                 <Nickname>
                   {behaviorFilter === 'give'
                     ? transaction.dealer.nickname &&
-                      `（${transaction.dealer.nickname}）`
+                      `(${transaction.dealer.nickname})`
                     : transaction.owner.nickname &&
-                      `（${transaction.owner.nickname}）`}
+                      `(${transaction.owner.nickname})`}
                 </Nickname>
               </User>
               <ContentAndButtons>
@@ -284,9 +290,13 @@ export default function TransactionsPage() {
                   </PostImg>
                   <Detail>
                     <ItemName>{transaction.post.itemName}</ItemName>
-                    <Quantity>數量：1</Quantity>
+                    <Quantity>數量：{transaction.amount}</Quantity>
                     <TradeMode>
-                      交易方式：{transaction.dealMethod.faceToFace && '面交'}
+                      交易方式：
+                      {(transaction.dealMethod.faceToFace && '面交') ||
+                        (transaction.dealMethod.convenientStore === '全家'
+                          ? '全家店到店'
+                          : '7-Eleven 店到店')}
                     </TradeMode>
                     <Number>交易編號：{transaction.id}</Number>
                   </Detail>
@@ -298,7 +308,9 @@ export default function TransactionsPage() {
                   >
                     交易詳情
                   </TransactionsDetailLink>
-                  {statusFilter === 'toBeFilled' && (
+                  {(statusFilter === 'toBeFilled' ||
+                    (statusFilter === 'sending' &&
+                      transaction.dealMethod.faceToFace)) && (
                     <CancelDealBtn
                       onClick={() => handleCancelDeal(transaction.id)}
                     >
