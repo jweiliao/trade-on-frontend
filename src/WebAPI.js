@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { getAuthToken } from './utils'
+import Swal from 'sweetalert2'
 
 const config = {
   apiHost1: 'http://localhost:8081',
@@ -8,8 +9,31 @@ const config = {
 
 const instance = axios.create({
   baseURL: config.apiHost2,
-  headers: { withCredentials: true, Authorization: `Bearer ${getAuthToken()}` },
 })
+
+instance.interceptors.request.use((config) => {
+  config.headers.withCredentials = true
+  config.headers.Authorization = `Bearer ${getAuthToken()}`
+  return config
+})
+
+instance.interceptors.response.use(
+  (response) => {
+    return response
+  },
+  (err) => {
+    if (err.response) {
+      switch (err.response.status) {
+        case 500:
+          Swal.fire('系統問題，請稍候')
+          break
+        default:
+          Swal.fire('發生錯誤！')
+      }
+    }
+    return Promise.reject(err)
+  }
+)
 
 // user
 export const register = async (email, nickname, password, confirmPassword) =>
@@ -23,7 +47,7 @@ export const register = async (email, nickname, password, confirmPassword) =>
 export const login = async (email, password) =>
   await instance.post('/users/login', { email, password })
 
-export const getMe = async () => await instance.get(`/users/me`)
+export const getMe = async () => await instance.get('/users/me')
 
 export const logout = async () => await instance.get('/users/logout')
 
@@ -35,6 +59,22 @@ export const getTransaction = async (id) => instance.get(`/transactions/${id}`)
 
 export const cancelTransaction = async (id) =>
   instance.put(`/transactions/${id}/cancel`)
+
+export const updateShippingInfo = async (id, data) =>
+  instance.put(`/transactions/${id}/filling-info`, data)
+
+export const checkPayment = async (id) =>
+  instance.put(`/transactions/${id}/payment`)
+
+export const checkComplete = async (id) =>
+  instance.put(`/transactions/${id}/complete`)
+
+// message
+export const getDealMessage = async (id) => instance.get(`/messages/deal/${id}`)
+
+export const addMessage = async (data) => instance.post('/messages/new', data)
+
+export const deleteMessage = async (id) => instance.delete(`/messages/${id}`)
 
 // faq
 export const getAllFaqs = (limit) =>

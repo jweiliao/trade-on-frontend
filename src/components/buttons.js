@@ -26,6 +26,12 @@ export const SmallButton = styled.button`
   &:hover {
     background: ${(props) => props.theme.primary_250};
   }
+
+  &:disabled {
+    cursor: auto;
+    color: ${(props) => props.theme.general_600};
+    background: ${(props) => props.theme.primary_100};
+  }
 `
 
 export const DangerSmallButton = styled(SmallButton)`
