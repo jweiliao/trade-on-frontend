@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react'
+import React, { useState, useContext } from 'react'
 import styled from 'styled-components'
 import Container from '../../components/Container'
 import { SmallButton, LargeButton } from '../../components/buttons'
@@ -163,12 +163,12 @@ const CancelButton = styled(UpdateButton)`
 
 export default function EditPortfolioPage() {
   const {
-    user: { avatarUrl, email, nickname, id },
+    user: { account, avatarUrl, email, nickname },
   } = useContext(AuthContext)
 
   const { user } = useContext(AuthContext)
   console.log(user)
-
+  console.log(account)
   const tradingOptions = [
     { key: '7-11 店到店', value: '7-11 店到店' },
     { key: '全家店到店', value: '全家店到店' },

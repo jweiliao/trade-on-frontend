@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import Container from '../../components/Container'
 import { SubTitle } from '../../components/heading'
-import { InputFile, InputLabel } from '../../components/textField'
 import { LargeButton } from '../../components/buttons'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 import { Link } from 'react-router-dom'
@@ -10,7 +9,6 @@ import { Formik, Form } from 'formik'
 import * as Yup from 'yup'
 import FormikControl from '../../components/FormikControl'
 import { ImageUpload } from '../../components/FileUpload/ImageUpload'
-import FileUploader from '../../components/FileUpload/FileUploader'
 
 const ItemInfoTitle = styled(SubTitle)`
   margin: 3rem 0;
@@ -28,36 +26,6 @@ const ItemStatus = styled(ItemName)``
 
 const Description = styled.div`
   max-width: 51rem;
-`
-const Imgs = styled.div``
-
-const UploadImg = styled(InputFile)``
-
-const ImgWrapper = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-`
-
-const Img = styled.div`
-  width: 10rem;
-  height: 10rem;
-  position: relative;
-  border: 0.1rem solid ${(props) => props.theme.secondary};
-  border-radius: 0.25rem;
-  margin: 1rem 1rem 0 0;
-`
-
-const Pic = styled.img`
-  max-height: 100%;
-  max-width: 100%;
-  width: auto;
-  height: auto;
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  margin: auto;
 `
 
 const Trading = styled(ItemName)`

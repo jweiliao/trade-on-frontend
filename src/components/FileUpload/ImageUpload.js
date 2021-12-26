@@ -1,5 +1,4 @@
 import React, { useCallback, useState, useEffect } from 'react'
-import ReactDOM from 'react-dom'
 import styled from 'styled-components'
 import ImageUploading from 'react-images-uploading'
 import axios from 'axios'
@@ -117,12 +116,8 @@ export const ImageUpload = (props) => {
   }
   const deleteImage = (index) => {
     console.log(index)
-    setDeleteId((preHash) =>
-      preHash.filter((hash) => preHash[hash] != preHash[index])
-    )
-    setImgUrl((oldImgUrl) =>
-      oldImgUrl.filter((link) => oldImgUrl[link] != oldImgUrl[index])
-    )
+    setDeleteId((preHash) => preHash.filter((hash, i) => i !== hash[index]))
+    setImgUrl((oldImgUrl) => oldImgUrl.filter((link, i) => i !== link[index]))
     console.log(imgUrl)
     const token = 'b23339c66ad5d10577964b20a0c4b847422a4726'
     const config = {
@@ -141,45 +136,6 @@ export const ImageUpload = (props) => {
     axios(config)
       .then(function (res) {
         console.log(res)
-      })
-      .catch(function (error) {
-        console.log(error)
-      })
-  }
-  const uploadFile = (image) => {
-    let { data_url } = image
-    let { file } = image
-    setError(null)
-    const albumId = 'GG8ZMKb'
-    const token = 'b23339c66ad5d10577964b20a0c4b847422a4726'
-    let formData = new FormData()
-    formData.append('image', data_url.replace('data:', '').replace(/^.+,/, ''))
-    formData.append('title', file.name)
-    formData.append('description', renderSize(file.size))
-    formData.append('album', albumId)
-    const config = {
-      method: 'post',
-      async: true,
-      crossDomain: true,
-      processData: false,
-      contentType: false,
-      url: 'https://api.imgur.com/3/image',
-      data: formData,
-      headers: {
-        Authorization: 'Bearer ' + token,
-      },
-      mimeType: 'multipart/form-data',
-    }
-    axios(config)
-      .then(function ({ data }) {
-        // console.log(JSON.stringify(response.data))
-        const {
-          data: { link, deletehash },
-        } = data
-        setDeleteId((preHash) => [...preHash, deletehash])
-        // setImgUrl((oldImgUrl) => [...oldImgUrl, data.data.link])
-        // arr.push(data.data.link)
-        // props.func(arr)
       })
       .catch(function (error) {
         console.log(error)

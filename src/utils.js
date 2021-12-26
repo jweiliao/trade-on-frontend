@@ -10,7 +10,7 @@ export const getAuthToken = () => {
 
 // convert file size
 export const renderSize = (fileSize) => {
-  if (null == fileSize || fileSize == '') {
+  if (null === fileSize || fileSize === '') {
     return '0 Bytes'
   }
   var unitArr = new Array(
