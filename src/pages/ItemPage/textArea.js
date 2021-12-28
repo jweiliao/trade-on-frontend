@@ -44,6 +44,7 @@ const LargeTextArea = ({
   addNewComment,
   relatedMsg,
   isApplyMessage,
+  post,
 }) => {
   return (
     <>
@@ -64,7 +65,7 @@ const LargeTextArea = ({
           type="submit"
           onClick={() =>
             addNewComment
-              ? handleSubmit()
+              ? handleSubmit(post, newMessageInput, setNewMessageInput)
               : handleReplySubmit(relatedMsg, isApplyMessage)
           }
         >

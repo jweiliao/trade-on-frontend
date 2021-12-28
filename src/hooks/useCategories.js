@@ -19,7 +19,7 @@ export default function useCategories() {
   })
 
   // 儲存是否正在 edit 的狀態
-  const [isUpdating, setIsUpdating] = useState(false)
+  const [isUpdating, setIsUpdating] = useState(null)
   const [editValue, setEditValue] = useState('')
 
   useEffect(() => {
@@ -81,11 +81,6 @@ export default function useCategories() {
     setNewCategory({
       categoryName: '',
     })
-  }
-
-  // 點擊 '編輯' 後，更新 isUpdating 的編輯狀態
-  const handleEditClick = () => {
-    setIsUpdating(!isUpdating)
   }
 
   const handleEditMessage = (e) => {
@@ -174,7 +169,6 @@ export default function useCategories() {
     handleAddCategory,
     categoryCotentRef,
     newCategory,
-    handleEditClick,
     handleEditMessage,
     isUpdating,
     setIsUpdating,

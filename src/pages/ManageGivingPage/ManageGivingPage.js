@@ -60,8 +60,8 @@ export default function ManageGivingPage() {
           {currentPosts.map((post) => {
             return (
               <Row key={post.id}>
-                <Data data-label="帳號">{post.owner.email}</Data>
-                <Data data-label="暱稱">{post.owner.nickname}</Data>
+                <Data data-label="帳號">{post.author.email}</Data>
+                <Data data-label="暱稱">{post.author.nickname}</Data>
                 <Data data-label="物品名稱">{post.itemName}</Data>
                 <Data data-label="物品介紹">{post.description}</Data>
                 <Data data-label="上架時間">{post.createdAt}</Data>

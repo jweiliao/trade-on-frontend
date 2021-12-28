@@ -11,7 +11,11 @@ const instance = axios.create({
   headers: { withCredentials: true, Authorization: `Bearer ${getAuthToken()}` },
 })
 
-// user
+/***************
+   登入機制相關
+***************/
+
+// 註冊
 export const register = async (email, nickname, password, confirmPassword) =>
   await instance.post('/users/register', {
     email,
@@ -20,14 +24,19 @@ export const register = async (email, nickname, password, confirmPassword) =>
     confirmPassword,
   })
 
+// 登入
 export const login = async (email, password) =>
   await instance.post('/users/login', { email, password })
 
+// 註冊、登入後取得使用者的 token
 export const getMe = async () => await instance.get(`/users/me`)
 
+// 登出
 export const logout = async () => await instance.get('/users/logout')
 
-// transaction
+/***************
+   交易相關
+***************/
 export const getAllTransactions = async (limit) =>
   instance.get(`/transactions/all?size=${limit}`)
 
@@ -36,6 +45,12 @@ export const getTransaction = async (id) => instance.get(`/transactions/${id}`)
 export const cancelTransaction = async (id) =>
   instance.put(`/transactions/${id}/cancel`)
 
+export const acceptTransaction = async (id, data) =>
+  instance.post(`/transactions/message/${id}/accept`, data)
+
+/***************
+   常見問題相關
+***************/
 export const getAllFaqs = instance.get(`/commonqnas/all`)
 
 export const getFaq = (id) => instance.get(`/commonqnas/${id}`)
@@ -126,5 +141,3 @@ export const updateMessage = (id, data) => instance.put(`/messages/${id}`, data)
 
 // 刪除留言
 export const deleteMessage = (id) => instance.delete(`/messages/${id}`)
-
-// export default instance

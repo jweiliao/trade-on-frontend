@@ -6,17 +6,12 @@ import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 import { SmallButton } from '../../components/buttons'
 import LargeTextArea from './textArea'
 import { BackstageSmallButton } from '../../components/buttons'
-// import {
-//   getPost,
-//   getAllMessages,
-//   getPostMessage,
-//   deleteMessage,
-//   updateMessage,
-//   replayMessage,
-//   addMessage,
-// } from '../../WebAPI'
 
 import useComments from '../../hooks/useComments'
+
+import ManageGiveItem from '../../components/ManageGiveItem'
+
+import useGiveItem from '../../hooks/useGiveItem'
 
 /* CommentsContainer - 留言的整個區塊 */
 const CommentsContainer = styled.div`
@@ -186,7 +181,12 @@ const Content = styled.div`
   white-space: pre-line;
 `
 
-export function Comments({ isApplyMessage, postMessageId, postOwnerId }) {
+export function Comments({
+  isApplyMessage,
+  post,
+  postMessageId,
+  postAuthorId,
+}) {
   const {
     questionMsgs,
     setQuestionMsgs,
@@ -218,6 +218,9 @@ export function Comments({ isApplyMessage, postMessageId, postOwnerId }) {
     setIsReplying,
   } = useComments(isApplyMessage, postMessageId)
 
+  const { givePopUp, handleToggleGivePopUp, applyMsgId } = useGiveItem()
+  const [isAccept, setIsAccept] = useState(false)
+  // 拿到 登入後的使用者資料
   const { user } = useContext(AuthContext)
 
   return (
@@ -233,12 +236,33 @@ export function Comments({ isApplyMessage, postMessageId, postOwnerId }) {
               {/* 留言最上方 */}
               <CommentTop>
                 {/* 留言最上方的留言者暱稱 */}
-                <CommentNickname>{msg.ownerInfo[0].nickname}</CommentNickname>
+                <CommentNickname>{msg.authorInfo[0].nickname}</CommentNickname>
 
                 {/* "送他禮物" 按鈕 */}
-                {user.id === postOwnerId
-                  ? isApplyMessage && <GivingGift>送他禮物</GivingGift>
+                {user && user.id === postAuthorId
+                  ? isApplyMessage &&
+                    (isAccept ? (
+                      <GivingGift>已贈送</GivingGift>
+                    ) : (
+                      <GivingGift
+                        onClick={() => handleToggleGivePopUp(msg._id)}
+                      >
+                        送他禮物
+                      </GivingGift>
+                    ))
                   : null}
+                {givePopUp && (
+                  <ManageGiveItem
+                    isApplyMessage={isApplyMessage}
+                    post={post}
+                    postMessageId={post.id}
+                    applyDealMethod={msg.applyDealMethod}
+                    handleToggleGivePopUp={handleToggleGivePopUp}
+                    applyMsgId={applyMsgId}
+                    isAccept={isAccept}
+                    setIsAccept={setIsAccept}
+                  />
+                )}
               </CommentTop>
 
               {/* 留言的留言內容 */}
@@ -282,20 +306,28 @@ export function Comments({ isApplyMessage, postMessageId, postOwnerId }) {
                 <CommentTime>{msg.updatedAt}</CommentTime>
 
                 {/* 留言的最下方的留言更新區塊 */}
-                {user.id === msg.owner ? (
+
+                {user && (
                   <CommentUpdates>
                     <CommentReply onClick={() => handleMainMsgReply(msg._id)}>
                       回覆
                     </CommentReply>
-                    <CommentEdit onClick={() => setIsUpdating(msg._id)}>
-                      {' '}
-                      | 編輯留言
-                    </CommentEdit>
-                    <CommentDelete onClick={() => handleDeleteMessage(msg._id)}>
-                      | 刪除留言
-                    </CommentDelete>
+
+                    {user.id === msg.author ? (
+                      <>
+                        <CommentEdit onClick={() => setIsUpdating(msg._id)}>
+                          {' '}
+                          | 編輯留言
+                        </CommentEdit>
+                        <CommentDelete
+                          onClick={() => handleDeleteMessage(msg._id)}
+                        >
+                          | 刪除留言
+                        </CommentDelete>
+                      </>
+                    ) : null}
                   </CommentUpdates>
-                ) : null}
+                )}
               </CommentBottom>
 
               {/* 輸入留言的區塊 */}
@@ -320,7 +352,7 @@ export function Comments({ isApplyMessage, postMessageId, postOwnerId }) {
                       <SubComment key={subMsg._id}>
                         <CommentTop>
                           <CommentNickname>
-                            {subMsg.ownerInfo[0].nickname}
+                            {subMsg.authorInfo[0].nickname}
                           </CommentNickname>
                         </CommentTop>
 
@@ -364,25 +396,31 @@ export function Comments({ isApplyMessage, postMessageId, postOwnerId }) {
 
                         <CommentBottom>
                           <CommentTime>{subMsg.updatedAt}</CommentTime>
-                          {user.id === subMsg.owner ? (
+                          {user && (
                             <CommentUpdates>
                               <CommentReply
                                 onClick={() => handleSubMsgReply(subMsg._id)}
                               >
                                 回覆
                               </CommentReply>
-                              <CommentEdit
-                                onClick={() => setIsUpdating(subMsg._id)}
-                              >
-                                | 編輯留言
-                              </CommentEdit>
-                              <CommentDelete
-                                onClick={() => handleDeleteMessage(subMsg._id)}
-                              >
-                                | 刪除留言
-                              </CommentDelete>
+                              {user && user.id === subMsg.author ? (
+                                <>
+                                  <CommentEdit
+                                    onClick={() => setIsUpdating(subMsg._id)}
+                                  >
+                                    | 編輯留言
+                                  </CommentEdit>
+                                  <CommentDelete
+                                    onClick={() =>
+                                      handleDeleteMessage(subMsg._id)
+                                    }
+                                  >
+                                    | 刪除留言
+                                  </CommentDelete>
+                                </>
+                              ) : null}
                             </CommentUpdates>
-                          ) : null}
+                          )}
                         </CommentBottom>
 
                         {/* 輸入子留言的區塊 */}
@@ -390,8 +428,9 @@ export function Comments({ isApplyMessage, postMessageId, postOwnerId }) {
                           <LargeTextArea
                             newMessageInput={newMessageInput}
                             setNewMessageInput={setNewMessageInput}
-                            relatedMsg={subMsg._id}
-                            handleSubmit={handleReplySubmit}
+                            relatedMsg={msg._id}
+                            isApplyMessage={isApplyMessage}
+                            handleReplySubmit={handleReplySubmit}
                           ></LargeTextArea>
                         )}
                       </SubComment>

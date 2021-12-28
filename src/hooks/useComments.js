@@ -65,24 +65,32 @@ export default function useComments(isApplyMessage, postMessageId) {
     if (applyMsgs.length > 0) {
       setApplyMainMsgs(
         applyMsgs.filter((msg) => {
-          return typeof msg.relatedMsg === 'undefined'
+          return (
+            typeof msg.relatedMsg === 'undefined' && msg.isDeleted === false
+          )
         })
       )
       setApplyRelatedMsgs(
         applyMsgs.filter((msg) => {
-          return typeof msg.relatedMsg !== 'undefined'
+          return (
+            typeof msg.relatedMsg !== 'undefined' && msg.isDeleted === false
+          )
         })
       )
     }
     if (questionMsgs.length > 0) {
       setMainMsgs(
         questionMsgs.filter((msg) => {
-          return typeof msg.relatedMsg === 'undefined'
+          return (
+            typeof msg.relatedMsg === 'undefined' && msg.isDeleted === false
+          )
         })
       )
       setRelatedMsgs(
         questionMsgs.filter((msg) => {
-          return typeof msg.relatedMsg !== 'undefined'
+          return (
+            typeof msg.relatedMsg !== 'undefined' && msg.isDeleted === false
+          )
         })
       )
     }
@@ -96,6 +104,33 @@ export default function useComments(isApplyMessage, postMessageId) {
   const handleSubMsgReply = (id) => {
     setShowSubTextArea(!showSubTextArea)
     setIsReplying(id)
+  }
+
+  // 執行新增留言功能
+  const handleSubmit = (post, newMessageInput, setNewMessageInput) => {
+    console.log('success!', newMessageInput)
+
+    // 串接新增留言的 API，並帶入參數 "content"、"messageType"、 "relatedId"
+    const newMessage = {
+      content: newMessageInput,
+      messageType: 'question',
+      relatedId: post.id,
+    }
+
+    try {
+      addMessage(newMessage).then((res) => {
+        console.log('ItemPage', res.data.new)
+        console.log('mainMsgs', mainMsgs)
+        const newMsg = res.data.new
+        if (res.data.message === 'success') {
+          alert('add newMsg!')
+          setMainMsgs([...mainMsgs, newMsg])
+        }
+      })
+    } catch (err) {
+      console.log(err)
+    }
+    setNewMessageInput('')
   }
 
   // 執行新增回覆功能
@@ -184,6 +219,50 @@ export default function useComments(isApplyMessage, postMessageId) {
   }
 
   // 刪除留言
+  // const handleDeleteMessage = (id) => {
+  //   Swal.fire({
+  //     title: '刪除',
+  //     text: '確定要刪除嗎？',
+  //     icon: 'warning',
+  //     showCancelButton: true,
+  //     confirmButtonColor: '#e25151',
+  //     cancelButtonColor: '#B7B7B7',
+  //     cancelButtonText: '不，取消刪除',
+  //     confirmButtonText: '是的，我要刪除',
+  //     reverseButtons: true,
+  //     backdrop: true,
+  //   }).then((result) => {
+  //     if (result.isConfirmed) {
+  //       deleteMessage(id)
+  //         .then((res) => {
+  //           if (res.data.message === 'success') {
+  //             console.log('qsm', questionMsgs)
+  //             console.log('qsmId', id)
+  //             isApplyMessageOrNot(
+  //               setApplyMsgs,
+  //               setQuestionMsgs
+  //             )(
+  //               isApplyMessageOrNot(applyMsgs, questionMsgs).filter(
+  //                 (msg) => msg._id !== id && msg.relatedMsg !== id
+  //               )
+  //             )
+  //             Swal.fire({
+  //               icon: 'success',
+  //               title: '刪除成功',
+  //               showConfirmButton: false,
+  //               timer: 1500,
+  //             })
+  //           }
+  //         })
+  //         .catch((err) => {
+  //           console.log(err)
+  //           Swal.fire('發生錯誤！')
+  //         })
+  //     }
+  //   })
+  // }
+
+  // 刪除留言
   const handleDeleteMessage = (id) => {
     Swal.fire({
       title: '刪除',
@@ -207,9 +286,13 @@ export default function useComments(isApplyMessage, postMessageId) {
                 setApplyMsgs,
                 setQuestionMsgs
               )(
-                isApplyMessageOrNot(applyMsgs, questionMsgs).filter(
-                  (msg) => msg._id !== id && msg.relatedMsg !== id
-                )
+                isApplyMessageOrNot(applyMsgs, questionMsgs).map((msg) => {
+                  if (msg._id !== id) return msg
+                  return {
+                    ...msg,
+                    isDeleted: true,
+                  }
+                })
               )
               Swal.fire({
                 icon: 'success',
@@ -249,11 +332,13 @@ export default function useComments(isApplyMessage, postMessageId) {
     handleSubMsgReply,
     showMainTextArea,
     showSubTextArea,
+    setShowMainTextArea,
     isApplyMessageOrNot,
     newMessageInput,
     setNewMessageInput,
     handleReplySubmit,
     isReplying,
     setIsReplying,
+    handleSubmit,
   }
 }

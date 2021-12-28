@@ -20,9 +20,11 @@ import { Comments } from './comments'
 // 引入填寫留言的區塊
 import LargeTextArea from './textArea'
 
-import { getPost, addMessage } from '../../WebAPI'
+import { getPost } from '../../WebAPI'
 
 import useComments from '../../hooks/useComments'
+import useWantItem from '../../hooks/useWantItem'
+import ManageWantItem from '../../components/ManageWantItem'
 
 /* 禮物詳情頁最上方 "物品" 資訊的全部區塊 */
 const GiftDetails = styled.div`
@@ -180,20 +182,41 @@ const IntroContent = styled.div`
 `
 
 export default function ItemPage() {
+  // 拿到 使用者登入後的 localStorage 資料
   const { user } = useContext(AuthContext)
-  // 設定 post 的 state
-  const [post, setPost] = useState({})
 
   // 取得 URL 上 id 的參數
   const { id } = useParams()
   console.log('id', id)
 
+  // 設定 post 的 state
+  const [post, setPost] = useState({})
+
+  // 設定 新增留言的 state
   const [newMessageInput, setNewMessageInput] = useState('')
 
+  // 設定點擊 " 想要禮物 " 後彈出視窗的 state
+  const { wantPopUp, handleToggleWantPopUp } = useWantItem()
+  const { handleSubmit } = useComments(false, id)
   // 拿到這筆贈物的資料
+  // useEffect(() => {
+  //   let isUnmount = false
+  //   const fetchPost = async () => {
+  //     const res = await getPost(id)
+  //     if (res.data.message === 'success' && !isUnmount) {
+  //       setPost(res.data.post)
+  //     }
+  //   }
+
+  //   fetchPost()
+  //   return () => (isUnmount = true)
+  // }, [])
+
   useEffect(() => {
+    // 串接拿到單筆的 post 的 API
     const fetchPost = async () => {
       const res = await getPost(id)
+      // 成功拿到資料後，將資料更新到 post 的 state
       if (res.data.message === 'success') {
         setPost(res.data.post)
       }
@@ -202,43 +225,44 @@ export default function ItemPage() {
     fetchPost()
   }, [])
 
-  // 執行新增留言功能
-  const handleSubmit = (e) => {
-    // e.preventDefault()
-    console.log('success!', newMessageInput)
+  // // 執行新增留言功能
+  // const handleSubmit = (post, newMessageInput, setNewMessageInput) => {
+  //   // e.preventDefault()
+  //   console.log('success!', newMessageInput)
 
-    // 串接新增留言的 API，並帶入參數 "content"、"messageType"
-    const newMessage = {
-      content: newMessageInput,
-      messageType: 'question',
-      relatedId: post.id,
-    }
+  //   // 串接新增留言的 API，並帶入參數 "content"、"messageType"、 "relatedId"
+  //   const newMessage = {
+  //     content: newMessageInput,
+  //     messageType: 'question',
+  //     relatedId: post.id,
+  //   }
 
-    try {
-      addMessage(newMessage).then((res) => {
-        console.log('ItemPage', res.data.new)
-        const newMsg = res.data.new
-        // if (res.data.message === 'success') {
-        //   setApplyMsgs([
-        //     ...applyMsgs,
-        //     {
-        //       content: replayMsg.content,
-        //       messageType: replayMsg.messageType,
-        //       owner: replayMsg.owner,
-        //       _id: replayMsg.id,
-        //       relatedMsg: replayMsg.relatedMsg,
-        //       updatedAt: replayMsg.lastModified,
-        //     },
-        //   ])
-        //   setShowMainTextArea(!showMainTextArea)
-        // }
-        // }
-      })
-    } catch (err) {
-      console.log(err)
-    }
-    setNewMessageInput('')
-  }
+  //   try {
+  //     addMessage(newMessage).then((res) => {
+  //       console.log('ItemPage', res.data.new)
+  //       console.log('questionMsgs', questionMsgs)
+  //       const newMsg = res.data.new
+  //       if (res.data.message === 'success') {
+  //         setMainMsgs([
+  //           ...questionMsgs,
+  //           newMsg,
+  //           // {
+  //           //   content: replayMsg.content,
+  //           //   messageType: replayMsg.messageType,
+  //           //   author: replayMsg.author,
+  //           //   _id: replayMsg.id,
+  //           //   relatedMsg: replayMsg.relatedMsg,
+  //           //   updatedAt: replayMsg.lastModified,
+  //           // },
+  //         ])
+  //         setShowMainTextArea(!showMainTextArea)
+  //       }
+  //     })
+  //   } catch (err) {
+  //     console.log(err)
+  //   }
+  //   setNewMessageInput('')
+  // }
 
   return (
     <>
@@ -255,16 +279,20 @@ export default function ItemPage() {
           <DetailRight>
             {/* "物品" 資訊右側：贈物者資訊 */}
             {/* todo: 連結到贈物者的個人主頁 */}
-            {post.owner && (
+            {post.author && post.author._id && (
               <Donor>
                 {/* 贈物者頭像 */}
-                <Link to={`/portfolio/${post.owner._id}`}>
-                  <DonorAvatar src={user.avatarUrl}></DonorAvatar>
+                <Link to={`/portfolio/${post.author._id}`}>
+                  {user ? (
+                    <DonorAvatar src={user.avatarUrl}></DonorAvatar>
+                  ) : (
+                    <DonorAvatar></DonorAvatar>
+                  )}
                 </Link>
 
                 {/* 贈物者暱稱 */}
-                <DonorNickname to={`/portfolio/${post.owner._id}`}>
-                  {post.owner.nickname}
+                <DonorNickname to={`/portfolio/${post.author._id}`}>
+                  {post.author.nickname}
                 </DonorNickname>
               </Donor>
             )}
@@ -332,19 +360,24 @@ export default function ItemPage() {
             </GiftDetail>
             {/* 判斷是否為發文者，顯示不同的按鈕 */}
             {/* "編輯禮物" 按鈕 */}
-            {post.owner && user.id === post.owner._id ? (
+            {user && post.author && user.id === post.author._id ? (
               <HandleGiftButton as={Link} to="/givings/edit">
                 編輯禮物
               </HandleGiftButton>
             ) : (
-              <HandleGiftButton as={Link} to="#">
+              <HandleGiftButton onClick={() => handleToggleWantPopUp(post.id)}>
                 想要禮物
               </HandleGiftButton>
             )}
-            {/* <HandleGiftButton as={Link} to="/givings/edit">
-              編輯禮物
-            </HandleGiftButton> */}
-            {/* <HandleGiftButton as={Link} to="#">想要禮物</HandleGiftButton> */}
+            {wantPopUp && (
+              <ManageWantItem
+                isApplyMessage={true}
+                post={post}
+                postMessageId={post.id}
+                postAuthorId={post.author._id}
+                handleToggleWantPopUp={handleToggleWantPopUp}
+              />
+            )}
           </DetailRight>
         </GiftDetails>
 
@@ -365,15 +398,14 @@ export default function ItemPage() {
           <IntroTitle>想要禮物</IntroTitle>
           {/* 想要禮物的內文 */}
           {/* 留言內容 */}
-          {post.owner && (
+          {post.author && (
             <Comments
               isApplyMessage={true}
+              post={post}
               postMessageId={post.id}
-              postOwnerId={post.owner._id}
+              postAuthorId={post.author._id}
             ></Comments>
           )}
-
-          {/* <ApplyComments postMessageId={post.id}></ApplyComments> */}
         </GiftIntro>
 
         {/* 禮物詳情頁的 "留言" 區塊 */}
@@ -381,17 +413,19 @@ export default function ItemPage() {
           {/* 留言的標題 */}
           <IntroTitle>留言</IntroTitle>
           {/* 填寫留言的區塊 */}
-          <LargeTextArea
-            newMessageInput={newMessageInput}
-            setNewMessageInput={setNewMessageInput}
-            addNewComment={true}
-            handleSubmit={handleSubmit}
-          ></LargeTextArea>
+          {user ? (
+            <LargeTextArea
+              newMessageInput={newMessageInput}
+              setNewMessageInput={setNewMessageInput}
+              addNewComment={true}
+              handleSubmit={handleSubmit}
+              post={post}
+            ></LargeTextArea>
+          ) : null}
 
           {/* 留言的內文 */}
           {/* 留言內容 */}
           <Comments isApplyMessage={false} postMessageId={post.id}></Comments>
-          {/* <QuestionComments postMessageId={post.id}></QuestionComments> */}
         </GiftIntro>
       </Container>
     </>
