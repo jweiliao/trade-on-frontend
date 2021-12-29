@@ -51,6 +51,13 @@ export const getMe = async () => await instance.get('/users/me')
 
 export const logout = async () => await instance.get('/users/logout')
 
+export const getUser = async (id) => await instance.get(`/users/${id}`)
+
+export const getUserRecord = async (id, limit, type, status) =>
+  await instance.get(
+    `/users/${id}/record?size=${limit}&type=${type}&status=${status}`
+  )
+
 // transaction
 export const getAllTransactions = async (limit) =>
   instance.get(`/transactions/all?size=${limit}`)
