@@ -61,8 +61,9 @@ const Home = () => {
         {user && <Route path="/givings/add" component={AddGiftPage} />}
         {user && <Route path="/givings/edit" component={EditGiftsPage} />}
         <Route exact strict path="/givings/:id" component={ItemPage} />
-        <Route exact path="/portfolio" component={PortfolioPage} />
         {user && <Route path="/portfolio/edit" component={EditPortfolioPage} />}
+        <Route exact path="/portfolio/:id" component={PortfolioPage} />
+        <Route exact path="/portfolio" component={PortfolioPage} />
         {user && (
           <Route exact path="/transactions" component={TransactionsPage} />
         )}
