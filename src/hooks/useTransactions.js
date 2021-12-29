@@ -1,19 +1,27 @@
-import { useState, useEffect, useContext } from 'react'
+import { useState, useEffect, useContext, useRef } from 'react'
 import AuthContext from '../contexts'
 import { getAllTransactions, cancelTransaction } from '../WebAPI'
 import Swal from 'sweetalert2'
+import dealStatus from '../constants/dealStatus'
 
 export default function useTransactions() {
   const { user } = useContext(AuthContext)
   const [transactions, setTransactions] = useState([])
 
-  const [behaviorFilter, setBehaviorFilter] = useState('give')
-  const [statusFilter, setStatusFilter] = useState('toBeFilled')
+  const give = '贈物'
+  const [behaviorFilter, setBehaviorFilter] = useState(give)
+
+  const { toFillInfo, toCharge, delivering, isCompleted, isCanceled } =
+    dealStatus
+  const [statusFilter, setStatusFilter] = useState(toFillInfo)
   const [filterTransactions, setFilterTransactions] = useState([])
 
   const transactionsPerPage = 10
   const [currentPage, setCurrentPage] = useState(1)
   const [currentTransactions, setCurrentTransactions] = useState([])
+
+  const scrollRef = useRef(null)
+  const scrollToTop = () => scrollRef.current.scrollIntoView()
 
   useEffect(() => {
     fetchTransactions()
@@ -46,7 +54,7 @@ export default function useTransactions() {
 
   const filterByBehavior = (transactionsData) => {
     if (transactionsData.length === 0) return []
-    if (behaviorFilter === 'give') {
+    if (behaviorFilter === give) {
       return transactionsData.filter(
         (transaction) => transaction.owner._id === user.id
       )
@@ -59,31 +67,31 @@ export default function useTransactions() {
   const filterByStatus = (transactionsData) => {
     if (transactionsData.length === 0) return []
     switch (statusFilter) {
-      case 'toBeFilled':
+      case toFillInfo:
         return transactionsData.filter(
           (transaction) =>
             transaction.isFilled === false && transaction.isCanceled === false
         )
-      case 'toBePaid':
+      case toCharge:
         return transactionsData.filter(
           (transaction) =>
             transaction.isFilled === true &&
             transaction.isPaid === false &&
             transaction.isCanceled === false
         )
-      case 'sending':
+      case delivering:
         return transactionsData.filter(
           (transaction) =>
             transaction.isPaid === true &&
             transaction.isCompleted === false &&
             transaction.isCanceled === false
         )
-      case 'isCompleted':
+      case isCompleted:
         return transactionsData.filter(
           (transaction) =>
             transaction.isCompleted === true && transaction.isCanceled === false
         )
-      case 'isCanceled':
+      case isCanceled:
         return transactionsData.filter(
           (transaction) => transaction.isCanceled === true
         )
@@ -92,34 +100,12 @@ export default function useTransactions() {
     }
   }
 
-  const handleChangeBehaviorTab = (behavior) => {
-    if (behavior === 'give') {
-      setBehaviorFilter('give')
-      return
-    }
-    setBehaviorFilter('receive')
+  const handleChangeBehavior = (behavior) => {
+    setBehaviorFilter(behavior)
   }
 
-  const handleChangeStatusTab = (status) => {
-    switch (status) {
-      case 'toBeFilled':
-        setStatusFilter('toBeFilled')
-        break
-      case 'toBePaid':
-        setStatusFilter('toBePaid')
-        break
-      case 'sending':
-        setStatusFilter('sending')
-        break
-      case 'isCompleted':
-        setStatusFilter('isCompleted')
-        break
-      case 'isCanceled':
-        setStatusFilter('isCanceled')
-        break
-      default:
-        break
-    }
+  const handleChangeStatus = (status) => {
+    setStatusFilter(status)
   }
 
   const handleCancelDeal = (id) => {
@@ -144,15 +130,20 @@ export default function useTransactions() {
     })
   }
 
-  const handleChangePage = (pageNumber) => setCurrentPage(pageNumber)
+  const handleChangePage = (pageNumber) => {
+    setCurrentPage(pageNumber)
+    scrollToTop()
+  }
 
   return {
+    scrollRef,
     filterTransactions,
     currentTransactions,
+    give,
     behaviorFilter,
-    handleChangeBehaviorTab,
+    handleChangeBehavior,
     statusFilter,
-    handleChangeStatusTab,
+    handleChangeStatus,
     handleCancelDeal,
     transactionsPerPage,
     currentPage,

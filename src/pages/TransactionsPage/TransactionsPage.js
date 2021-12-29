@@ -3,26 +3,15 @@ import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import Container from '../../components/Container'
 import { PageTitle } from '../../components/heading'
-import { TextTab, BorderTab } from '../../components/tabs'
 import { Img, ImgWrapper, ImgCircleWrapper } from '../../components/img'
 import { SmallButton, DangerSmallButton } from '../../components/buttons'
+import BehaviorTab from '../../components/BehaviorTab'
+import StatusTab from '../../components/StatusTab'
 import Pagination from '../../components/Pagination/Pagination'
 import { MEDIA_QUERY_SM, MEDIA_QUERY_MD } from '../../styles/breakpoints'
+import shippingMethod from '../../constants/shippingMethod'
+import dealStatus from '../../constants/dealStatus'
 import useTransactions from '../../hooks/useTransactions'
-
-const BehaviorTabsWrapper = styled.div`
-  margin: 3rem 0 2rem;
-  display: flex;
-  justify-content: center;
-  text-align: center;
-`
-
-const BehaviorTab = styled(TextTab)`
-  font-size: 1.5rem;
-  text-align: center;
-  margin: 0 2rem;
-  width: 3.5rem;
-`
 
 const Transactions = styled.div`
   border: ${(props) => props.theme.general_300} solid 1px;
@@ -30,17 +19,6 @@ const Transactions = styled.div`
   border-radius: 0px 0px 4px 4px;
   padding: 2rem 8% 0;
   min-height: 50vh;
-`
-
-const StatusTabsWrapper = styled.div`
-  display: flex;
-  overflow: auto;
-  white-space: nowrap;
-`
-
-const StatusTab = styled(BorderTab)`
-  min-width: 9rem;
-  overflow: auto;
 `
 
 const Transaction = styled.div`
@@ -180,13 +158,19 @@ const CancelDealBtn = styled(DangerSmallButton)`
 `
 
 export default function TransactionsPage() {
+  const { toFillInfo, toCharge, delivering, isCompleted, isCanceled } =
+    dealStatus
+  const statusData = [toFillInfo, toCharge, delivering, isCompleted, isCanceled]
+  const { faceToFace, sevenEleven, familyMart } = shippingMethod
   const {
+    scrollRef,
     filterTransactions,
     currentTransactions,
+    give,
     behaviorFilter,
-    handleChangeBehaviorTab,
+    handleChangeBehavior,
     statusFilter,
-    handleChangeStatusTab,
+    handleChangeStatus,
     handleCancelDeal,
     transactionsPerPage,
     currentPage,
@@ -196,66 +180,16 @@ export default function TransactionsPage() {
   return (
     <Container>
       <PageTitle>交易紀錄</PageTitle>
-      <BehaviorTabsWrapper>
-        <BehaviorTab
-          onClick={() => {
-            handleChangeBehaviorTab('give')
-          }}
-          $isActive={behaviorFilter === 'give' ? true : false}
-        >
-          贈物
-        </BehaviorTab>
-        <BehaviorTab
-          onClick={() => {
-            handleChangeBehaviorTab('receive')
-          }}
-          $isActive={behaviorFilter === 'receive' ? true : false}
-        >
-          索物
-        </BehaviorTab>
-      </BehaviorTabsWrapper>
-      <StatusTabsWrapper>
-        <StatusTab
-          onClick={() => {
-            handleChangeStatusTab('toBeFilled')
-          }}
-          $isActive={statusFilter === 'toBeFilled' ? true : false}
-        >
-          待填資料
-        </StatusTab>
-        <StatusTab
-          onClick={() => {
-            handleChangeStatusTab('toBePaid')
-          }}
-          $isActive={statusFilter === 'toBePaid' ? true : false}
-        >
-          待付運費
-        </StatusTab>
-        <StatusTab
-          onClick={() => {
-            handleChangeStatusTab('sending')
-          }}
-          $isActive={statusFilter === 'sending' ? true : false}
-        >
-          交貨中
-        </StatusTab>
-        <StatusTab
-          onClick={() => {
-            handleChangeStatusTab('isCompleted')
-          }}
-          $isActive={statusFilter === 'isCompleted' ? true : false}
-        >
-          已完成
-        </StatusTab>
-        <StatusTab
-          onClick={() => {
-            handleChangeStatusTab('isCanceled')
-          }}
-          $isActive={statusFilter === 'isCanceled' ? true : false}
-        >
-          已取消
-        </StatusTab>
-      </StatusTabsWrapper>
+      <BehaviorTab
+        handleChangeBehavior={handleChangeBehavior}
+        behaviorFilter={behaviorFilter}
+        scrollRef={scrollRef}
+      />
+      <StatusTab
+        statusData={statusData}
+        handleChangeStatus={handleChangeStatus}
+        statusFilter={statusFilter}
+      />
       <Transactions>
         {currentTransactions.map((transaction) => {
           return (
@@ -264,19 +198,19 @@ export default function TransactionsPage() {
                 <Avatar>
                   <Img
                     src={
-                      behaviorFilter === 'give'
+                      behaviorFilter === give
                         ? transaction.dealer.avatarUrl
                         : transaction.owner.avatarUrl
                     }
                   />
                 </Avatar>
                 <Email>
-                  {behaviorFilter === 'give'
+                  {behaviorFilter === give
                     ? transaction.dealer.email
                     : transaction.owner.email}
                 </Email>
                 <Nickname>
-                  {behaviorFilter === 'give'
+                  {behaviorFilter === give
                     ? transaction.dealer.nickname &&
                       `(${transaction.dealer.nickname})`
                     : transaction.owner.nickname &&
@@ -293,10 +227,10 @@ export default function TransactionsPage() {
                     <Quantity>數量：{transaction.amount}</Quantity>
                     <TradeMode>
                       交易方式：
-                      {(transaction.dealMethod.faceToFace && '面交') ||
+                      {(transaction.dealMethod.faceToFace && faceToFace) ||
                         (transaction.dealMethod.convenientStore === '全家'
-                          ? '全家店到店'
-                          : '7-Eleven 店到店')}
+                          ? familyMart
+                          : sevenEleven)}
                     </TradeMode>
                     <Number>交易編號：{transaction.id}</Number>
                   </Detail>
@@ -308,8 +242,8 @@ export default function TransactionsPage() {
                   >
                     交易詳情
                   </TransactionsDetailLink>
-                  {(statusFilter === 'toBeFilled' ||
-                    (statusFilter === 'sending' &&
+                  {(statusFilter === toFillInfo ||
+                    (statusFilter === delivering &&
                       transaction.dealMethod.faceToFace)) && (
                     <CancelDealBtn
                       onClick={() => handleCancelDeal(transaction.id)}
