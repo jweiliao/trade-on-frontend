@@ -47,9 +47,12 @@ export default function useTradeRecord() {
       if (user.id === (dealInfo.owner && dealInfo.owner._id)) {
         setOtherUser(dealInfo.dealer)
         setIsGiver(true)
-      } else {
+      } else if (user.id === (dealInfo.dealer && dealInfo.dealer._id)) {
         setOtherUser(dealInfo.owner)
         setIsGiver(false)
+      } else {
+        history.push('/')
+        return
       }
     }
 
