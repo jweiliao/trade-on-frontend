@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import AuthContext from '../../contexts'
 import { Link } from 'react-router-dom'
 import { SmallButton } from '../../components/buttons'
+import { SubTitle } from '../../components/heading'
 import { Img, ImgCircleWrapper } from '../../components/img'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 import shippingMethod from '../../constants/shippingMethod'
@@ -54,11 +55,20 @@ const Introduce = styled.p`
   }
 `
 
-const PreferTradeMode = styled.p`
+const TradeInfo = styled.div`
+  width: 100%;
+  border: ${(props) => props.theme.general_300} solid 1px;
+  border-radius: 4px;
+  margin-top: 1rem;
+  padding: 2rem;
+`
+
+const PreferTradeMode = styled(SubTitle)`
   font-size: 1.125rem;
   line-height: 1.5;
 `
-const TransactionTypeContent = styled.p`
+
+const TransactionType = styled.p`
   margin: 1rem 0;
   line-height: 1;
   position: relative;
@@ -101,7 +111,15 @@ const TransactionTypeContent = styled.p`
   }
 `
 
-const Account = styled(PreferTradeMode)``
+const Account = styled(PreferTradeMode)`
+  margin-top: 1.5rem;
+`
+
+const AccountNum = styled.p`
+  font-size: 1.125rem;
+  line-height: 1.5;
+  margin-top: 1rem;
+`
 
 const EditButton = styled(SmallButton)`
   margin-top: 1rem;
@@ -124,37 +142,41 @@ const UserInfo = ({ userData }) => {
       <Introduce>{userData && userData.introduction}</Introduce>
       {userData && user && userData.id === user.id && (
         <>
-          <PreferTradeMode>
-            偏好交易方式：
-            <TransactionTypeContent
+          <EditButton as={Link} to="/portfolio/edit">
+            編輯
+          </EditButton>
+          <TradeInfo>
+            <PreferTradeMode>偏好交易方式</PreferTradeMode>
+            <TransactionType
               $isSelected={
+                preferDealMethods &&
                 preferDealMethods.convenientStores &&
                 preferDealMethods.convenientStores.includes('全家')
               }
             >
               {familyMart}
-            </TransactionTypeContent>
-            <TransactionTypeContent
+            </TransactionType>
+            <TransactionType
               $isSelected={
+                preferDealMethods &&
                 preferDealMethods.convenientStores &&
                 preferDealMethods.convenientStores.includes('7-11')
               }
             >
               {sevenEleven}
-            </TransactionTypeContent>
-            <TransactionTypeContent $isSelected={preferDealMethods.faceToFace}>
+            </TransactionType>
+            <TransactionType
+              $isSelected={preferDealMethods && preferDealMethods.faceToFace}
+            >
               {faceToFace}
-            </TransactionTypeContent>
-          </PreferTradeMode>
-          <Account>
-            匯款資訊：
-            {user.account
-              ? `(${user.account.bankCode})${user.account.accountNum}`
-              : '未填寫'}
-          </Account>
-          <EditButton as={Link} to="/portfolio/edit">
-            編輯
-          </EditButton>
+            </TransactionType>
+            <Account>匯款資訊</Account>
+            <AccountNum>
+              {user.account
+                ? `(${user.account.bankCode})${user.account.accountNum}`
+                : '未填寫'}
+            </AccountNum>
+          </TradeInfo>
         </>
       )}
     </Wrapper>
