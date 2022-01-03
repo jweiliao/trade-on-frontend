@@ -9,7 +9,7 @@ const BackstagePageItem = styled(PageItem)`
   }
   background-color: ${({ $isCurrent }) => {
     return $isCurrent
-      ? (props) => props.theme.secondary_200
+      ? (props) => props.theme.secondary_100
       : (props) => props.theme.general_000
   }};
 `

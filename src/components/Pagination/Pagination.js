@@ -37,7 +37,7 @@ export const PageItem = styled.li`
   }
   background-color: ${({ $isCurrent }) => {
     return $isCurrent
-      ? (props) => props.theme.primary_150
+      ? (props) => props.theme.primary_100
       : (props) => props.theme.general_000
   }};
 `
