@@ -11,6 +11,9 @@ import { Formik, Form } from 'formik'
 import * as Yup from 'yup'
 import FormikControl from '../../components/FormikControl'
 import AuthContext from '../../contexts'
+import { updateUserInfo } from '../../WebAPI'
+import { CityData } from '../../constants/AreaData'
+import { DistrictData } from '../../constants/DistrictData'
 
 const BorderWrapper = styled(Form)`
   border: ${(props) => props.theme.general_300} solid 1px;
@@ -163,32 +166,46 @@ const CancelButton = styled(UpdateButton)`
 
 export default function EditPortfolioPage() {
   const {
-    user: { account, avatarUrl, email, nickname },
+    user: {
+      account,
+      avatarUrl,
+      email,
+      nickname,
+      id,
+      introduction,
+      preferDealMethods,
+    },
   } = useContext(AuthContext)
 
   const { user } = useContext(AuthContext)
   console.log(user)
-  console.log(account)
   const tradingOptions = [
-    { key: '7-11 店到店', value: '7-11 店到店' },
-    { key: '全家店到店', value: '全家店到店' },
+    { key: '7-11 店到店', value: '7-11' },
+    { key: '全家店到店', value: '全家' },
     { key: '面交', value: '面交' },
   ]
-
-  const regionOptions = [{ key: '基隆市', value: '基隆市' }]
+  console.log(DistrictData)
+  const regionOptions = [
+    // {
+    //   key: '',
+    //   value: preferDealMethods && preferDealMethods.faceToFace.region,
+    // },
+    ...DistrictData,
+  ]
 
   const initialValues = {
-    name: nickname || '',
-    introduction: '',
-    trading: [],
-    region: '',
-    district: '',
-    bankCode: '',
-    bankAccount: '',
+    nickname: nickname || '',
+    introduction: introduction || '',
+    trading: (preferDealMethods && preferDealMethods.convenientStores) || [],
+    region: (preferDealMethods && preferDealMethods.faceToFace.region) || '',
+    district:
+      (preferDealMethods && preferDealMethods.faceToFace.district) || '',
+    bankCode: (account && account.bankCode) || '',
+    accountNum: (account && account.accountNum) || '',
   }
 
   const validationSchema = Yup.object({
-    name: Yup.string().required('此欄位為必填'),
+    nickname: Yup.string().required('此欄位為必填'),
     introduction: Yup.string().max(100, '限 100 字'),
     trading: Yup.array(),
     region: Yup.string().when('trading', (trading, schema) => {
@@ -215,14 +232,21 @@ export default function EditPortfolioPage() {
       .matches(/^[0-9]+$/, '請填寫數字')
       .min(3, '格式錯誤')
       .max(3, '格式錯誤'),
-    bankAccount: Yup.string()
+    accountNum: Yup.string()
       .matches(/^[0-9]+$/, '請填寫數字')
       .min(10, '格式錯誤')
       .max(14, '格式錯誤'),
   })
 
-  const handleSubmit = (values) => {
-    console.log(values)
+  const handleSubmit = (req) => {
+    console.log(req)
+    updateUserInfo(id, req)
+      .then((res) => {
+        console.log(res)
+      })
+      .then((err) => {
+        console.log(err)
+      })
   }
 
   // 設定是否顯示更新密碼彈窗的 state，預設 false（不顯示彈窗）
@@ -293,7 +317,7 @@ export default function EditPortfolioPage() {
                 <FormikControl
                   control="input"
                   label="暱稱"
-                  name="name"
+                  name="nickname"
                   placeholder="輸入暱稱"
                 />
               </Name>
@@ -352,7 +376,7 @@ export default function EditPortfolioPage() {
                 <FormikControl
                   control="input"
                   label="帳號"
-                  name="bankAccount"
+                  name="accountNum"
                   placeholder="輸入銀行名稱"
                 />
               </BankAccount>

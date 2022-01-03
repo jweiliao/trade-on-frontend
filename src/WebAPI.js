@@ -102,3 +102,6 @@ export const PostPublishStatus = (id) => instance.put(`/posts/${id}/status`)
 
 // 更新使用者頭像
 export const PutAvatar = (id, data) => instance.put(`/users/${id}/avatar`, data)
+
+// 更新使用者資料
+export const updateUserInfo = (id, data) => instance.put(`/users/${id}`, data)

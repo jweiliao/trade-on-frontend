@@ -9,6 +9,8 @@ import { Formik, Form } from 'formik'
 import * as Yup from 'yup'
 import FormikControl from '../../components/FormikControl'
 import { ImageUpload } from '../../components/FileUpload/ImageUpload'
+import axios from 'axios'
+import { renderSize } from '../../utils'
 
 const ItemInfoTitle = styled(SubTitle)`
   margin: 3rem 0;

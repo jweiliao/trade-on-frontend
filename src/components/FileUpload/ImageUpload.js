@@ -67,51 +67,51 @@ export const ImageUpload = (props) => {
       return
     }
 
-    imageList.forEach((item) => {
-      let { data_url } = item
-      let { file } = item
-      // console.log(data_url)
-      setError(null)
-      const albumId = 'GG8ZMKb'
-      const token = 'b23339c66ad5d10577964b20a0c4b847422a4726'
-      let formData = new FormData()
-      formData.append(
-        'image',
-        data_url.replace('data:', '').replace(/^.+,/, '')
-      )
-      formData.append('title', file.name)
-      formData.append('description', renderSize(file.size))
-      formData.append('album', albumId)
+    // imageList.forEach((item) => {
+    //   let { data_url } = item
+    //   let { file } = item
+    //   // console.log(data_url)
+    //   setError(null)
+    //   const albumId = 'GG8ZMKb'
+    //   const token = 'b23339c66ad5d10577964b20a0c4b847422a4726'
+    //   let formData = new FormData()
+    //   formData.append(
+    //     'image',
+    //     data_url.replace('data:', '').replace(/^.+,/, '')
+    //   )
+    //   formData.append('title', file.name)
+    //   formData.append('description', renderSize(file.size))
+    //   formData.append('album', albumId)
 
-      const config = {
-        method: 'post',
-        async: true,
-        crossDomain: true,
-        processData: false,
-        contentType: false,
-        url: 'https://api.imgur.com/3/image',
-        data: formData,
-        headers: {
-          Authorization: 'Bearer ' + token,
-        },
-        mimeType: 'multipart/form-data',
-      }
+    //   const config = {
+    //     method: 'post',
+    //     async: true,
+    //     crossDomain: true,
+    //     processData: false,
+    //     contentType: false,
+    //     url: 'https://api.imgur.com/3/image',
+    //     data: formData,
+    //     headers: {
+    //       Authorization: 'Bearer ' + token,
+    //     },
+    //     mimeType: 'multipart/form-data',
+    //   }
 
-      axios(config)
-        .then(function ({ data }) {
-          // console.log(JSON.stringify(response.data))
-          const {
-            data: { link, deletehash },
-          } = data
-          setDeleteId((preHash) => [...preHash, deletehash])
-          setImgUrl((oldImgUrl) => [...oldImgUrl, link])
-          arr.push(link)
-          // props.func(arr)
-        })
-        .catch(function (error) {
-          console.log(error)
-        })
-    })
+    //   axios(config)
+    //     .then(function ({ data }) {
+    //       // console.log(JSON.stringify(response.data))
+    //       const {
+    //         data: { link, deletehash },
+    //       } = data
+    //       setDeleteId((preHash) => [...preHash, deletehash])
+    //       setImgUrl((oldImgUrl) => [...oldImgUrl, link])
+    //       arr.push(link)
+    //       // props.func(arr)
+    //     })
+    //     .catch(function (error) {
+    //       console.log(error)
+    //     })
+    // })
     // props.func({ arr })
   }
   const deleteImage = (index) => {
