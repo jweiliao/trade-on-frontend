@@ -10,6 +10,8 @@ import ReactCrop from 'react-image-crop'
 import 'react-image-crop/dist/ReactCrop.css'
 import { PutAvatar } from '../WebAPI'
 import AuthContext from '../contexts'
+import { getMe, updateUserInfo } from '../WebAPI'
+import { getAuthToken } from '../utils'
 
 /* 彈窗出現時的遮罩背景 */
 const BackDrop = styled.div`
@@ -104,6 +106,7 @@ const PreviewImg = styled.div`
 // 將從父層傳入的 setPwPopUp、closeModal 這些 props 帶入
 export default function UpdatePortfolioPw({ AvPwPopUp, closeModal }) {
   const {
+    setUser,
     user: { avatarUrl, email, nickname, id },
   } = useContext(AuthContext)
   // 當點擊 "更新" 的按鈕時，執行 handleUpdate
@@ -143,17 +146,20 @@ export default function UpdatePortfolioPw({ AvPwPopUp, closeModal }) {
         }
         PutAvatar(id, avatarLink)
           .then((res) => {
-            console.log(res)
+            // PutAvatar
+            Swal.fire({
+              icon: 'success',
+              title: '圖片上傳成功',
+              showConfirmButton: true,
+            })
+            console.log(`avatarLink`, avatarLink)
+            console.log(res.data.update)
+            setUser(res.data.update)
           })
           .then((err) => {
             console.log(err)
           })
         // PutAvatar
-        Swal.fire({
-          icon: 'success',
-          title: '圖片上傳成功',
-          showConfirmButton: true,
-        })
       })
       .catch(function (error) {
         Swal.fire({
@@ -309,9 +315,6 @@ export default function UpdatePortfolioPw({ AvPwPopUp, closeModal }) {
           'image/jpeg',
           1
         )
-        // console.log(
-        //   canvas.toDataURL('image/png').replace('data:', '').replace(/^.+,/, '')
-        // )
         setImgUrl(
           canvas.toDataURL('image/png').replace('data:', '').replace(/^.+,/, '')
         )

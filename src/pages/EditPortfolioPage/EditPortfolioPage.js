@@ -7,12 +7,13 @@ import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 import UpdatePortfolioPw from '../../components/UpdatePortfolioPw'
 import AvatarUploader from '../../components/AvatarUploader'
 import { Link } from 'react-router-dom'
+import { useHistory } from 'react-router'
 import { Formik, Form } from 'formik'
 import * as Yup from 'yup'
 import FormikControl from '../../components/FormikControl'
 import AuthContext from '../../contexts'
-import { updateUserInfo } from '../../WebAPI'
-import { CityData } from '../../constants/AreaData'
+import { getMe, updateUserInfo } from '../../WebAPI'
+import { getAuthToken } from '../../utils'
 import { DistrictData } from '../../constants/DistrictData'
 
 const BorderWrapper = styled(Form)`
@@ -177,14 +178,15 @@ export default function EditPortfolioPage() {
     },
   } = useContext(AuthContext)
 
-  const { user } = useContext(AuthContext)
+  const { user, setUser } = useContext(AuthContext)
   console.log(user)
-  const tradingOptions = [
+  const history = useHistory()
+  const tradingOption = [
     { key: '7-11 店到店', value: '7-11' },
     { key: '全家店到店', value: '全家' },
     { key: '面交', value: '面交' },
   ]
-  console.log(DistrictData)
+
   const regionOptions = [
     // {
     //   key: '',
@@ -196,10 +198,18 @@ export default function EditPortfolioPage() {
   const initialValues = {
     nickname: nickname || '',
     introduction: introduction || '',
-    trading: (preferDealMethods && preferDealMethods.convenientStores) || [],
-    region: (preferDealMethods && preferDealMethods.faceToFace.region) || '',
+    tradingOptions:
+      (preferDealMethods && preferDealMethods.selectedMethods) || [],
+    region:
+      (preferDealMethods &&
+        preferDealMethods.faceToFace &&
+        preferDealMethods.faceToFace.region) ||
+      '',
     district:
-      (preferDealMethods && preferDealMethods.faceToFace.district) || '',
+      (preferDealMethods &&
+        preferDealMethods.faceToFace &&
+        preferDealMethods.faceToFace.district) ||
+      '',
     bankCode: (account && account.bankCode) || '',
     accountNum: (account && account.accountNum) || '',
   }
@@ -207,10 +217,10 @@ export default function EditPortfolioPage() {
   const validationSchema = Yup.object({
     nickname: Yup.string().required('此欄位為必填'),
     introduction: Yup.string().max(100, '限 100 字'),
-    trading: Yup.array(),
-    region: Yup.string().when('trading', (trading, schema) => {
+    tradingOptions: Yup.array(),
+    region: Yup.string().when('tradingOptions', (tradingOptions, schema) => {
       try {
-        if (trading.includes('面交')) {
+        if (tradingOptions.includes('面交')) {
           return Yup.string().required('請選擇面交縣市')
         }
         return schema
@@ -218,9 +228,9 @@ export default function EditPortfolioPage() {
         console.log('error', error)
       }
     }),
-    district: Yup.string().when('trading', (trading, schema) => {
+    district: Yup.string().when('tradingOptions', (tradingOptions, schema) => {
       try {
-        if (trading.includes('面交')) {
+        if (tradingOptions.includes('面交')) {
           return Yup.string().required('請填寫面交地點')
         }
         return schema
@@ -239,10 +249,23 @@ export default function EditPortfolioPage() {
   })
 
   const handleSubmit = (req) => {
-    console.log(req)
     updateUserInfo(id, req)
       .then((res) => {
-        console.log(res)
+        const { data } = res
+        if (data.message === 'success') {
+          const fetchUser = async () => {
+            if (getAuthToken()) {
+              try {
+                const { data } = await getMe()
+                setUser(data.userInfo)
+                history.push('/portfolio')
+              } catch (err) {
+                console.log(err)
+              }
+            }
+          }
+          fetchUser()
+        }
       })
       .then((err) => {
         console.log(err)
@@ -335,8 +358,8 @@ export default function EditPortfolioPage() {
               <Trading>
                 <FormikControl
                   control="checkbox"
-                  name="trading"
-                  options={tradingOptions}
+                  name="tradingOptions"
+                  options={tradingOption}
                 />
                 {true && (
                   <>
