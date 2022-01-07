@@ -1,6 +1,10 @@
 [[redirects]]
   from = "/#/*"
-  to = "https://cosdelus.tw/tradeon/api/"
+  to = "/cosdelus.tw/tradeon/api/posts/all?size=12"
   status = 200
   force = true
-  
+
+[[redirects]]
+  from = "/#/login"
+  to = "/cosdelus.tw/tradeon/api/users/login"
+  status = 302
