@@ -1,6 +1,0 @@
-[[redirects]]
-  from = "https://tradeon.netlify.app/cosdelus.tw/tradeon/api/posts/all?size=12*"
-  to = "https://cosdelus.tw/tradeon/api/posts/all?size=12"
-  status = 200
-  force = true
-  
