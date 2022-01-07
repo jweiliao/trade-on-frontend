@@ -1,6 +1,6 @@
 [[redirects]]
   from = "/*"
-  to = "https://cosdelus.tw/tradeon/api/"
+  to = "/"
   status = 200
   force = true
   
