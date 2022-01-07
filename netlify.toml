@@ -1,7 +1,7 @@
 [[redirects]]
   from = "https://tradeon.netlify.app/#/"
-  to = "https://about.google/"
-  status = 301
+  to = "https://cosdelus.tw/tradeon/api/posts/all?size=12"
+  status = 200
   force = true
 
 [[redirects]]
