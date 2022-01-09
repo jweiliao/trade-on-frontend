@@ -6,4 +6,4 @@
  [[redirects]]
   from = "https://tradeon.netlify.app/givings/"
   to = "https://cosdelus.tw/tradeon/api/posts/all?size=100:splat"
-  status = 200
+  status = 302
