@@ -1,0 +1,5 @@
+[[redirects]]
+  from = "https://tradeon.netlify.app/*"
+  to = /index"
+  status = 200
+  force = true
