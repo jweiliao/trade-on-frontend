@@ -1,5 +1,5 @@
 [[redirects]]
   from = "https://tradeon.netlify.app/*"
-  to = "https://cosdelus.tw/tradeon/api/posts/all?size=12:splat"
-  status = 302
+  to = "https://cosdelus.tw/tradeon/api:splat"
+  status = 200
  
