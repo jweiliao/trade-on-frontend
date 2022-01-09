@@ -1,5 +1,5 @@
 [[redirects]]
   from = "https://tradeon.netlify.app/*"
-  to = /index"
+  to = /tradeon/api/posts/all?size=12"
   status = 200
   force = true
