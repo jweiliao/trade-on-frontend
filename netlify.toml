@@ -1,4 +1,4 @@
 [[redirects]]
-  from = "/*"
-  to = "index.html"
+  from = "https://tradeon.netlify.app/*"
+  to = "https://cosdelus.tw/tradeon/api/"
   status = 200
