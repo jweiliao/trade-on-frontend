@@ -1,20 +1,21 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import styled from 'styled-components'
-import { Input, Textarea } from './textField'
+import { Textarea } from './textField'
 import { BackstageTitle } from './heading'
 import { SmallButton } from './buttons'
 import Swal from 'sweetalert2'
 import { MEDIA_QUERY_SM } from '../styles/breakpoints'
-import { addMessage } from '../WebAPI'
-import useComments from '../hooks/useComments'
-import useGiveItem from '../hooks/useGiveItem'
-import {
-  RadioWrapper,
-  RadioItem,
-  RadioButtonLabel,
-  RadioButton,
-} from './textField'
 
+// 引入新增留言 API
+import { addMessage } from '../WebAPI'
+
+// 引入 radio 相關 component
+import { RadioItem, RadioButtonLabel, RadioButton } from './textField'
+
+// 引入操作留言的 hook
+import useComments from '../hooks/useComments'
+
+/* 彈窗底下的遮罩 */
 const BackDrop = styled.div`
   width: 100%;
   height: 100%;
@@ -25,10 +26,11 @@ const BackDrop = styled.div`
   background-color: rgba(0, 0, 0, 0.3);
 `
 
+/* 整個索取請求的彈窗 */
 const GiveItemWrapper = styled.div`
   z-index: 100;
   width: 500px;
-  padding: 10px 50px;
+  padding: 0px 50px;
   position: fixed;
   top: 50%;
   left: 50%;
@@ -44,12 +46,19 @@ const GiveItemWrapper = styled.div`
   }
 `
 
+/* 索取請求彈窗的標題 */
 const Title = styled(BackstageTitle)`
+  font-weight: 500;
+  padding-bottom: 7px;
+  text-align: left;
+  border-bottom: 2px solid ${(props) => props.theme.general_500};
+
   ${MEDIA_QUERY_SM} {
     margin-top: 3rem;
   }
 `
 
+/* 索取項目的細節 */
 const GiveDetail = styled.div`
   max-width: 100%;
   display: flex;
@@ -59,16 +68,13 @@ const GiveDetail = styled.div`
   font-size: 20px;
   margin-bottom: 30px;
 `
-const BankInfo = styled.div`
-  margin-top: 20px;
-`
 
-const GiveDealMethod = styled.span``
-
-const Location = styled(Textarea)`
+/* 索取請求的留言內容  */
+const ApplyMessageInput = styled(Textarea)`
   width: 100%;
 `
 
+/* 彈窗下方操作按鈕們的全部區塊 */
 const ConfirmButtonsWrapper = styled.div`
   display: flex;
   justify-content: center;
@@ -78,7 +84,7 @@ const ConfirmButtonsWrapper = styled.div`
     align-items: center;
   }
 `
-
+/* "取消" 按鈕 */
 const CancelButton = styled(SmallButton)`
   background-color: ${(props) => props.theme.general_200};
   &:hover {
@@ -88,7 +94,7 @@ const CancelButton = styled(SmallButton)`
     width: 100%;
   }
 `
-
+/* "確認" 按鈕 */
 const GiveButton = styled(SmallButton)`
   margin-left: 27px;
   background-color: ${(props) => props.theme.primary_100};
@@ -106,131 +112,75 @@ export default function ManageGiveItem({
   isApplyMessage,
   post,
   postMessageId,
-  postAuthorId,
   handleToggleWantPopUp,
 }) {
-  const { applyMsgs, applyMainMsgs } = useComments(
-    isApplyMessage,
-    postMessageId
-  )
+  // console.log('post', post)
 
-  // console.log('WantapplyMsgs', applyMainMsgs)
-  console.log('post', post)
-  const [select, setSelect] = useState('')
-
-  // const handleSelectChange = (e) => {
-  //   setSelect(e.target.value)
-  // }
-
+  // 設定索取留言內容的 state，預設為空值
   const [newApplyInput, setNewApplyInput] = useState('')
 
-  // const [transactions, setTransactions] = useState([])
-  // const [newTransactionData, setNewTransactionData] = useState({
-  //   amount: 1,
-  //   accountNum: 0,
-  //   bankName: '',
-  //   accountName: 'author',
-  //   bankCode: 888,
-  // })
+  // 設定寄送方式選項的 state，預設為空值
+  const [select, setSelect] = useState('')
 
-  // const handleInput = (e) => {
-  //   const { name, value } = e.target
-  //   setNewTransactionData({
-  //     ...newTransactionData,
-  //     [name]: value,
-  //   })
-  // }
-
-  // useEffect(() => {
-  //   fetchTransactions()
-  // }, [])
-
-  // const fetchTransactions = async () => {
-  //   const { data } = await getAllTransactions(1000)
-  //   if (data.message === 'No deal submitted yet.') return
-  //   setTransactions(data.allTransactions)
-  // }
-
-  // console.log('receptapply', applyMsgId)
-  // console.log('transactions', transactions)
+  // 帶入 useComments 中的 applyMsgs, setApplyMsgs
+  const { applyMsgs, setApplyMsgs } = useComments(isApplyMessage, postMessageId)
 
   const handleWantItem = (e) => {
-    e.preventDefault()
+    // e.preventDefault()
 
-    // acceptTransaction(applyMsgId, newTransactionData)
-    //   .then((res) => {
-    //     const newTransactionData = res.data
-    //     console.log(res.data)
-    //     if (res.data.message === 'success') {
-    //       Swal.fire({
-    //         icon: 'success',
-    //         title: '交易成立',
-    //         showConfirmButton: false,
-    //         timer: 1500,
-    //       })
-    //       setIsAccept(true)
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     console.log(err)
-    //     Swal.fire('發生錯誤！')
-    //   })
-    // 串接新增回覆的 API，並帶入參數 "content"、"messageType"、"relatedMsg"、"relatedId"
-
+    // 變數 newApply 為串接新增索取的 API，並帶入參數 "content"、"messageType"、"chooseDealMethod"、"relatedId"
     const newApply = {
       content: newApplyInput,
       messageType: 'apply',
-      chooseDealMethod: {
-        faceToFace: true,
-        evenEleven: true,
-        familyMart: true,
-      },
+      chooseDealMethod: select,
       relatedId: postMessageId,
     }
 
-    console.log('newTransactionData', newApply)
-    // console.log('select', select)
-    // try {
-    //   addMessage(newApply).then((res) => {
-    //     console.log('新增索取', res.data)
-    //     // const replayMsg = res.data.new
-    //     // if (res.data.message === 'success') {
-    //     //   setApplyMsgs([
-    //     //     ...applyMsgs,
-    //     //     {
-    //     //       content: replayMsg.content,
-    //     //       messageType: replayMsg.messageType,
-    //     //       author: replayMsg.author,
-    //     //       _id: replayMsg.id,
-    //     //       relatedMsg: replayMsg.relatedMsg,
-    //     //       updatedAt: replayMsg.lastModified,
-    //     //     },
-    //     //   ])
-    //     //   setShowMainTextArea(!showMainTextArea)
-    //     // }
-    //   })
-    // } catch (err) {
-    //   console.log(err)
-    // }
+    // console.log('newTransactionData', newApply)
+
+    try {
+      // 串接新增索取請求的 API，並帶入 newApply
+      addMessage(newApply)
+        .then((res) => {
+          // 如果新增索取請求成功
+          if (res.data.message === 'success') {
+            const replyMsgRes = res.data.new
+            // 將回傳的值新增到 applyMsgs 的 state
+            setApplyMsgs([...applyMsgs, replyMsgRes])
+          }
+        })
+        .catch((err) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: '寄送方式必填喔！',
+            timer: 1500,
+          })
+        })
+    } catch (err) {
+      console.log(err)
+    }
+    // 索取請求的留言內容清空
     setNewApplyInput('')
+
+    // toggle 索取請求彈窗：若已顯示彈窗隱藏，否則就顯示
     handleToggleWantPopUp()
   }
 
-  console.log('select', select)
-
-  const Alert = (e) => {
-    alert('Selected Radio Value ' + e.target.value)
-  }
   return (
     <>
+      {/* 彈窗底下的遮罩，點擊彈窗以外的地方，會收回彈窗  */}
       <BackDrop onClick={handleToggleWantPopUp}></BackDrop>
+      {/* 整個索取請求的彈窗 */}
       <GiveItemWrapper>
         <Title>索取請求</Title>
         <GiveDetail>物品名稱：{post.itemName}</GiveDetail>
         <GiveDetail>物品數量：{post.quantity}</GiveDetail>
+
+        {/* 留言的輸入框 */}
         <GiveDetail>
           留言：
-          <Location
+          <ApplyMessageInput
             rows="3"
             maxlength="200"
             name="apply"
@@ -238,25 +188,29 @@ export default function ManageGiveItem({
             value={newApplyInput}
             onChange={(e) => setNewApplyInput(e.target.value)}
             required
-          ></Location>
+          ></ApplyMessageInput>
         </GiveDetail>
 
+        {/* 如果寄送方式可以 "面交" ，出現 "面交" 的單選選項*/}
         {post.tradingOptions.faceToFace ? (
           <RadioItem>
             <RadioButton
               type="radio"
               name="tradingOptions"
               value="faceToFace"
-              checked={true}
-              onChange={Alert()}
+              checked={select === 'faceToFace'}
+              onChange={(e) => setSelect(e.target.value)}
             />
             <RadioButtonLabel />
             <div>面交</div>
           </RadioItem>
         ) : null}
+
+        {/* 如果寄送方式可以 "7-11 店到店" ，出現 "7-11 店到店" 的單選選項*/}
+        {/* 如果寄送方式可以 "全家店到店" ，出現 "全家店到店" 的單選選項*/}
         {post.tradingOptions &&
-          post.tradingOptions.convenientStores &&
-          post.tradingOptions.convenientStores.map((applyDealMethodItem) => {
+          post.tradingOptions.selectedMethods &&
+          post.tradingOptions.selectedMethods.map((applyDealMethodItem) => {
             if (applyDealMethodItem === '7-11') {
               return (
                 <RadioItem>
@@ -264,7 +218,7 @@ export default function ManageGiveItem({
                     type="radio"
                     name="tradingOptions"
                     value="sevenEleven"
-                    checked={applyDealMethodItem === '7-11'}
+                    checked={select === 'sevenEleven'}
                     onChange={(e) => setSelect(e.target.value)}
                   />
                   <RadioButtonLabel />
@@ -272,6 +226,7 @@ export default function ManageGiveItem({
                 </RadioItem>
               )
             }
+
             if (applyDealMethodItem === '全家') {
               return (
                 <RadioItem>
@@ -279,7 +234,7 @@ export default function ManageGiveItem({
                     type="radio"
                     name="tradingOptions"
                     value="familyMart"
-                    checked={applyDealMethodItem === '全家'}
+                    checked={select === 'familyMart'}
                     onChange={(e) => setSelect(e.target.value)}
                   />
                   <RadioButtonLabel />
@@ -288,52 +243,18 @@ export default function ManageGiveItem({
               )
             }
           })}
+
+        {/* 彈窗下方操作按鈕們的全部區塊 */}
         <ConfirmButtonsWrapper>
+          {/* 點擊 "取消" 按鈕後，隱藏索取請求的彈窗 */}
           <CancelButton onClick={handleToggleWantPopUp}>取消</CancelButton>
+
+          {/* 點擊 "確認" 按鈕，執行 "handleWantItem" */}
           <GiveButton type="submit" onClick={handleWantItem}>
-            下一步
+            確認
           </GiveButton>
         </ConfirmButtonsWrapper>
       </GiveItemWrapper>
     </>
   )
 }
-
-// <GiveItemWrapper>
-//   <Title>贈與物品</Title>
-//   <GiveDetail>物品名稱：{post ? post.itemName : '暫無'}</GiveDetail>
-//   <GiveDetail>物品數量： {post ? post.quantity : 0} 個</GiveDetail>
-//   <GiveDetail>
-//     寄送方式：
-//     <GiveDealMethod>
-//       {applyDealMethod.faceToFace
-//         ? '面交'
-//         : applyDealMethod.convenientStore === '7-11'
-//         ? '7-11店到店'
-//         : '全家店到店'}
-//     </GiveDealMethod>
-//     {applyDealMethod.convenientStore && (
-//       <BankInfo>
-//         匯款銀行：
-//         <Location
-//           name="bankName"
-//           placeholder="請輸入匯款銀行名稱"
-//           onChange={handleInput}
-//         ></Location>
-//         匯款帳戶：
-//         <Location
-//           name="accountNum"
-//           placeholder="請輸入匯款帳戶"
-//           onChange={handleInput}
-//         ></Location>
-//       </BankInfo>
-//     )}
-//   </GiveDetail>
-
-//   <ConfirmButtonsWrapper>
-//     <CancelButton onClick={handleToggleGivePopUp}>取消</CancelButton>
-//     <GiveButton type="submit" onClick={handleGiveItem}>
-//       確認
-//     </GiveButton>
-//   </ConfirmButtonsWrapper>
-// </GiveItemWrapper>

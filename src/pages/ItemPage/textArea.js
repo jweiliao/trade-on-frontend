@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import styled from 'styled-components'
 import { SmallButton } from '../../components/buttons'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
@@ -11,11 +10,12 @@ const Form = styled.div`
   align-items: flex-start;
   margin-top: 50px;
   margin-bottom: 50px;
+  max-width: 557px;
 `
 
 /* TextArea - 輸入留言的地方 */
 const TextArea = styled.textarea`
-  width: 557px;
+  width: 100%;
   font-size: 16px;
   line-height: 1.5;
   letter-spacing: 0.5px;
@@ -33,18 +33,18 @@ const TextArea = styled.textarea`
 `
 /* MessageSubmitButton - 送出留言的按鈕 */
 const MessageSubmitButton = styled(SmallButton)`
-  margin: 5px 0;
+  margin: 10px 0;
 `
 
 const LargeTextArea = ({
+  isApplyMessage,
+  post,
   newMessageInput,
   setNewMessageInput,
   handleReplySubmit,
-  handleSubmit,
+  handleAddQuestionSubmit,
   addNewComment,
   relatedMsg,
-  isApplyMessage,
-  post,
 }) => {
   return (
     <>
@@ -52,6 +52,7 @@ const LargeTextArea = ({
         {/* 輸入留言的地方 */}
         <TextArea
           rows="3"
+          cols="70"
           maxlength="200"
           placeholder="請輸入您的留言 / 提問"
           name="addNewMessage"
@@ -61,11 +62,17 @@ const LargeTextArea = ({
         ></TextArea>
 
         {/* 送出留言的按鈕 */}
+        {/* 點擊 "送出留言" 按鈕後的操作，透過 addNewComment 這個 props， 判斷是 "留言"還是 "回覆" ，再執行各自操作*/}
         <MessageSubmitButton
           type="submit"
           onClick={() =>
             addNewComment
-              ? handleSubmit(post, newMessageInput, setNewMessageInput)
+              ? handleAddQuestionSubmit(
+                  post,
+                  newMessageInput,
+                  setNewMessageInput,
+                  isApplyMessage
+                )
               : handleReplySubmit(relatedMsg, isApplyMessage)
           }
         >

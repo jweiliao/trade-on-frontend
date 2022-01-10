@@ -11,6 +11,11 @@ const instance = axios.create({
   baseURL: config.apiHost2,
 })
 
+/***************
+   登入機制相關
+***************/
+
+// 註冊
 instance.interceptors.request.use((config) => {
   config.headers.withCredentials = true
   config.headers.Authorization = `Bearer ${getAuthToken()}`
@@ -65,6 +70,9 @@ export const getTransaction = async (id) => instance.get(`/transactions/${id}`)
 export const cancelTransaction = async (id) =>
   instance.put(`/transactions/${id}/cancel`)
 
+export const acceptTransaction = async (id, data) =>
+  instance.post(`/transactions/message/${id}/accept`, data)
+
 export const updateShippingInfo = async (id, data) =>
   instance.put(`/transactions/${id}/filling-info`, data)
 
@@ -84,8 +92,7 @@ export const deleteMessage = async (id) => instance.delete(`/messages/${id}`)
 /***************
    常見問題相關
 ***************/
-export const getAllFaqs = (limit) =>
-  instance.get(`/commonqnas/all?size=${limit}`)
+export const getAllFaqs = instance.get(`/commonqnas/all`)
 
 export const getFaq = (id) => instance.get(`/commonqnas/${id}`)
 
@@ -158,13 +165,13 @@ export const getAllMessages = (limit) =>
 export const getPostMessage = (id) => instance.get(`/messages/post/${id}`)
 
 // 取得該交易進程的留言。
-export const getDealMessage = (id) => instance.get(`/messages/deal/${id}`)
+// export const getDealMessage = (id) => instance.get(`/messages/deal/${id}`)
 
 // 取得該留言或回覆
 export const getMessage = (id) => instance.get(`/messages/${id}`)
 
 // 新增留言
-export const addMessage = (data) => instance.post('/messages/new', data)
+// export const addMessage = (data) => instance.post('/messages/new', data)
 
 // 新增回覆
 export const replyMessage = (id, data) =>
@@ -174,4 +181,4 @@ export const replyMessage = (id, data) =>
 export const updateMessage = (id, data) => instance.put(`/messages/${id}`, data)
 
 // 刪除留言
-export const deleteMessage = (id) => instance.delete(`/messages/${id}`)
+// export const deleteMessage = (id) => instance.delete(`/messages/${id}`)
