@@ -4,7 +4,7 @@ import Swal from 'sweetalert2'
 
 const config = {
   apiHost1: 'http://localhost:8081',
-  apiHost2: 'https:/cosdelus.tw/tradeon/api',
+  apiHost2: 'https://cosdelus.tw/tradeon/api',
 }
 
 const instance = axios.create({
