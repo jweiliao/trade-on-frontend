@@ -1,5 +1,6 @@
 import { useState, useEffect, useContext } from 'react'
-import { useLocation, useHistory } from 'react-router'
+import { useHistory } from 'react-router'
+import { useParams } from 'react-router-dom'
 import AuthContext from '../contexts'
 import {
   getTransaction,
@@ -12,10 +13,8 @@ import Swal from 'sweetalert2'
 import dealStatus from '../constants/dealStatus'
 
 export default function useTradeRecord() {
-  const location = useLocation()
   const history = useHistory()
-  const tradeRecordId = location.pathname.slice(14)
-
+  const { id: tradeRecordId } = useParams()
   const { user } = useContext(AuthContext)
   const [isGiver, setIsGiver] = useState(null)
   const [tradeRecord, setTradeRecord] = useState([])
@@ -87,8 +86,7 @@ export default function useTradeRecord() {
     }
 
     setDealStatus()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tradeRecord])
+  }, [delivering, isCanceled, isCompleted, toCharge, toFillInfo, tradeRecord])
 
   const handleCancelDeal = (id) => {
     Swal.fire({
@@ -191,16 +189,11 @@ export default function useTradeRecord() {
     if (Object.keys(errorMessages).length === 0 && isSubmitting) {
       updateShippingInfo(tradeRecordId, shippingInfo).then((res) => {
         if (res.data.message === 'success') {
-          setTradeRecord({
-            ...tradeRecord,
-            isFilled: true,
-            sendingInfo: shippingInfo,
-          })
+          setTradeRecord(res.data.updated)
         }
       })
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [errorMessages])
+  }, [errorMessages, isSubmitting, shippingInfo, tradeRecordId])
 
   return {
     isGiver,
