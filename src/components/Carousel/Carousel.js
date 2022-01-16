@@ -114,7 +114,7 @@ function Carousel() {
           <StyledSlider {...rwdSettings}>
             {posts.map((post) => (
               <Card key={post.id} as={Link} to={`/givings/${post.id}`}>
-                <Img alt={'物品圖片'} src={post.imgUrls[0]} />
+                <Img alt={'物品圖片'} src={post.imgUrls[0].imgUrl} />
                 <Content>
                   <ItemName>{post.itemName}</ItemName>
                 </Content>

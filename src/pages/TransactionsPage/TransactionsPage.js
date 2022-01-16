@@ -199,8 +199,8 @@ export default function TransactionsPage() {
                   <Img
                     src={
                       behaviorFilter === give
-                        ? transaction.dealer.avatarUrl
-                        : transaction.owner.avatarUrl
+                        ? transaction.dealer.avatarUrl.imgUrl
+                        : transaction.owner.avatarUrl.imgUrl
                     }
                   />
                 </Avatar>
@@ -220,7 +220,7 @@ export default function TransactionsPage() {
               <ContentAndButtons>
                 <Content>
                   <PostImg>
-                    <Img src={transaction.post.imgUrls[0]} />
+                    <Img src={transaction.post.imgUrls[0].imgUrl} />
                   </PostImg>
                   <Detail>
                     <ItemName>{transaction.post.itemName}</ItemName>
