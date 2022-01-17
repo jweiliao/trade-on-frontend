@@ -27,13 +27,10 @@ export default function useTransactions() {
 
   const fetchTransactions = useCallback(() => {
     const fetchingTransactions = async () => {
-      const { data } = await getAllTransactions(1000)
-      if (data.error) {
-        Swal.fire('發生錯誤！')
-        return
-      }
-      if (data.message === 'No deal submitted yet.') return
-      setTransactions(data.allTransactions)
+      const {
+        data: { allTransactions },
+      } = await getAllTransactions(1000)
+      if (allTransactions) setTransactions(allTransactions)
     }
 
     fetchingTransactions()

@@ -54,8 +54,8 @@ const Home = () => {
       <ScrollToTop />
       <Switch>
         <Route exact path="/" component={HomePage} />
-        <Route path="/login" component={LoginPage} />
-        <Route path="/register" component={RegisterPage} />
+        {!user && <Route path="/login" component={LoginPage} />}
+        {!user && <Route path="/register" component={RegisterPage} />}
         <Route path="/about" component={AboutPage} />
         <Route exact path="/givings" component={GivingsPage} />
         {user && <Route path="/givings/add" component={AddGiftPage} />}

@@ -83,9 +83,14 @@ export default function ManageFaqPage() {
     currentFaqs,
     addPopUp,
     handleToggleAddPopUp,
+    handleInput,
+    handleAddFaq,
     editPopUp,
     editedFaq,
     handleToggleEditPopUp,
+    updateFaqData,
+    handleEditInput,
+    handleUpdateFaq,
     handleDeleteFaq,
     faqsPerPage,
     currentPage,
@@ -96,13 +101,6 @@ export default function ManageFaqPage() {
     <Container>
       <Title>常見問題管理</Title>
       <AddNewFaqButton onClick={handleToggleAddPopUp}>新增問答</AddNewFaqButton>
-      {addPopUp && (
-        <ManageFaqAdd
-          setFaqs={setFaqs}
-          faqs={faqs}
-          handleToggleAddPopUp={handleToggleAddPopUp}
-        />
-      )}
       <FaqWrapper>
         {currentFaqs.map((faq) => {
           return (
@@ -126,12 +124,24 @@ export default function ManageFaqPage() {
             </FaqContent>
           )
         })}
+        {addPopUp && (
+          <ManageFaqAdd
+            setFaqs={setFaqs}
+            faqs={faqs}
+            handleToggleAddPopUp={handleToggleAddPopUp}
+            handleInput={handleInput}
+            handleAddFaq={handleAddFaq}
+          />
+        )}
         {editPopUp && (
           <ManageFaqEdit
             editedFaq={editedFaq}
             setFaqs={setFaqs}
             faqs={faqs}
             handleToggleEditPopUp={handleToggleEditPopUp}
+            updateFaqData={updateFaqData}
+            handleEditInput={handleEditInput}
+            handleUpdateFaq={handleUpdateFaq}
           />
         )}
       </FaqWrapper>
