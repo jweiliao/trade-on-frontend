@@ -92,7 +92,9 @@ const DeleteBtn = styled.p`
 `
 
 export default function Messages({ days, messages, handleDeleteMessage }) {
-  const { user } = useContext(AuthContext)
+  const {
+    user: { id: userId },
+  } = useContext(AuthContext)
   const containerRef = useRef(null)
 
   useEffect(() => {
@@ -116,12 +118,12 @@ export default function Messages({ days, messages, handleDeleteMessage }) {
               return (
                 <React.Fragment key={message.id}>
                   {day === message.createdAt.split(' ')[0] && (
-                    <MessageWrapper $isMyself={message.author === user.id}>
-                      <Message $isMyself={message.author === user.id}>
+                    <MessageWrapper $isMyself={message.author._id === userId}>
+                      <Message $isMyself={message.author._id === userId}>
                         <TimeAndBtn>
                           {!message.isDeleted && (
                             <DeleteBtn
-                              $isMyself={message.author === user.id}
+                              $isMyself={message.author._id === userId}
                               onClick={() => handleDeleteMessage(message.id)}
                             >
                               刪除
@@ -129,7 +131,7 @@ export default function Messages({ days, messages, handleDeleteMessage }) {
                           )}
                           <Time>{message.createdAt.split(' ')[1]}</Time>
                         </TimeAndBtn>
-                        <Content $isMyself={message.author === user.id}>
+                        <Content $isMyself={message.author._id === userId}>
                           {message.isDeleted ? (
                             <DeletedContent>此則留言已被刪除</DeletedContent>
                           ) : (

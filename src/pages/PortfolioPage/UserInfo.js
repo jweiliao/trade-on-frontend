@@ -133,7 +133,7 @@ const UserInfo = ({ userData }) => {
   return (
     <Wrapper>
       <Avatar>
-        <Img src={userData && userData.avatarUrl} />
+        <Img src={userData && userData.avatarUrl.imgUrl} />
       </Avatar>
       <User>
         <Email>{userData && userData.email}</Email>

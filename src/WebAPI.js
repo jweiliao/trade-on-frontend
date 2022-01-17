@@ -36,52 +36,49 @@ instance.interceptors.response.use(
 )
 
 // user
-export const register = async (email, nickname, password, confirmPassword) =>
-  await instance.post('/users/register', {
+export const register = (email, nickname, password, confirmPassword) =>
+  instance.post('/users/register', {
     email,
     nickname,
     password,
     confirmPassword,
   })
 
-export const login = async (email, password) =>
-  await instance.post('/users/login', { email, password })
+export const login = (email, password) =>
+  instance.post('/users/login', { email, password })
 
-export const getMe = async () => await instance.get('/users/me')
+export const getMe = () => instance.get('/users/me')
 
-export const logout = async () => await instance.get('/users/logout')
+export const getUser = (id) => instance.get(`/users/${id}`)
 
-export const getUser = async (id) => await instance.get(`/users/${id}`)
-
-export const getUserRecord = async (id, limit, type, status) =>
-  await instance.get(
+export const getUserRecord = (id, limit, type, status) =>
+  instance.get(
     `/users/${id}/record?size=${limit}&type=${type}&status=${status}`
   )
 
 // transaction
-export const getAllTransactions = async (limit) =>
+export const getAllTransactions = (limit) =>
   instance.get(`/transactions/all?size=${limit}`)
 
-export const getTransaction = async (id) => instance.get(`/transactions/${id}`)
+export const getTransaction = (id) => instance.get(`/transactions/${id}`)
 
-export const cancelTransaction = async (id) =>
+export const cancelTransaction = (id) =>
   instance.put(`/transactions/${id}/cancel`)
 
-export const updateShippingInfo = async (id, data) =>
+export const updateShippingInfo = (id, data) =>
   instance.put(`/transactions/${id}/filling-info`, data)
 
-export const checkPayment = async (id) =>
-  instance.put(`/transactions/${id}/payment`)
+export const checkPayment = (id) => instance.put(`/transactions/${id}/payment`)
 
-export const checkComplete = async (id) =>
+export const checkComplete = (id) =>
   instance.put(`/transactions/${id}/complete`)
 
 // message
-export const getDealMessage = async (id) => instance.get(`/messages/deal/${id}`)
+export const getDealMessage = (id) => instance.get(`/messages/deal/${id}`)
 
-export const addMessage = async (data) => instance.post('/messages/new', data)
+export const addMessage = (data) => instance.post('/messages/new', data)
 
-export const deleteMessage = async (id) => instance.delete(`/messages/${id}`)
+export const deleteMessage = (id) => instance.delete(`/messages/${id}`)
 
 // faq
 export const getAllFaqs = (limit) =>
