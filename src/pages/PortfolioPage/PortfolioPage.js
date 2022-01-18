@@ -66,7 +66,8 @@ export default function PortfolioPage() {
           >
             <CardImage
               src={
-                (record.imgUrls && record.imgUrls[0]) || record.post.imgUrls[0]
+                (record.imgUrls && record.imgUrls[0].imgUrl) ||
+                record.post.imgUrls[0].imgUrl
               }
             ></CardImage>
             <CardContent>

@@ -55,14 +55,14 @@ export default function RegisterPage() {
 
   const initialValues = {
     email: '',
-    name: '',
+    nickname: '',
     password: '',
     confirmPassword: '',
   }
 
   const validationSchema = Yup.object({
     email: Yup.string().email('信箱格式不正確').required('此欄位為必填'),
-    name: Yup.string().required('此欄位為必填'),
+    nickname: Yup.string().required('此欄位為必填'),
     password: Yup.string()
       .matches(
         /^(?=.*[A-Za-z])(?=.*[0-9])(?=.{6,})/,
@@ -76,12 +76,7 @@ export default function RegisterPage() {
 
   const handleRegister = async (values) => {
     try {
-      const res = await register(
-        values.email,
-        values.name,
-        values.password,
-        values.confirmPassword
-      )
+      const res = await register(values)
       if (res.status === 200) {
         setAuthToken(res.data.token)
         setUser(res.data.newUser)
@@ -97,13 +92,6 @@ export default function RegisterPage() {
         })
         return
       }
-      Swal.fire({
-        icon: 'error',
-        title: '錯誤',
-        text: '系統問題，請稍候',
-        showConfirmButton: false,
-        timer: 1500,
-      })
     }
   }
 
@@ -133,7 +121,7 @@ export default function RegisterPage() {
               <FormikControl
                 control="input"
                 label="暱稱"
-                name="name"
+                name="nickname"
                 placeholder="輸入暱稱"
               />
               <FormikControl

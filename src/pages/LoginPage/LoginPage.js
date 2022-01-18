@@ -50,26 +50,17 @@ export default function LoginPage() {
   })
 
   const handleLogin = async (values) => {
-    try {
-      const res = await login(values.email, values.password)
-      if (res.data.message === 'success') {
-        setAuthToken(res.data.token)
-        setUser(res.data.userInfo)
-        history.push('/givings')
-      }
-      if (res.data.error) {
-        Swal.fire({
-          icon: 'error',
-          text: '帳號或密碼輸入錯誤',
-          showConfirmButton: false,
-          timer: 1500,
-        })
-      }
-    } catch (err) {
+    const res = await login(values)
+    if (res.data.message === 'success') {
+      setAuthToken(res.data.token)
+      setUser(res.data.userInfo)
+      history.push('/givings')
+      return
+    }
+    if (res.data.error) {
       Swal.fire({
         icon: 'error',
-        title: '錯誤',
-        text: '系統問題，請稍候',
+        text: '帳號或密碼輸入錯誤',
         showConfirmButton: false,
         timer: 1500,
       })

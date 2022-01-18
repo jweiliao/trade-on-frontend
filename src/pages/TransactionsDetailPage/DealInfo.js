@@ -40,7 +40,7 @@ const DealInfo = ({ transaction }) => {
   return (
     <>
       <ObjectImage>
-        <Img src={transaction.post && transaction.post.imgUrls[0]} />
+        <Img src={transaction.post && transaction.post.imgUrls[0].imgUrl} />
       </ObjectImage>
       <TextWrapper>
         <ObjectName>{transaction.post && transaction.post.itemName}</ObjectName>

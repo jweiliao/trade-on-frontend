@@ -37,7 +37,7 @@ const User = ({ user }) => {
   return (
     <Wrapper>
       <Avatar as={Link} to={`/portfolio/${user._id}`}>
-        <Img src={user.avatarUrl} />
+        <Img src={user.avatarUrl && user.avatarUrl.imgUrl} />
       </Avatar>
       <Email as={Link} to={`/portfolio/${user._id}`}>
         {user.email}

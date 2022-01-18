@@ -104,7 +104,7 @@ export default function GivingsPage() {
       <Cards>
         {currentPosts.map((post) => (
           <Card key={post.id} as={Link} to={`/givings/${post.id}`}>
-            <CardImage alt={'物品圖片'} src={post.imgUrls[0]}></CardImage>
+            <CardImage alt={'物品圖片'} src={post.imgUrls[0].imgUrl} />
             <CardContent>
               <CardTitle>{post.itemName}</CardTitle>
             </CardContent>

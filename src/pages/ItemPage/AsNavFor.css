@@ -6,7 +6,8 @@
 }
 
 .sliders {
-  width: 521px;
+  /* max-width: 521px; */
+  width: 100%;
 }
 
 /* 包住整個圖片的區塊 */
@@ -20,7 +21,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* object-position: center center; */
+  object-position: center center;
 }
 
 /* 下方小圖 */
@@ -40,7 +41,8 @@
 
 @media only screen and (max-width: 768px) {
   .sliders-wrap {
-    margin-left: -29px;
+    margin-left: 10px;
+    justify-content: center;
   }
 
   .thumbnail_sliders-item .thumbnail_slider-img {

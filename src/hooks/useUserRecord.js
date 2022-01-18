@@ -1,13 +1,12 @@
 import { useState, useEffect, useContext, useRef } from 'react'
 import { useHistory } from 'react-router'
-import { useLocation } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import AuthContext from '../contexts'
 import { getUser, getUserRecord } from '../WebAPI'
 
 export default function useUserRecord() {
   const history = useHistory()
-  const location = useLocation()
-  const userId = location.pathname.slice(11)
+  const { id: userId } = useParams()
   const { user } = useContext(AuthContext)
   const [userData, setUserData] = useState()
 
@@ -50,23 +49,31 @@ export default function useUserRecord() {
     }
 
     const fetchGiveAllRecords = async (id) => {
-      const { data } = await getUserRecord(id, 1000, 'give', 'all')
-      setGiveAllRecord(data.allRelatedPosts)
+      const {
+        data: { allRelatedPosts },
+      } = await getUserRecord(id, 1000, 'give', 'all')
+      if (allRelatedPosts) setGiveAllRecord(allRelatedPosts)
     }
 
     const fetchGiveCompleteRecords = async (id) => {
-      const { data } = await getUserRecord(id, 1000, 'give', 'complete')
-      setGiveCompleteRecord(data.allRelatedPosts)
+      const {
+        data: { allRelatedPosts },
+      } = await getUserRecord(id, 1000, 'give', 'complete')
+      if (allRelatedPosts) setGiveCompleteRecord(allRelatedPosts)
     }
 
     const fetchTakeAllRecords = async (id) => {
-      const { data } = await getUserRecord(id, 1000, 'take', 'all')
-      setTakeAllRecord(data.allRelatedPosts)
+      const {
+        data: { allRelatedPosts },
+      } = await getUserRecord(id, 1000, 'take', 'all')
+      if (allRelatedPosts) setTakeAllRecord(allRelatedPosts)
     }
 
     const fetchTakeCompleteRecords = async (id) => {
-      const { data } = await getUserRecord(id, 1000, 'take', 'complete')
-      setTakeCompleteRecord(data.allRelatedPosts)
+      const {
+        data: { allRelatedPosts },
+      } = await getUserRecord(id, 1000, 'take', 'complete')
+      if (allRelatedPosts) setTakeCompleteRecord(allRelatedPosts)
     }
 
     if (userId) {
@@ -105,6 +112,8 @@ export default function useUserRecord() {
     giveCompleteRecord,
     takeAllRecord,
     takeCompleteRecord,
+    give,
+    take,
   ])
 
   useEffect(() => {

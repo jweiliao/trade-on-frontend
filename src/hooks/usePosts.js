@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import Swal from 'sweetalert2'
-import { getAllPosts, PostPublishStatus } from '../WebAPI'
+import { getAllPosts, updatePostStatus } from '../WebAPI'
 
 export default function usePosts() {
   const [posts, setPosts] = useState([])
@@ -38,7 +38,7 @@ export default function usePosts() {
           reverseButtons: true,
         }).then((result) => {
           if (result.isConfirmed) {
-            PostPublishStatus(id).then((res) => {
+            updatePostStatus(id).then((res) => {
               // console.log(res.data.update)
               // console.log(res.data.update.isPublic)
               const updatedStatus = res.data.update
@@ -82,7 +82,7 @@ export default function usePosts() {
           reverseButtons: true,
         }).then((result) => {
           if (result.isConfirmed) {
-            PostPublishStatus(id).then((res) => {
+            updatePostStatus(id).then((res) => {
               // console.log(res.data.update)
               // console.log(res.data.update.isPublic)
               const updatedStatus = res.data.update
