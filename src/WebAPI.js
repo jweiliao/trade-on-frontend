@@ -56,9 +56,11 @@ export const updateAvatar = (id, data) =>
 
 export const updateUserInfo = (id, data) => instance.put(`/users/${id}`, data)
 
-export const updateUserPassword = (id) => instance.put(`/users/${id}/password`)
+export const updateUserPassword = (id, data) =>
+  instance.put(`/users/${id}/password`, data)
 
-export const updateUserRole = (id) => instance.put(`/users/${id}/role`)
+export const updateUserRole = (id, data) =>
+  instance.put(`/users/${id}/role`, data)
 
 export const deleteUser = (id) => instance.delete(`/users/${id}/delete`)
 
@@ -101,8 +103,8 @@ export const getTransaction = (id) => instance.get(`/transactions/${id}`)
 export const acceptTransaction = (id, data) =>
   instance.post(`/transactions/message/${id}/accept`, data)
 
-export const updateTransactionAccount = (id) =>
-  instance.put(`/transactions/user/${id}/account-info`)
+export const updateTransactionAccount = (id, data) =>
+  instance.put(`/transactions/user/${id}/account-info`, data)
 
 export const cancelTransaction = (id) =>
   instance.put(`/transactions/${id}/cancel`)
