@@ -8,9 +8,8 @@ import { MEDIA_QUERY_SM } from '../styles/breakpoints'
 import axios from 'axios'
 import ReactCrop from 'react-image-crop'
 import 'react-image-crop/dist/ReactCrop.css'
-import { PutAvatar } from '../WebAPI'
 import AuthContext from '../contexts'
-import { getMe, updateUserInfo } from '../WebAPI'
+import { getMe, updateAvatar, updateUserInfo } from '../WebAPI'
 import { getAuthToken } from '../utils'
 
 /* 彈窗出現時的遮罩背景 */
@@ -144,9 +143,9 @@ export default function UpdatePortfolioPw({ AvPwPopUp, closeModal }) {
         const avatarLink = {
           avatarUrl: link,
         }
-        PutAvatar(id, avatarLink)
+        updateAvatar(id, avatarLink)
           .then((res) => {
-            // PutAvatar
+            // updateAvatar
             Swal.fire({
               icon: 'success',
               title: '圖片上傳成功',
@@ -159,7 +158,7 @@ export default function UpdatePortfolioPw({ AvPwPopUp, closeModal }) {
           .then((err) => {
             console.log(err)
           })
-        // PutAvatar
+        // updateAvatar
       })
       .catch(function (error) {
         Swal.fire({

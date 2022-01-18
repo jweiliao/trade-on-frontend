@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
-import { getDealMessage, addMessage, deleteMessage } from '../WebAPI'
+import { getDealMessages, addMessage, deleteMessage } from '../WebAPI'
 
 export default function useDealMessage() {
   const { id: tradeRecordId } = useParams()
@@ -13,7 +13,7 @@ export default function useDealMessage() {
     const fetchMessage = async () => {
       const {
         data: { dealMessages },
-      } = await getDealMessage(tradeRecordId)
+      } = await getDealMessages(tradeRecordId)
       if (dealMessages) setMessages(dealMessages)
     }
 

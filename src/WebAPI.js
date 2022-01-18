@@ -36,18 +36,9 @@ instance.interceptors.response.use(
 )
 
 // 使用者
-export const register = (email, nickname, password, confirmPassword) =>
-  instance.post('/users/register', {
-    email,
-    nickname,
-    password,
-    confirmPassword,
-  })
-
-export const login = (email, password) =>
-  instance.post('/users/login', { email, password })
-
 export const getMe = () => instance.get('/users/me')
+
+export const getAllUsers = (limit) => instance.get(`/users/all?size=${limit}`)
 
 export const getUser = (id) => instance.get(`/users/${id}`)
 
@@ -56,37 +47,41 @@ export const getUserRecord = (id, limit, type, status) =>
     `/users/${id}/record?size=${limit}&type=${type}&status=${status}`
   )
 
-export const PutAvatar = (id, data) => instance.put(`/users/${id}/avatar`, data)
+export const register = (data) => instance.post('/users/register', data)
+
+export const login = (data) => instance.post('/users/login', data)
+
+export const updateAvatar = (id, data) =>
+  instance.put(`/users/${id}/avatar`, data)
 
 export const updateUserInfo = (id, data) => instance.put(`/users/${id}`, data)
+
+export const updateUserPassword = (id) => instance.put(`/users/${id}/password`)
+
+export const updateUserRole = (id) => instance.put(`/users/${id}/role`)
+
+export const deleteUser = (id) => instance.delete(`/users/${id}/delete`)
 
 // 贈物文
 export const getAllPosts = (limit) => instance.get(`/posts/all?size=${limit}`)
 
-export const getPost = (id) => instance.get(`/posts/${id}`)
+export const getPublicPosts = (limit) =>
+  instance.get(`/posts/all?size=${limit}&isPublic=true`)
 
-export const getLimitPost = (page, limit, owner, isPublic) =>
-  instance.get(
-    `/posts/all?page=${page}&size=${limit}&user=${owner}&isPublic=${isPublic}`
-  )
+export const getPost = (id) => instance.get(`/posts/${id}`)
 
 export const addPost = (data) => instance.post('/posts/new', data)
 
 export const updatePost = (id, data) => instance.put(`/posts/${id}`, data)
 
+export const updatePostStatus = (id) => instance.put(`/posts/${id}/status`)
+
 export const deletePost = (id) => instance.delete(`/posts/${id}`)
 
-export const PostPublishStatus = (id) => instance.put(`/posts/${id}/status`)
-
 // 留言
-export const getAllMessages = (limit) =>
-  instance.get(`/messages/all?size=${limit}`)
+export const getPostMessages = (id) => instance.get(`/messages/post/${id}`)
 
-export const getPostMessage = (id) => instance.get(`/messages/post/${id}`)
-
-export const getDealMessage = (id) => instance.get(`/messages/deal/${id}`)
-
-export const getMessage = (id) => instance.get(`/messages/${id}`)
+export const getDealMessages = (id) => instance.get(`/messages/deal/${id}`)
 
 export const addMessage = (data) => instance.post('/messages/new', data)
 
@@ -103,19 +98,26 @@ export const getAllTransactions = (limit) =>
 
 export const getTransaction = (id) => instance.get(`/transactions/${id}`)
 
+export const acceptTransaction = (id, data) =>
+  instance.post(`/transactions/message/${id}/accept`, data)
+
+export const updateTransactionAccount = (id) =>
+  instance.put(`/transactions/user/${id}/account-info`)
+
 export const cancelTransaction = (id) =>
   instance.put(`/transactions/${id}/cancel`)
 
 export const updateShippingInfo = (id, data) =>
   instance.put(`/transactions/${id}/filling-info`, data)
 
-export const checkPayment = (id) => instance.put(`/transactions/${id}/payment`)
+export const checkTransactionPayment = (id) =>
+  instance.put(`/transactions/${id}/payment`)
 
-export const checkComplete = (id) =>
+export const checkTransactionComplete = (id) =>
   instance.put(`/transactions/${id}/complete`)
 
 // 常見問題
-export const getAllFaqs = instance.get(`/commonqnas/all`)
+export const getAllFaqs = () => instance.get('/commonqnas/all')
 
 export const getFaq = (id) => instance.get(`/commonqnas/${id}`)
 
@@ -125,11 +127,8 @@ export const updateFaq = (id, data) => instance.put(`/commonqnas/${id}`, data)
 
 export const deleteFaq = (id) => instance.delete(`/commonqnas/${id}`)
 
-export const getLimitFaq = (page, limit) =>
-  instance.get(`/commonqnas/all?page=${page}&size=${limit}`)
-
 // 物品分類
-export const getAllCategories = instance.get(`/category/all`)
+export const getAllCategories = () => instance.get('/category/all')
 
 export const getCategory = (id) => instance.get(`/category/${id}`)
 
@@ -139,8 +138,3 @@ export const updateCategory = (id, data) =>
   instance.put(`/category/${id}`, data)
 
 export const deleteCategory = (id) => instance.delete(`/category/${id}`)
-
-
-
-
-

@@ -21,7 +21,7 @@ export default function useFaqs() {
 
   useEffect(() => {
     const fetchFaqs = async () => {
-      const res = await getAllFaqs
+      const res = await getAllFaqs()
       setFaqs(res.data.allQAs)
     }
 

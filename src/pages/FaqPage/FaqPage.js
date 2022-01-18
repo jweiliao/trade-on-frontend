@@ -47,7 +47,7 @@ export default function FaqPage() {
   // 第一次進入頁面時，撈後端資料，並帶入 faqData 的 state
   useEffect(() => {
     const fetchFaqs = async () => {
-      const res = await getAllFaqs
+      const res = await getAllFaqs()
       setFaqData(res.data.allQAs)
     }
 

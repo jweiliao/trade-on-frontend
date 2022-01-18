@@ -24,7 +24,7 @@ export default function useCategories() {
 
   useEffect(() => {
     const fetchCategories = async () => {
-      const res = await getAllCategories
+      const res = await getAllCategories()
       setCategories(res.data.categories)
     }
 

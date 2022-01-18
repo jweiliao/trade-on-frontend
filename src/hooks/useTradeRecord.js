@@ -6,8 +6,8 @@ import {
   getTransaction,
   cancelTransaction,
   updateShippingInfo,
-  checkPayment,
-  checkComplete,
+  checkTransactionPayment,
+  checkTransactionComplete,
 } from '../WebAPI'
 import Swal from 'sweetalert2'
 import dealStatus from '../constants/dealStatus'
@@ -159,7 +159,7 @@ export default function useTradeRecord() {
         break
 
       case toCharge:
-        checkPayment(id).then((res) => {
+        checkTransactionPayment(id).then((res) => {
           if (res.data.message === 'success') {
             setTradeRecord({
               ...tradeRecord,
@@ -170,7 +170,7 @@ export default function useTradeRecord() {
         break
 
       case delivering:
-        checkComplete(id).then((res) => {
+        checkTransactionComplete(id).then((res) => {
           if (res.data.message === 'success') {
             setTradeRecord({
               ...tradeRecord,

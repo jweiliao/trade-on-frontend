@@ -3,7 +3,7 @@ import Swal from 'sweetalert2'
 
 // 引入留言相關的 API (取得 post 的所有留言以及新增、更新、刪除、回覆留言)
 import {
-  getPostMessage,
+  getPostMessages,
   addMessage,
   updateMessage,
   deleteMessage,
@@ -63,7 +63,7 @@ export default function useComments(isApplyMessage, postMessageId) {
     const fetchMessages = async () => {
       if (postMessageId) {
         // 串接拿到特定 post 中所有留言的 API
-        const res = await getPostMessage(postMessageId)
+        const res = await getPostMessages(postMessageId)
         // 拿到回傳的所有留言
         const messages = res.data.postMessages
         console.log('resMessage', res.data.postMessages)
