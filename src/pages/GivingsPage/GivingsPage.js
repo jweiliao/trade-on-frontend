@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import Container from '../../components/Container'
@@ -13,7 +13,6 @@ import {
   EmptyCard,
 } from '../../components/card'
 import Pagination from '../../components/Pagination/Pagination'
-
 import givingsbanner from '../../images/givingsBanner.svg'
 import { getAllPosts } from '../../WebAPI'
 
@@ -65,7 +64,7 @@ const UploadGiftButton = styled(MediumButton)`
 export default function GivingsPage() {
   const [posts, setPosts] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
-  const postsPerPage = 12
+  const postsPerPage = 24
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -80,7 +79,13 @@ export default function GivingsPage() {
   const indexOfFirstPost = indexOfLastPost - postsPerPage
   const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost)
 
-  const handleChangePage = (pageNumber) => setCurrentPage(pageNumber)
+  const scrollRef = useRef(null)
+  const scrollToTop = () => scrollRef.current.scrollIntoView()
+
+  const handleChangePage = (pageNumber) => {
+    setCurrentPage(pageNumber)
+    scrollToTop()
+  }
 
   return (
     <Container>
@@ -93,13 +98,13 @@ export default function GivingsPage() {
           <UploadGiftButton as={Link} to="/givings/add">
             上傳禮物
           </UploadGiftButton>
-          <SubTitle>目前上架中的禮物有...</SubTitle>
+          <SubTitle ref={scrollRef}>目前上架中的禮物有...</SubTitle>
         </BannerTextWrapper>
       </Banner>
       <Cards>
         {currentPosts.map((post) => (
           <Card key={post.id} as={Link} to={`/givings/${post.id}`}>
-            <CardImage alt={'物品圖片'} src={`post.imgUrls`}></CardImage>
+            <CardImage alt={'物品圖片'} src={post.imgUrls[0].imgUrl} />
             <CardContent>
               <CardTitle>{post.itemName}</CardTitle>
             </CardContent>
@@ -114,6 +119,7 @@ export default function GivingsPage() {
         totalData={posts.length}
         handleChangePage={handleChangePage}
         currentPage={currentPage}
+        scrollRef={scrollRef}
       />
     </Container>
   )

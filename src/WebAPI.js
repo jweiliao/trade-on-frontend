@@ -4,18 +4,13 @@ import Swal from 'sweetalert2'
 
 const config = {
   apiHost1: 'http://localhost:8081',
-  apiHost2: 'https:/cosdelus.tw/tradeon/api',
+  apiHost2: 'https://cosdelus.tw/tradeon/api',
 }
 
 const instance = axios.create({
   baseURL: config.apiHost2,
 })
 
-/***************
-   登入機制相關
-***************/
-
-// 註冊
 instance.interceptors.request.use((config) => {
   config.headers.withCredentials = true
   config.headers.Authorization = `Bearer ${getAuthToken()}`
@@ -40,58 +35,86 @@ instance.interceptors.response.use(
   }
 )
 
-// user
-export const register = async (email, nickname, password, confirmPassword) =>
-  await instance.post('/users/register', {
+// 使用者
+export const register = (email, nickname, password, confirmPassword) =>
+  instance.post('/users/register', {
     email,
     nickname,
     password,
     confirmPassword,
   })
 
-// 登入
-export const login = async (email, password) =>
-  await instance.post('/users/login', { email, password })
+export const login = (email, password) =>
+  instance.post('/users/login', { email, password })
 
-// 註冊、登入後取得使用者的 token
-export const getMe = async () => await instance.get(`/users/me`)
+export const getMe = () => instance.get('/users/me')
 
-// 登出
-export const logout = async () => await instance.get('/users/logout')
+export const getUser = (id) => instance.get(`/users/${id}`)
 
-/***************
-   交易相關
-***************/
-export const getAllTransactions = async (limit) =>
+export const getUserRecord = (id, limit, type, status) =>
+  instance.get(
+    `/users/${id}/record?size=${limit}&type=${type}&status=${status}`
+  )
+
+export const PutAvatar = (id, data) => instance.put(`/users/${id}/avatar`, data)
+
+export const updateUserInfo = (id, data) => instance.put(`/users/${id}`, data)
+
+// 贈物文
+export const getAllPosts = (limit) => instance.get(`/posts/all?size=${limit}`)
+
+export const getPost = (id) => instance.get(`/posts/${id}`)
+
+export const getLimitPost = (page, limit, owner, isPublic) =>
+  instance.get(
+    `/posts/all?page=${page}&size=${limit}&user=${owner}&isPublic=${isPublic}`
+  )
+
+export const addPost = (data) => instance.post('/posts/new', data)
+
+export const updatePost = (id, data) => instance.put(`/posts/${id}`, data)
+
+export const deletePost = (id) => instance.delete(`/posts/${id}`)
+
+export const PostPublishStatus = (id) => instance.put(`/posts/${id}/status`)
+
+// 留言
+export const getAllMessages = (limit) =>
+  instance.get(`/messages/all?size=${limit}`)
+
+export const getPostMessage = (id) => instance.get(`/messages/post/${id}`)
+
+export const getDealMessage = (id) => instance.get(`/messages/deal/${id}`)
+
+export const getMessage = (id) => instance.get(`/messages/${id}`)
+
+export const addMessage = (data) => instance.post('/messages/new', data)
+
+export const replyMessage = (id, data) =>
+  instance.post(`/messages/${id}/new`, data)
+
+export const updateMessage = (id, data) => instance.put(`/messages/${id}`, data)
+
+export const deleteMessage = (id) => instance.delete(`/messages/${id}`)
+
+// 交易紀錄
+export const getAllTransactions = (limit) =>
   instance.get(`/transactions/all?size=${limit}`)
 
-export const getTransaction = async (id) => instance.get(`/transactions/${id}`)
+export const getTransaction = (id) => instance.get(`/transactions/${id}`)
 
-export const cancelTransaction = async (id) =>
+export const cancelTransaction = (id) =>
   instance.put(`/transactions/${id}/cancel`)
 
-export const acceptTransaction = async (id, data) =>
-  instance.post(`/transactions/message/${id}/accept`, data)
-
-export const updateShippingInfo = async (id, data) =>
+export const updateShippingInfo = (id, data) =>
   instance.put(`/transactions/${id}/filling-info`, data)
 
-export const checkPayment = async (id) =>
-  instance.put(`/transactions/${id}/payment`)
+export const checkPayment = (id) => instance.put(`/transactions/${id}/payment`)
 
-export const checkComplete = async (id) =>
+export const checkComplete = (id) =>
   instance.put(`/transactions/${id}/complete`)
 
-// message
-export const getDealMessage = async (id) => instance.get(`/messages/deal/${id}`)
-
-export const addMessage = async (data) => instance.post('/messages/new', data)
-
-export const deleteMessage = async (id) => instance.delete(`/messages/${id}`)
-
-/***************
-   常見問題相關
-***************/
+// 常見問題
 export const getAllFaqs = instance.get(`/commonqnas/all`)
 
 export const getFaq = (id) => instance.get(`/commonqnas/${id}`)
@@ -105,80 +128,19 @@ export const deleteFaq = (id) => instance.delete(`/commonqnas/${id}`)
 export const getLimitFaq = (page, limit) =>
   instance.get(`/commonqnas/all?page=${page}&size=${limit}`)
 
-/***************
-   分類相關
-***************/
-
-// 取得分類
+// 物品分類
 export const getAllCategories = instance.get(`/category/all`)
 
-// 取得特定一筆分類
 export const getCategory = (id) => instance.get(`/category/${id}`)
 
-// 新增分類
 export const addCategory = (data) => instance.post('/category/new', data)
 
-// 編輯分類
 export const updateCategory = (id, data) =>
   instance.put(`/category/${id}`, data)
 
-// 刪除分類
 export const deleteCategory = (id) => instance.delete(`/category/${id}`)
 
-/***************
-   贈物文相關
- ***************/
 
-// 取得贈物文
-export const getAllPosts = (limit) => instance.get(`/posts/all?size=${limit}`)
 
-// 取得特定一筆贈物文
-export const getPost = (id) => instance.get(`/posts/${id}`)
 
-// 取得特定某幾筆贈物文（篩選：頁碼、每頁多少筆、發文者、上下架）
-export const getLimitPost = (page, limit, owner, isPublic) =>
-  instance.get(
-    `/posts/all?page=${page}&size=${limit}&user=${owner}&isPublic=${isPublic}`
-  )
 
-// 新增贈物文
-export const addPost = (data) => instance.post('/posts/new', data)
-
-// 編輯贈物文
-export const updatePost = (id, data) => instance.put(`/posts/${id}`, data)
-
-// 刪除贈物文
-export const deletePost = (id) => instance.delete(`/posts/${id}`)
-
-// 上架或下架贈物文
-export const PostPublishStatus = (id) => instance.put(`/posts/${id}/status`)
-
-/***************
-   留言相關
-***************/
-
-// 取得留言
-export const getAllMessages = (limit) =>
-  instance.get(`/messages/all?size=${limit}`)
-
-// 取得該刊登的留言，包含問題和申請索取
-export const getPostMessage = (id) => instance.get(`/messages/post/${id}`)
-
-// 取得該交易進程的留言。
-// export const getDealMessage = (id) => instance.get(`/messages/deal/${id}`)
-
-// 取得該留言或回覆
-export const getMessage = (id) => instance.get(`/messages/${id}`)
-
-// 新增留言
-// export const addMessage = (data) => instance.post('/messages/new', data)
-
-// 新增回覆
-export const replyMessage = (id, data) =>
-  instance.post(`/messages/${id}/new`, data)
-
-// 編輯留言
-export const updateMessage = (id, data) => instance.put(`/messages/${id}`, data)
-
-// 刪除留言
-// export const deleteMessage = (id) => instance.delete(`/messages/${id}`)

@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react'
-import { useLocation } from 'react-router'
+import { useParams } from 'react-router-dom'
 import { getDealMessage, addMessage, deleteMessage } from '../WebAPI'
 
 export default function useDealMessage() {
-  const location = useLocation()
-  const tradeRecordId = location.pathname.slice(14)
+  const { id: tradeRecordId } = useParams()
   const [value, setValue] = useState('')
   const [messages, setMessages] = useState([])
   const [days, setDays] = useState([])
@@ -15,16 +14,19 @@ export default function useDealMessage() {
       const {
         data: { dealMessages },
       } = await getDealMessage(tradeRecordId)
-      setMessages(dealMessages)
+      if (dealMessages) setMessages(dealMessages)
     }
 
     fetchMessage()
   }, [tradeRecordId])
 
   useEffect(() => {
-    const daysData = messages.map((dealMessage) => {
-      return dealMessage.createdAt.split(' ')[0]
-    })
+    let daysData = []
+    if (messages) {
+      daysData = messages.map((dealMessage) => {
+        return dealMessage.createdAt.split(' ')[0]
+      })
+    }
     setDays([...new Set(daysData)])
   }, [messages])
 

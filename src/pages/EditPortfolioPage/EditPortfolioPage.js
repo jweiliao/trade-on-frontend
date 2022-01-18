@@ -1,14 +1,20 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import styled from 'styled-components'
 import Container from '../../components/Container'
 import { SmallButton, LargeButton } from '../../components/buttons'
 import { SubTitle } from '../../components/heading'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 import UpdatePortfolioPw from '../../components/UpdatePortfolioPw'
+import AvatarUploader from '../../components/AvatarUploader'
 import { Link } from 'react-router-dom'
+import { useHistory } from 'react-router'
 import { Formik, Form } from 'formik'
 import * as Yup from 'yup'
 import FormikControl from '../../components/FormikControl'
+import AuthContext from '../../contexts'
+import { getMe, updateUserInfo } from '../../WebAPI'
+import { getAuthToken } from '../../utils'
+import { DistrictData } from '../../constants/DistrictData'
 
 const BorderWrapper = styled(Form)`
   border: ${(props) => props.theme.general_300} solid 1px;
@@ -134,8 +140,6 @@ const Note = styled.span`
 
 const BankCode = styled(Name)``
 
-const BankName = styled(Name)``
-
 const BankAccount = styled(Name)``
 
 const ButtonsWrapper = styled.div`
@@ -162,32 +166,61 @@ const CancelButton = styled(UpdateButton)`
 `
 
 export default function EditPortfolioPage() {
-  const tradingOptions = [
-    { key: '7-11 店到店', value: '7-11 店到店' },
-    { key: '全家店到店', value: '全家店到店' },
+  const {
+    user: {
+      account,
+      avatarUrl,
+      email,
+      nickname,
+      id,
+      introduction,
+      preferDealMethods,
+    },
+  } = useContext(AuthContext)
+
+  const { user, setUser } = useContext(AuthContext)
+  console.log(user)
+  const history = useHistory()
+  const tradingOption = [
+    { key: '7-11 店到店', value: '7-11' },
+    { key: '全家店到店', value: '全家' },
     { key: '面交', value: '面交' },
   ]
 
-  const regionOptions = [{ key: '基隆市', value: '基隆市' }]
+  const regionOptions = [
+    // {
+    //   key: '',
+    //   value: preferDealMethods && preferDealMethods.faceToFace.region,
+    // },
+    ...DistrictData,
+  ]
 
   const initialValues = {
-    name: '',
-    introduction: '',
-    trading: [],
-    region: '',
-    district: '',
-    bankCode: '',
-    bankName: '',
-    bankAccount: '',
+    nickname: nickname || '',
+    introduction: introduction || '',
+    tradingOptions:
+      (preferDealMethods && preferDealMethods.selectedMethods) || [],
+    region:
+      (preferDealMethods &&
+        preferDealMethods.faceToFace &&
+        preferDealMethods.faceToFace.region) ||
+      '',
+    district:
+      (preferDealMethods &&
+        preferDealMethods.faceToFace &&
+        preferDealMethods.faceToFace.district) ||
+      '',
+    bankCode: (account && account.bankCode) || '',
+    accountNum: (account && account.accountNum) || '',
   }
 
   const validationSchema = Yup.object({
-    name: Yup.string().required('此欄位為必填'),
+    nickname: Yup.string().required('此欄位為必填'),
     introduction: Yup.string().max(100, '限 100 字'),
-    trading: Yup.array(),
-    region: Yup.string().when('trading', (trading, schema) => {
+    tradingOptions: Yup.array(),
+    region: Yup.string().when('tradingOptions', (tradingOptions, schema) => {
       try {
-        if (trading.includes('面交')) {
+        if (tradingOptions.includes('面交')) {
           return Yup.string().required('請選擇面交縣市')
         }
         return schema
@@ -195,9 +228,9 @@ export default function EditPortfolioPage() {
         console.log('error', error)
       }
     }),
-    district: Yup.string().when('trading', (trading, schema) => {
+    district: Yup.string().when('tradingOptions', (tradingOptions, schema) => {
       try {
-        if (trading.includes('面交')) {
+        if (tradingOptions.includes('面交')) {
           return Yup.string().required('請填寫面交地點')
         }
         return schema
@@ -209,20 +242,40 @@ export default function EditPortfolioPage() {
       .matches(/^[0-9]+$/, '請填寫數字')
       .min(3, '格式錯誤')
       .max(3, '格式錯誤'),
-    bankName: Yup.string(),
-    bankAccount: Yup.string()
+    accountNum: Yup.string()
       .matches(/^[0-9]+$/, '請填寫數字')
       .min(10, '格式錯誤')
       .max(14, '格式錯誤'),
   })
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    console.log('You clicked submit.')
+  const handleSubmit = (req) => {
+    updateUserInfo(id, req)
+      .then((res) => {
+        const { data } = res
+        if (data.message === 'success') {
+          const fetchUser = async () => {
+            if (getAuthToken()) {
+              try {
+                const { data } = await getMe()
+                setUser(data.userInfo)
+                history.push('/portfolio')
+              } catch (err) {
+                console.log(err)
+              }
+            }
+          }
+          fetchUser()
+        }
+      })
+      .then((err) => {
+        console.log(err)
+      })
   }
 
   // 設定是否顯示更新密碼彈窗的 state，預設 false（不顯示彈窗）
   const [pwPopUp, setPwPopUp] = useState(false)
+
+  const [AvPopUp, AvPwPopUp] = useState(false)
 
   // 當點擊 "更改密碼" 的按鈕時，執行 handleEditPwClick
   // => 更新 pwPopUp 的 state 為 true （顯示彈窗）
@@ -235,9 +288,18 @@ export default function EditPortfolioPage() {
     setPwPopUp(false)
   }
 
+  const handleAvatar = () => {
+    AvPwPopUp(true)
+  }
+
+  const AvCloseModal = () => {
+    AvPwPopUp(false)
+  }
+
   return (
     <Container>
       <Formik
+        enableReinitialize
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
@@ -246,12 +308,20 @@ export default function EditPortfolioPage() {
           <BorderWrapper>
             <PersonalInfo>
               <AvatarWrapper>
-                <Avatar src={`https://i.pravatar.cc/300`} />
-                <UploadAvatarBtn>編輯</UploadAvatarBtn>
+                <Avatar src={`${avatarUrl}` || null} />
+                <UploadAvatarBtn type="button" onClick={handleAvatar}>
+                  編輯
+                </UploadAvatarBtn>
+                {AvPopUp && (
+                  <AvatarUploader
+                    AvPwPopUp={AvPwPopUp}
+                    closeModal={AvCloseModal}
+                  />
+                )}
               </AvatarWrapper>
-              <Email>janejane8491@gmail.com</Email>
+              <Email>{email || null}</Email>
               {/* 點擊 "更改密碼" 的按鈕時，執行 handleEditPwClick */}
-              <EditPasswordBtn onClick={handleEditPwClick}>
+              <EditPasswordBtn type="button" onClick={handleEditPwClick}>
                 更改密碼
               </EditPasswordBtn>
 
@@ -270,7 +340,7 @@ export default function EditPortfolioPage() {
                 <FormikControl
                   control="input"
                   label="暱稱"
-                  name="name"
+                  name="nickname"
                   placeholder="輸入暱稱"
                 />
               </Name>
@@ -288,8 +358,8 @@ export default function EditPortfolioPage() {
               <Trading>
                 <FormikControl
                   control="checkbox"
-                  name="trading"
-                  options={tradingOptions}
+                  name="tradingOptions"
+                  options={tradingOption}
                 />
                 {true && (
                   <>
@@ -325,19 +395,11 @@ export default function EditPortfolioPage() {
                   placeholder="輸入銀行代碼"
                 />
               </BankCode>
-              <BankName>
-                <FormikControl
-                  control="input"
-                  label="銀行名稱"
-                  name="bankName"
-                  placeholder="輸入銀行名稱"
-                />
-              </BankName>
               <BankAccount>
                 <FormikControl
                   control="input"
                   label="帳號"
-                  name="bankAccount"
+                  name="accountNum"
                   placeholder="輸入銀行名稱"
                 />
               </BankAccount>

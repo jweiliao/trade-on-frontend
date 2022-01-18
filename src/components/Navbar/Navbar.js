@@ -112,7 +112,7 @@ export default function Navbar() {
 
         {user ? (
           <Avatar onClick={toggleDropdown}>
-            <Img src={user.avatarUrl} />
+            <Img src={user.avatarUrl && user.avatarUrl.imgUrl} />
           </Avatar>
         ) : (
           <LoginLink as={Link} to="/login">

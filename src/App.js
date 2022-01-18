@@ -54,19 +54,16 @@ const Home = () => {
       <ScrollToTop />
       <Switch>
         <Route exact path="/" component={HomePage} />
-        <Route path="/login" component={LoginPage} />
-        <Route path="/register" component={RegisterPage} />
+        {!user && <Route path="/login" component={LoginPage} />}
+        {!user && <Route path="/register" component={RegisterPage} />}
         <Route path="/about" component={AboutPage} />
         <Route exact path="/givings" component={GivingsPage} />
         {user && <Route path="/givings/add" component={AddGiftPage} />}
         {user && <Route path="/givings/edit" component={EditGiftsPage} />}
         <Route exact strict path="/givings/:id" component={ItemPage} />
-        <Route exact path="/portfolio" component={PortfolioPage} />
-        <Route exact strict path="/portfolio/:id" component={PortfolioPage} />
-        <Route path="/portfolio/edit" component={EditPortfolioPage} />
-        <Route exact path="/transactions" component={TransactionsPage} />
-        <Route path="/transactions/detail" component={TransactionsDetailPage} />
         {user && <Route path="/portfolio/edit" component={EditPortfolioPage} />}
+        <Route exact path="/portfolio/:id" component={PortfolioPage} />
+        <Route exact path="/portfolio" component={PortfolioPage} />
         {user && (
           <Route exact path="/transactions" component={TransactionsPage} />
         )}
@@ -87,7 +84,6 @@ const Backstage = () => {
   return (
     <>
       <BackstageNavbar />
-      <ScrollToTop />
       <Switch>
         <Route path="/backstage/member" component={ManageMemberPage} />
         <Route path="/backstage/category" component={ManageCategoryPage} />

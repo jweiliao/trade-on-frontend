@@ -1,11 +1,8 @@
-import { useState } from 'react'
 import styled from 'styled-components'
-import { Input, Textarea } from './textField'
+import { InputLabel, Input, Textarea } from './textField'
 import { BackstageTitle } from './heading'
 import { SmallButton } from './buttons'
-import Swal from 'sweetalert2'
 import { MEDIA_QUERY_SM } from '../styles/breakpoints'
-import { addFaq } from '../WebAPI'
 
 export const BackDrop = styled.div`
   width: 100%;
@@ -54,7 +51,6 @@ export const AddFaq = styled.form`
 
 export const QuestionInput = styled(Input)`
   width: 100%;
-  margin-bottom: 50px;
 `
 
 export const AnswerInput = styled(Textarea)`
@@ -99,68 +95,27 @@ export default function ManageFaqPageAdd({
   setFaqs,
   faqs,
   handleToggleAddPopUp,
+  handleInput,
+  handleAddFaq,
 }) {
-  const [newFaqData, setNewFaqData] = useState({
-    question: '',
-    answer: '',
-  })
-
-  const handleInput = (e) => {
-    const { name, value } = e.target
-    setNewFaqData({
-      ...newFaqData,
-      [name]: value,
-    })
-  }
-
-  const handleAddFaq = (e) => {
-    e.preventDefault()
-    addFaq(newFaqData)
-      .then((res) => {
-        const newFaq = res.data.new
-        console.log(res.data)
-        if (res.data.message === 'success') {
-          Swal.fire({
-            icon: 'success',
-            title: '新增成功',
-            showConfirmButton: false,
-            timer: 1500,
-          })
-          setFaqs([
-            ...faqs,
-            {
-              id: newFaq.id,
-              question: newFaq.question,
-              answer: newFaq.answer,
-            },
-          ])
-        }
-      })
-      .catch((err) => {
-        console.log(err)
-        Swal.fire('發生錯誤！')
-      })
-    handleToggleAddPopUp()
-  }
-
   return (
     <>
-      <BackDrop onClick={handleToggleAddPopUp}></BackDrop>
+      <BackDrop onClick={handleToggleAddPopUp} />
       <AddFaqWrapper>
         <Title>新增常見問題</Title>
         <AddFaq>
-          問題
+          <InputLabel>問題</InputLabel>
           <QuestionInput
             name="question"
             placeholder="請輸入問題"
             onChange={handleInput}
-          ></QuestionInput>
-          回答
+          />
+          <InputLabel>回答</InputLabel>
           <AnswerInput
             name="answer"
             placeholder="請輸入回答"
             onChange={handleInput}
-          ></AnswerInput>
+          />
         </AddFaq>
         <ConfirmButtonsWrapper>
           <CancelButton onClick={handleToggleAddPopUp}>取消</CancelButton>
