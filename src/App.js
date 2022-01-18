@@ -84,7 +84,6 @@ const Backstage = () => {
   return (
     <>
       <BackstageNavbar />
-      <ScrollToTop />
       <Switch>
         <Route path="/backstage/member" component={ManageMemberPage} />
         <Route path="/backstage/category" component={ManageCategoryPage} />
