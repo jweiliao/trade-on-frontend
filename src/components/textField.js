@@ -80,6 +80,66 @@ export const Select = styled.select`
   color: ${(props) => props.theme.secondary};
 `
 
+export const RadioWrapper = styled.div`
+  margin-top: 20px;
+`
+
+export const RadioItem = styled.div`
+  display: flex;
+  align-items: center;
+  height: 48px;
+  position: relative;
+  border: 1px solid ${(props) => props.theme.general_300};
+  box-sizing: border-box;
+  border-radius: 2px;
+  margin-bottom: 15px;
+  padding-right: 10px;
+`
+
+export const RadioButtonLabel = styled.label`
+  position: absolute;
+  top: 25%;
+  left: 4px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: white;
+  border: 1px solid ${(props) => props.theme.general_300};
+`
+export const RadioButton = styled.input`
+  opacity: 0;
+  z-index: 1;
+  cursor: pointer;
+  width: 25px;
+  height: 25px;
+  margin-right: 10px;
+  &:hover ~ ${RadioButtonLabel} {
+    background: ${(props) => props.theme.general_300};
+    &::after {
+      display: block;
+      color: white;
+      width: 12px;
+      height: 12px;
+      margin: 4px;
+    }
+  }
+  &:checked + ${RadioItem} {
+    background: ${(props) => props.theme.primary_200};
+    border: 2px solid ${(props) => props.theme.primary_200};
+  }
+  &:checked + ${RadioButtonLabel} {
+    background: ${(props) => props.theme.primary_200};
+    border: 1px solid ${(props) => props.theme.primary_200};
+    &::after {
+      display: block;
+      color: white;
+      width: 12px;
+      height: 12px;
+      margin: 4px;
+    }
+  }
+`
+
 export const CheckBoxLabel = styled.label`
   display: block;
   position: relative;

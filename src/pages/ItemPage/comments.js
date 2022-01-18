@@ -1,20 +1,42 @@
-import React from 'react'
+import React, { useState, useContext } from 'react'
+import AuthContext from '../../contexts'
 import styled from 'styled-components'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 import { SmallButton } from '../../components/buttons'
 import LargeTextArea from './textArea'
 
+// 引入操作留言的 hook
+import useComments from '../../hooks/useComments'
+
+// 引入操作 "給他禮物" 按鈕的 hook
+import useGiveItem from '../../hooks/useGiveItem'
+
+// 引入 "給他禮物" 按鈕點擊後的彈窗 component
+import ManageGiveItem from '../../components/ManageGiveItem'
+
 /* CommentsContainer - 留言的整個區塊 */
 const CommentsContainer = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
   ${MEDIA_QUERY_SM} {
-    width: 90%;
+    // width: 90%;
   }
 `
+
+/* 物品介紹的內文 */
+const IntroContent = styled.div`
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: 0.5px;
+  margin-bottom: 50px;
+`
+
 /*  Comment - 主留言 */
 const Comment = styled.div`
   margin-bottom: 50px;
+  width: 100%;
 `
 
 /* CommentTop - 留言最上方 */
@@ -39,11 +61,10 @@ const GivingGift = styled(SmallButton)``
 
 /* CommentContent - 留言的留言內容 */
 const CommentContent = styled.div`
-  width: 80%;
+  // width: 80%;
   margin-bottom: 15px;
   font-size: 16px;
   line-height: 1.5;
-
   letter-spacing: 0.5px;
 `
 
@@ -98,9 +119,9 @@ const CommentDelete = styled.div`
 
 /* SubCommentContainer - 子留言全部區塊 */
 const SubCommentContainer = styled.div`
-  width: 85%;
+  width: 90%;
   margin-bottom: 50px;
-  margin-left: 35px;
+  margin-left: 54px;
   padding-left: 10px;
   border-left: 2px solid ${(props) => props.theme.general_300};
 `
@@ -110,78 +131,321 @@ const SubComment = styled.div`
   margin-bottom: 25px;
 `
 
-function comments() {
+/* EditWrapper - 編輯留言的全部區塊 */
+const EditWrapper = styled.div`
+  display: flex;
+  // flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  ${MEDIA_QUERY_SM} {
+    flex-direction: column;
+  }
+`
+
+/* EditInput - 編輯留言的輸入框 */
+const EditInput = styled.input`
+  font-size: 14px;
+  &:focus {
+    outline: none;
+  }
+  border: ${(props) => props.theme.general_200} solid 2px;
+  border-radius: 4px;
+  margin-top: 10px;
+  line-height: 1.5em;
+  // padding-left: 5px;
+  // min-width: 80%;
+  padding: 5px;
+  background: ${(props) => props.theme.general_100};
+  ${MEDIA_QUERY_SM} {
+    min-width: 40%;
+  }
+`
+
+/* ButtonsWrapper - 編輯留言的按鈕們 */
+const ButtonsWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+`
+
+/* SaveBtn - 編輯留言的 "送出" 按鈕 */
+const SaveBtn = styled(SmallButton)`
+  margin: 1rem;
+  background-color: ${(props) => props.theme.primary_100};
+  &:hover {
+    background-color: ${(props) => props.theme.primary_150};
+  }
+  ${MEDIA_QUERY_SM} {
+    width: 100%;
+  }
+`
+
+/* CancelBtn - 編輯留言的 "取消編輯" 按鈕 */
+const CancelBtn = styled(SaveBtn)`
+  background-color: ${(props) => props.theme.general_100};
+  &:hover {
+    background-color: ${(props) => props.theme.general_200};
+  }
+  ${MEDIA_QUERY_SM} {
+    width: 100%;
+  }
+`
+
+export function Comments({
+  isApplyMessage,
+  post,
+  postMessageId,
+  postAuthorId,
+}) {
+  // 拿到 登入後的使用者資料
+  const { user } = useContext(AuthContext)
+
+  const {
+    mainMsgs,
+    relatedMsgs,
+    applyMainMsgs,
+    applyRelatedMsgs,
+    isUpdating,
+    setIsUpdating,
+    editValue,
+    setEditValue,
+    handleEditMsg,
+    handleDeleteMessage,
+    handleMainMsgReply,
+    handleSubMsgReply,
+    showMainTextArea,
+    showSubTextArea,
+    isApplyMessageOrNot,
+    newMessageInput,
+    setNewMessageInput,
+    handleReplySubmit,
+    isReplying,
+  } = useComments(isApplyMessage, postMessageId)
+
+  // 帶入 useGiveItem 中的 givePopUp, handleToggleGivePopUp,applyMsgId
+  const { givePopUp, handleToggleGivePopUp, applyMsgId } = useGiveItem()
+
+  // 設定 isAccept 的 state：當 "送他禮物" 的按鈕執行且彈窗資料填入成功後，state 更新為 true
+  const [isAccept, setIsAccept] = useState(false)
+
   return (
     <CommentsContainer>
       {/* 主留言 */}
-      <Comment>
-        {/* 留言最上方 */}
-        <CommentTop>
-          {/* 留言最上方的留言者暱稱 */}
-          <CommentNickname>Willy</CommentNickname>
+      {/* 判斷是否有留言，且留言為請求索取，還是提問；
+      有留言時顯示留言，否則顯示 "目前沒有資料" */}
+      {JSON.stringify(isApplyMessageOrNot(applyMainMsgs, mainMsgs)) ===
+        '{}' && <IntroContent>目前沒有資料</IntroContent>}
+      {isApplyMessageOrNot(applyMainMsgs, mainMsgs).length > 0 &&
+        isApplyMessageOrNot(applyMainMsgs, mainMsgs).map((msg) => (
+          <>
+            <Comment key={msg.id}>
+              {/* 留言最上方 */}
+              <CommentTop>
+                {/* 留言最上方的留言者暱稱 */}
+                <CommentNickname>{msg.author.nickname}</CommentNickname>
+                {/* "送他禮物" 按鈕 */}
+                {/* 在"想要禮物" 區塊內"，如果登入者為發文者，若還未完成贈送，顯示 "送他禮物" 按鈕，否則顯示 "已贈送" 按鈕 */}
+                {/* 如果登入者非發問者，不顯示任何按鈕 */}
+                {user && user.id === postAuthorId
+                  ? isApplyMessage &&
+                    (isAccept ? (
+                      // disable "已贈送" 按鈕，讓它不執行任何操作
+                      <GivingGift disabled={true}>已贈送</GivingGift>
+                    ) : (
+                      // 點擊 "送他禮物" 按鈕後，執行 handleToggleGivePopUp 並帶入 message 的 id
+                      <GivingGift onClick={() => handleToggleGivePopUp(msg.id)}>
+                        送他禮物
+                      </GivingGift>
+                    ))
+                  : null}
+                {/* 如果 givePopUp 的 state 為 true，顯示 "送他禮物"的彈窗，並帶入所需的 props 值 */}
+                {givePopUp && (
+                  <ManageGiveItem
+                    isApplyMessage={isApplyMessage}
+                    post={post}
+                    postMessageId={post.id}
+                    applyDealMethod={msg.applyDealMethod}
+                    handleToggleGivePopUp={handleToggleGivePopUp}
+                    applyMsgId={applyMsgId}
+                    isAccept={isAccept}
+                    setIsAccept={setIsAccept}
+                  />
+                )}
+              </CommentTop>
 
-          {/* "送他禮物" 按鈕 */}
-          <GivingGift>送他禮物</GivingGift>
-        </CommentTop>
+              {/* 留言的留言內容 */}
+              {/* 判斷是否為編輯該留言，是的話，則顯示編輯的輸入框以及按鈕 */}
+              {isUpdating === msg.id ? (
+                <EditWrapper>
+                  <EditInput
+                    id={msg.id}
+                    onChange={(e) => {
+                      setEditValue(e.target.value)
+                    }}
+                    defaultValue={editValue ? editValue : msg.content}
+                    type="text"
+                  />
+                  <ButtonsWrapper>
+                    <SaveBtn
+                      editValue={editValue}
+                      id={msg.id}
+                      onClick={(e) => {
+                        handleEditMsg(e)
+                      }}
+                    >
+                      送出
+                    </SaveBtn>
+                    <CancelBtn
+                      editValue={!editValue}
+                      onClick={() => {
+                        setIsUpdating(false)
+                        setEditValue('')
+                      }}
+                    >
+                      取消編輯
+                    </CancelBtn>
+                  </ButtonsWrapper>
+                </EditWrapper>
+              ) : (
+                <CommentContent>{msg.content}</CommentContent>
+              )}
 
-        {/* 留言的留言內容 */}
-        <CommentContent>
-          您好，我平常有隨手筆記的習慣，很喜歡這個手帳，盼能獲贈。謝謝分享！
-        </CommentContent>
+              {/* 留言的最下方 */}
+              <CommentBottom>
+                <CommentTime>{msg.lastModified}</CommentTime>
+                {/* 留言的最下方的留言更新區塊 */}
+                {/* 登入者可以回覆留言，登入者為該留言者時才可以編輯、刪除該留言 */}
+                {user && (
+                  <CommentUpdates>
+                    <CommentReply onClick={() => handleMainMsgReply(msg.id)}>
+                      回覆
+                    </CommentReply>
+                    {user.id === msg.author._id ? (
+                      <>
+                        <CommentEdit onClick={() => setIsUpdating(msg.id)}>
+                          {' '}
+                          | 編輯留言
+                        </CommentEdit>
+                        <CommentDelete
+                          onClick={() => handleDeleteMessage(msg.id)}
+                        >
+                          | 刪除留言
+                        </CommentDelete>
+                      </>
+                    ) : null}
+                  </CommentUpdates>
+                )}
+              </CommentBottom>
 
-        {/* 留言的最下方 */}
-        <CommentBottom>
-          <CommentTime>2021/10/14 14:01</CommentTime>
+              {/* 輸入留言的區塊 */}
+              {/* 點擊 "回覆" 時，顯示輸入留言的區塊 */}
+              {showMainTextArea && isReplying === msg.id && (
+                <LargeTextArea
+                  newMessageInput={newMessageInput}
+                  setNewMessageInput={setNewMessageInput}
+                  relatedMsg={msg.id}
+                  isApplyMessage={isApplyMessage}
+                  handleReplySubmit={handleReplySubmit}
+                ></LargeTextArea>
+              )}
+            </Comment>
 
-          {/* 留言的最下方的留言更新區塊 */}
-          <CommentUpdates>
-            <CommentReply>回覆</CommentReply>
-            <CommentEdit> | 編輯留言</CommentEdit>
-            <CommentDelete> | 刪除留言</CommentDelete>
-          </CommentUpdates>
-        </CommentBottom>
+            {/* 子留言全部區塊 */}
+            <SubCommentContainer>
+              {/* 子留言 */}
+              {isApplyMessageOrNot(applyRelatedMsgs, relatedMsgs).length > 0 &&
+                isApplyMessageOrNot(applyRelatedMsgs, relatedMsgs).map(
+                  (subMsg) =>
+                    msg.id === subMsg.relatedMsg ? (
+                      <SubComment key={subMsg.id}>
+                        <CommentTop>
+                          <CommentNickname>
+                            {subMsg.author.nickname}
+                          </CommentNickname>
+                        </CommentTop>
 
-        {/* 輸入留言的區塊 */}
-        <LargeTextArea></LargeTextArea>
-      </Comment>
+                        {/* 留言的留言內容 */}
+                        {isUpdating === subMsg.id ? (
+                          <EditWrapper>
+                            <EditInput
+                              id={subMsg.id}
+                              onChange={(e) => {
+                                setEditValue(e.target.value)
+                              }}
+                              defaultValue={
+                                editValue ? editValue : subMsg.content
+                              }
+                              type="text"
+                            />
+                            <ButtonsWrapper>
+                              <SaveBtn
+                                editValue={editValue}
+                                id={subMsg.id}
+                                onClick={(e) => {
+                                  handleEditMsg(e)
+                                }}
+                              >
+                                送出
+                              </SaveBtn>
+                              <CancelBtn
+                                editValue={!editValue}
+                                onClick={() => {
+                                  setIsUpdating(false)
+                                  setEditValue('')
+                                }}
+                              >
+                                取消編輯
+                              </CancelBtn>
+                            </ButtonsWrapper>
+                          </EditWrapper>
+                        ) : (
+                          <CommentContent>{subMsg.content}</CommentContent>
+                        )}
 
-      {/* 子留言全部區塊 */}
-      <SubCommentContainer>
-        {/* 子留言 */}
-        <SubComment>
-          <CommentTop>
-            <CommentNickname>Kimi</CommentNickname>
-          </CommentTop>
-          <CommentContent>準備寄送囉，記得先付運費哊！</CommentContent>
-          <CommentBottom>
-            <CommentTime>2021/10/14 14:07</CommentTime>
-            <CommentUpdates>
-              <CommentReply>回覆</CommentReply>
-              <CommentEdit> | 編輯留言</CommentEdit>
-              <CommentDelete> | 刪除留言</CommentDelete>
-            </CommentUpdates>
-          </CommentBottom>
-          <LargeTextArea></LargeTextArea>
-        </SubComment>
+                        <CommentBottom>
+                          <CommentTime>{subMsg.lastModified}</CommentTime>
+                          {user && (
+                            <CommentUpdates>
+                              <CommentReply
+                                onClick={() => handleSubMsgReply(subMsg.id)}
+                              >
+                                回覆
+                              </CommentReply>
+                              {user && user.id === subMsg.author._id ? (
+                                <>
+                                  <CommentEdit
+                                    onClick={() => setIsUpdating(subMsg.id)}
+                                  >
+                                    | 編輯留言
+                                  </CommentEdit>
+                                  <CommentDelete
+                                    onClick={() =>
+                                      handleDeleteMessage(subMsg.id)
+                                    }
+                                  >
+                                    | 刪除留言
+                                  </CommentDelete>
+                                </>
+                              ) : null}
+                            </CommentUpdates>
+                          )}
+                        </CommentBottom>
 
-        {/* 子留言 */}
-        <SubComment>
-          <CommentTop>
-            <CommentNickname>Willy</CommentNickname>
-          </CommentTop>
-          <CommentContent>已付運費囉～ 感謝 </CommentContent>
-          <CommentBottom>
-            <CommentTime>2021/10/14 14:21</CommentTime>
-            <CommentUpdates>
-              <CommentReply>回覆</CommentReply>
-              <CommentEdit> | 編輯留言</CommentEdit>
-              <CommentDelete> | 刪除留言</CommentDelete>
-            </CommentUpdates>
-          </CommentBottom>
-        </SubComment>
-      </SubCommentContainer>
+                        {/* 輸入子留言的區塊 */}
+                        {showSubTextArea && isReplying === subMsg.id && (
+                          <LargeTextArea
+                            newMessageInput={newMessageInput}
+                            setNewMessageInput={setNewMessageInput}
+                            relatedMsg={msg.id}
+                            isApplyMessage={isApplyMessage}
+                            handleReplySubmit={handleReplySubmit}
+                          ></LargeTextArea>
+                        )}
+                      </SubComment>
+                    ) : null
+                )}
+            </SubCommentContainer>
+          </>
+        ))}
     </CommentsContainer>
   )
 }
-
-export default comments
