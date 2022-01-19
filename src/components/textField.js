@@ -195,7 +195,7 @@ export const CheckBoxSpan = styled.span`
   }
 `
 
-const BackstageCheckBoxLabel = styled(CheckBoxLabel)`
+export const BackstageCheckBoxLabel = styled(CheckBoxLabel)`
   margin: 0;
   padding: 0;
   position: static;
@@ -213,9 +213,9 @@ const BackstageCheckBoxLabel = styled(CheckBoxLabel)`
   }
 `
 
-const BackstageCheckBox = styled(CheckBox)``
+export const BackstageCheckBox = styled(CheckBox)``
 
-const BackstageCheckBoxSpan = styled(CheckBoxSpan)`
+export const BackstageCheckBoxSpan = styled(CheckBoxSpan)`
   top: 50%;
   left: 50%;
   transform: translateX(-50%) translateY(-50%);
