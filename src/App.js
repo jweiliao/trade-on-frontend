@@ -20,8 +20,7 @@ const RegisterPage = lazy(() => import('./pages/RegisterPage'))
 const AboutPage = lazy(() => import('./pages/AboutPage'))
 const GivingsPage = lazy(() => import('./pages/GivingsPage'))
 const ItemPage = lazy(() => import('./pages/ItemPage'))
-const AddGiftPage = lazy(() => import('./pages/AddGiftPage'))
-const EditGiftsPage = lazy(() => import('./pages/EditGiftsPage'))
+const PostGiftPage = lazy(() => import('./pages/PostGiftPage'))
 const PortfolioPage = lazy(() => import('./pages/PortfolioPage'))
 const EditPortfolioPage = lazy(() => import('./pages/EditPortfolioPage'))
 const TransactionsPage = lazy(() => import('./pages/TransactionsPage'))
@@ -58,8 +57,8 @@ const Home = () => {
         {!user && <Route path="/register" component={RegisterPage} />}
         <Route path="/about" component={AboutPage} />
         <Route exact path="/givings" component={GivingsPage} />
-        {user && <Route path="/givings/add" component={AddGiftPage} />}
-        {user && <Route path="/givings/edit" component={EditGiftsPage} />}
+        <Route exact path="/givings/add" component={PostGiftPage} />
+        {user && <Route path="/givings/edit/:id" component={PostGiftPage} />}
         <Route exact strict path="/givings/:id" component={ItemPage} />
         {user && <Route path="/portfolio/edit" component={EditPortfolioPage} />}
         <Route exact path="/portfolio/:id" component={PortfolioPage} />
@@ -84,6 +83,7 @@ const Backstage = () => {
   return (
     <>
       <BackstageNavbar />
+      <ScrollToTop />
       <Switch>
         <Route path="/backstage/member" component={ManageMemberPage} />
         <Route path="/backstage/category" component={ManageCategoryPage} />
@@ -112,7 +112,6 @@ export default function App() {
           }
           setUser(data.userInfo)
         } catch (err) {
-          console.log(err.response)
           setUser(null)
           setAuthToken('')
         }
