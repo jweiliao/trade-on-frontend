@@ -3,12 +3,12 @@ import { getAuthToken } from './utils'
 import Swal from 'sweetalert2'
 
 const config = {
-  apiHost1: 'http://localhost:8081',
-  apiHost2: 'https:/cosdelus.tw/tradeon/api',
+  apiHost1: 'http://localhost:3333/tradeon/api',
+  apiHost2: 'https://cosdelus.tw/tradeon/api',
 }
 
 const instance = axios.create({
-  baseURL: config.apiHost2,
+  baseURL: config.apiHost1,
 })
 
 instance.interceptors.request.use((config) => {
@@ -51,12 +51,18 @@ export const getMe = async () => await instance.get('/users/me')
 
 export const logout = async () => await instance.get('/users/logout')
 
+export const getAllUsers = async (limit) =>
+  await instance.get(`/users/all?size=${limit}`)
+
 export const getUser = async (id) => await instance.get(`/users/${id}`)
 
 export const getUserRecord = async (id, limit, type, status) =>
   await instance.get(
     `/users/${id}/record?size=${limit}&type=${type}&status=${status}`
   )
+
+export const updateUserAuthority = async (id, data) =>
+  await instance.put(`/users/${id}/auth`, data)
 
 // transaction
 export const getAllTransactions = async (limit) =>
