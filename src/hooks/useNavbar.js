@@ -1,8 +1,6 @@
 import { useState, useEffect, useContext } from 'react'
 import AuthContext from '../contexts'
 import { setAuthToken } from '../utils'
-import Swal from 'sweetalert2'
-import { logout } from '../WebAPI'
 import { NavbarData } from '../components/Navbar/NavbarData'
 import useRWD from './useRWD'
 
@@ -115,22 +113,9 @@ export default function useNavbar() {
     }
   }, [user, device])
 
-  const handleLogout = async () => {
-    try {
-      const { data } = await logout()
-      if (data.message === 'success') {
-        setUser(null)
-        setAuthToken('')
-      }
-    } catch (err) {
-      Swal.fire({
-        icon: 'error',
-        title: '錯誤',
-        text: '系統問題，請稍候',
-        showConfirmButton: false,
-        timer: 1500,
-      })
-    }
+  const handleLogout = () => {
+    setUser(null)
+    setAuthToken('')
   }
 
   return { dropdown, toggleDropdown, hideDropdown, submenuData, handleLogout }

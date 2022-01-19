@@ -128,12 +128,14 @@ const EditButton = styled(SmallButton)`
 const UserInfo = ({ userData }) => {
   const { faceToFace, sevenEleven, familyMart } = shippingMethod
   const { user } = useContext(AuthContext)
-  const preferDealMethods = user.preferDealMethods
+  let preferDealMethods = []
+  if (user.preferDealMethods && user.preferDealMethods.selectedMethods)
+    preferDealMethods = user.preferDealMethods.selectedMethods
 
   return (
     <Wrapper>
       <Avatar>
-        <Img src={userData && userData.avatarUrl} />
+        <Img src={userData && userData.avatarUrl.imgUrl} />
       </Avatar>
       <User>
         <Email>{userData && userData.email}</Email>
@@ -149,24 +151,22 @@ const UserInfo = ({ userData }) => {
             <PreferTradeMode>偏好交易方式</PreferTradeMode>
             <TransactionType
               $isSelected={
-                preferDealMethods &&
-                preferDealMethods.convenientStores &&
-                preferDealMethods.convenientStores.includes('全家')
+                preferDealMethods && preferDealMethods.includes('全家')
               }
             >
               {familyMart}
             </TransactionType>
             <TransactionType
               $isSelected={
-                preferDealMethods &&
-                preferDealMethods.convenientStores &&
-                preferDealMethods.convenientStores.includes('7-11')
+                preferDealMethods && preferDealMethods.includes('7-11')
               }
             >
               {sevenEleven}
             </TransactionType>
             <TransactionType
-              $isSelected={preferDealMethods && preferDealMethods.faceToFace}
+              $isSelected={
+                preferDealMethods && preferDealMethods.includes('面交')
+              }
             >
               {faceToFace}
             </TransactionType>

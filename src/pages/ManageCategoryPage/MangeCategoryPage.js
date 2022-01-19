@@ -136,7 +136,6 @@ export default function ManageCategoryPage() {
     handleAddCategory,
     categoryCotentRef,
     newCategory,
-    handleEditClick,
     handleEditMessage,
     isUpdating,
     setIsUpdating,
@@ -169,7 +168,7 @@ export default function ManageCategoryPage() {
         return (
           <Category key={category.id}>
             {/* {category.categoryName} */}
-            {isUpdating ? (
+            {isUpdating === category.id ? (
               <EditWrapper>
                 <EditInput
                   id={category.id}
@@ -204,7 +203,11 @@ export default function ManageCategoryPage() {
               <Content id={category.id}>{category.categoryName}</Content>
             )}
             <PageButtonsWrapper>
-              <EditBtn onClick={handleEditClick}>
+              <EditBtn
+                onClick={(e) => {
+                  setIsUpdating(category.id)
+                }}
+              >
                 <FaPen />
               </EditBtn>
               <DeleteBtn onClick={() => handleDeleteCategory(category.id)}>

@@ -3,7 +3,7 @@ import { getAuthToken } from './utils'
 import Swal from 'sweetalert2'
 
 const config = {
-  apiHost1: 'http://localhost:3333/tradeon/api',
+  apiHost1: 'http://localhost:8081',
   apiHost2: 'https://cosdelus.tw/tradeon/api',
 }
 
@@ -35,63 +35,91 @@ instance.interceptors.response.use(
   }
 )
 
-// user
-export const register = async (email, nickname, password, confirmPassword) =>
-  await instance.post('/users/register', {
-    email,
-    nickname,
-    password,
-    confirmPassword,
-  })
+// 使用者
+export const getMe = () => instance.get('/users/me')
 
-export const login = async (email, password) =>
-  await instance.post('/users/login', { email, password })
+export const getAllUsers = (limit) => instance.get(`/users/all?size=${limit}`)
 
-export const getMe = async () => await instance.get('/users/me')
+export const getUser = (id) => instance.get(`/users/${id}`)
 
-export const logout = async () => await instance.get('/users/logout')
-
-export const getAllUsers = async (limit) =>
-  await instance.get(`/users/all?size=${limit}`)
-
-export const getUser = async (id) => await instance.get(`/users/${id}`)
-
-export const getUserRecord = async (id, limit, type, status) =>
-  await instance.get(
+export const getUserRecord = (id, limit, type, status) =>
+  instance.get(
     `/users/${id}/record?size=${limit}&type=${type}&status=${status}`
   )
 
-export const updateUserAuthority = async (id, data) =>
-  await instance.put(`/users/${id}/auth`, data)
+export const register = (data) => instance.post('/users/register', data)
 
-// transaction
-export const getAllTransactions = async (limit) =>
+export const login = (data) => instance.post('/users/login', data)
+
+export const updateAvatar = (id, data) =>
+  instance.put(`/users/${id}/avatar`, data)
+
+export const updateUserInfo = (id, data) => instance.put(`/users/${id}`, data)
+
+export const updateUserPassword = (id, data) =>
+  instance.put(`/users/${id}/password`, data)
+
+export const updateUserRole = (id, data) =>
+  instance.put(`/users/${id}/role`, data)
+
+export const deleteUser = (id) => instance.delete(`/users/${id}/delete`)
+
+// 贈物文
+export const getAllPosts = (limit) => instance.get(`/posts/all?size=${limit}`)
+
+export const getPublicPosts = (limit) =>
+  instance.get(`/posts/all?size=${limit}&isPublic=true`)
+
+export const getPost = (id) => instance.get(`/posts/${id}`)
+
+export const addPost = (data) => instance.post('/posts/new', data)
+
+export const updatePost = (id, data) => instance.put(`/posts/${id}`, data)
+
+export const updatePostStatus = (id) => instance.put(`/posts/${id}/status`)
+
+export const deletePost = (id) => instance.delete(`/posts/${id}`)
+
+// 留言
+export const getPostMessages = (id) => instance.get(`/messages/post/${id}`)
+
+export const getDealMessages = (id) => instance.get(`/messages/deal/${id}`)
+
+export const addMessage = (data) => instance.post('/messages/new', data)
+
+export const replyMessage = (id, data) =>
+  instance.post(`/messages/${id}/new`, data)
+
+export const updateMessage = (id, data) => instance.put(`/messages/${id}`, data)
+
+export const deleteMessage = (id) => instance.delete(`/messages/${id}`)
+
+// 交易紀錄
+export const getAllTransactions = (limit) =>
   instance.get(`/transactions/all?size=${limit}`)
 
-export const getTransaction = async (id) => instance.get(`/transactions/${id}`)
+export const getTransaction = (id) => instance.get(`/transactions/${id}`)
 
-export const cancelTransaction = async (id) =>
+export const acceptTransaction = (id, data) =>
+  instance.post(`/transactions/message/${id}/accept`, data)
+
+export const updateTransactionAccount = (id, data) =>
+  instance.put(`/transactions/user/${id}/account-info`, data)
+
+export const cancelTransaction = (id) =>
   instance.put(`/transactions/${id}/cancel`)
 
-export const updateShippingInfo = async (id, data) =>
+export const updateShippingInfo = (id, data) =>
   instance.put(`/transactions/${id}/filling-info`, data)
 
-export const checkPayment = async (id) =>
+export const checkTransactionPayment = (id) =>
   instance.put(`/transactions/${id}/payment`)
 
-export const checkComplete = async (id) =>
+export const checkTransactionComplete = (id) =>
   instance.put(`/transactions/${id}/complete`)
 
-// message
-export const getDealMessage = async (id) => instance.get(`/messages/deal/${id}`)
-
-export const addMessage = async (data) => instance.post('/messages/new', data)
-
-export const deleteMessage = async (id) => instance.delete(`/messages/${id}`)
-
-// faq
-export const getAllFaqs = (limit) =>
-  instance.get(`/commonqnas/all?size=${limit}`)
+// 常見問題
+export const getAllFaqs = () => instance.get('/commonqnas/all')
 
 export const getFaq = (id) => instance.get(`/commonqnas/${id}`)
 
@@ -101,54 +129,14 @@ export const updateFaq = (id, data) => instance.put(`/commonqnas/${id}`, data)
 
 export const deleteFaq = (id) => instance.delete(`/commonqnas/${id}`)
 
-export const getLimitFaq = (page, limit) =>
-  instance.get(`/commonqnas/all?page=${page}&size=${limit}`)
+// 物品分類
+export const getAllCategories = () => instance.get('/category/all')
 
-/***************
-   分類相關
-***************/
-
-// 取得分類
-export const getAllCategories = (limit) =>
-  instance.get(`/category/all?size=${limit}`)
-
-// 取得特定一筆分類
 export const getCategory = (id) => instance.get(`/category/${id}`)
 
-// 新增分類
 export const addCategory = (data) => instance.post('/category/new', data)
 
-// 編輯分類
 export const updateCategory = (id, data) =>
   instance.put(`/category/${id}`, data)
 
-// 刪除分類
 export const deleteCategory = (id) => instance.delete(`/category/${id}`)
-
-/***************
-   贈物文相關
-***************/
-
-// 取得贈物文
-export const getAllPosts = (limit) => instance.get(`/posts/all?size=${limit}`)
-
-// 取得特定一筆贈物文
-export const getPost = (id) => instance.get(`/posts/${id}`)
-
-// 取得特定某幾筆贈物文（篩選：頁碼、每頁多少筆、發文者、上下架）
-export const getLimitPost = (page, limit, owner, isPublic) =>
-  instance.get(
-    `/posts/all?page=${page}&size=${limit}&user=${owner}&isPublic=${isPublic}`
-  )
-
-// 新增贈物文
-export const addPost = (data) => instance.post('/posts/new', data)
-
-// 編輯贈物文
-export const updatePost = (id, data) => instance.put(`/posts/${id}`, data)
-
-// 刪除贈物文
-export const deletePost = (id) => instance.delete(`/posts/${id}`)
-
-// 上架或下架贈物文
-export const PostPublishStatus = (id) => instance.put(`/posts/${id}/status`)

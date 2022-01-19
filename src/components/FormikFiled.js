@@ -27,6 +27,7 @@ export const Input = (props) => {
                 placeholder={placeholder}
                 {...field}
                 {...rest}
+                borderColor={meta.touched && meta.error ? '#e25151' : '#D3D4D6'}
               />
             </>
           )
@@ -48,8 +49,14 @@ export const Select = (props) => {
         {({ field, meta }) => {
           return (
             <>
-              <StyledSelect id={name} name={name} {...field} {...rest}>
-                <option value="" selected disabled>
+              <StyledSelect
+                id={name}
+                name={name}
+                {...field}
+                {...rest}
+                borderColor={meta.touched && meta.error ? '#e25151' : '#D3D4D6'}
+              >
+                <option value="" disabled>
                   選擇{label}
                 </option>
                 {options.map((option) => {
@@ -81,7 +88,12 @@ export const Textarea = (props) => {
         {({ field, meta }) => {
           return (
             <>
-              <StyledTextarea id={name} {...field} {...rest} />
+              <StyledTextarea
+                id={name}
+                {...field}
+                {...rest}
+                borderColor={meta.touched && meta.error ? '#e25151' : '#D3D4D6'}
+              />
             </>
           )
         }}

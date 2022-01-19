@@ -11,7 +11,7 @@ import 'slick-carousel/slick/slick-theme.css'
 import './AsNavFor.css'
 
 // AsNavFor：上方一張大圖，下方多張小圖的輪播
-export default function AsNavFor() {
+export default function AsNavFor({ post }) {
   // nav1 ： 設定上方大圖的 state
   const [nav1, setNav1] = useState([])
   // nav2 ： 設定下方小圖的 state
@@ -19,14 +19,12 @@ export default function AsNavFor() {
   // 設定帶入的資料
   const [recommended, setRecommended] = useState([])
 
-  // 第一次進入頁面時，撈後端資料，並帶入 recommended 的 state
+  // 撈 post 的 imgUrls 資料，並帶入 recommended 的 state
   useEffect(() => {
-    fetch('https://jsonplaceholder.typicode.com/users')
-      .then((res) => res.json())
-      .then((data) => {
-        setRecommended(data)
-      })
-  }, [])
+    if (post && post.imgUrls) {
+      setRecommended(post.imgUrls)
+    }
+  }, [post])
 
   return (
     // 輪播圖的整個區塊
@@ -44,11 +42,7 @@ export default function AsNavFor() {
           // 包住整個大圖的區塊
           <li className="sliders-item" key={current.id}>
             {/* 圖片 */}
-            <img
-              className="slider-img"
-              alt={'object'}
-              src={`https://source.unsplash.com/random/${current.id}`}
-            />
+            <img className="slider-img" alt={'object'} src={current} />
           </li>
         ))}
       </Slider>
@@ -72,7 +66,7 @@ export default function AsNavFor() {
             <img
               className="thumbnail_slider-img"
               alt={'object'}
-              src={`https://source.unsplash.com/random/${current.id}`}
+              src={current}
             />
           </li>
         ))}
