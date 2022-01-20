@@ -14,6 +14,7 @@ export const Img = styled.img`
 export const ImgWrapper = styled.div`
   position: relative;
   border: solid 1px ${(props) => props.theme.general_200};
+  border-radius: 0.25rem;
 `
 
 export const ImgCircleWrapper = styled(ImgWrapper)`

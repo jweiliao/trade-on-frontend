@@ -20,7 +20,12 @@ export const Input = styled.input`
   margin-top: 1.2rem;
   padding: 0 0.5rem;
   color: ${(props) => props.theme.secondary};
-  border: 1px solid ${(props) => props.borderColor};
+  border: 1px solid
+    ${({ isWarning }) => {
+      return isWarning
+        ? (props) => props.theme.danger_100
+        : (props) => props.theme.general_300
+    }};
   border-radius: 0.25rem;
   outline: none;
   ::placeholder,
@@ -53,7 +58,12 @@ export const Textarea = styled.textarea`
   padding: 0.5rem;
   margin-top: 1.2rem;
   color: ${(props) => props.theme.secondary};
-  border: 0.1rem solid ${(props) => props.theme.general_300};
+  border: 0.1rem solid
+    ${({ isWarning }) => {
+      return isWarning
+        ? (props) => props.theme.danger_100
+        : (props) => props.theme.general_300
+    }};
   border-radius: 0.25rem;
   resize: none;
   outline: none;
@@ -74,7 +84,12 @@ export const Select = styled.select`
   width: 100%;
   margin-top: 1.2rem;
   padding: 0 0.5rem;
-  border: 1px solid ${(props) => props.borderColor};
+  border: 1px solid
+    ${({ isWarning }) => {
+      return isWarning
+        ? (props) => props.theme.danger_100
+        : (props) => props.theme.general_300
+    }};
   border-radius: 0.25rem;
   outline: none;
   color: ${(props) => props.theme.secondary};
