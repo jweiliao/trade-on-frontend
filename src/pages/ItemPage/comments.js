@@ -72,6 +72,13 @@ const CommentContent = styled.div`
 const CommentBottom = styled.div`
   display: flex;
   justify-content: space-between;
+  // 如果完成交易，則不可回覆、編輯、刪除留言
+  ${({ postIsGoal }) =>
+    postIsGoal &&
+    `
+      pointer-events: none;
+      opacity: 0.4;
+    `}
 `
 
 /* CommentTime - 留言的最下方的發送留言時間 */
@@ -195,6 +202,7 @@ export function Comments({
   post,
   postMessageId,
   postAuthorId,
+  postIsGoal,
 }) {
   // 拿到 登入後的使用者資料
   const { user } = useContext(AuthContext)
@@ -310,7 +318,7 @@ export function Comments({
               )}
 
               {/* 留言的最下方 */}
-              <CommentBottom>
+              <CommentBottom postIsGoal={postIsGoal}>
                 <CommentTime>{msg.lastModified}</CommentTime>
                 {/* 留言的最下方的留言更新區塊 */}
                 {/* 登入者可以回覆留言，登入者為該留言者時才可以編輯、刪除該留言 */}

@@ -45,6 +45,7 @@ const LargeTextArea = ({
   handleAddQuestionSubmit,
   addNewComment,
   relatedMsg,
+  postIsGoal,
 }) => {
   return (
     <>
@@ -59,6 +60,7 @@ const LargeTextArea = ({
           value={newMessageInput}
           onChange={(e) => setNewMessageInput(e.target.value)}
           required
+          disabled={postIsGoal}
         ></TextArea>
 
         {/* 送出留言的按鈕 */}
@@ -75,6 +77,7 @@ const LargeTextArea = ({
                 )
               : handleReplySubmit(relatedMsg, isApplyMessage)
           }
+          disabled={postIsGoal}
         >
           送出留言
         </MessageSubmitButton>

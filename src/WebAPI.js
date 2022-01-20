@@ -8,7 +8,7 @@ const config = {
 }
 
 const instance = axios.create({
-  baseURL: config.apiHost1,
+  baseURL: config.apiHost2,
 })
 
 instance.interceptors.request.use((config) => {

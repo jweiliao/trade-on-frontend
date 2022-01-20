@@ -5,6 +5,7 @@ import { Link, useParams } from 'react-router-dom'
 import Container from '../../components/Container'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 import { LargeButton } from '../../components/buttons'
+import itemGoal from '../../images/itemGoal.svg'
 
 // 引入 react icons
 import * as FaIcons from 'react-icons/fa'
@@ -188,6 +189,17 @@ const IntroContent = styled.div`
   letter-spacing: 0.5px;
   margin-bottom: 50px;
 `
+/* 交易完成時顯示的圖片 */
+const GoalImage = styled.img`
+  max-width: 25%;
+  margin-left: 33px;
+  margin-bottom: -26px;
+
+  ${MEDIA_QUERY_SM} {
+    margin-left: 15px;
+    margin-bottom: -18px;
+  }
+`
 
 export default function ItemPage() {
   // 拿到 使用者登入後的 localStorage 資料
@@ -254,7 +266,10 @@ export default function ItemPage() {
             )}
 
             {/* "物品" 資訊右側：物品名稱 */}
-            <GiftTitle> {post.itemName}</GiftTitle>
+            <GiftTitle>
+              {post.itemName}
+              {post.isGoal ? <GoalImage src={itemGoal} /> : null}
+            </GiftTitle>
 
             {/* "物品" 資訊右側：物品細節 */}
             <GiftDetail>
@@ -319,11 +334,20 @@ export default function ItemPage() {
             {/* 判斷是否為發文者，顯示不同的按鈕 */}
             {/* 當登入者與發文者為同一人時,顯示 "編輯禮物" 按鈕,否則顯示 "想要禮物" 按鈕 */}
             {user && post.author && user.id === post.author._id ? (
-              <HandleGiftButton as={Link} to="/givings/edit">
-                編輯禮物
-              </HandleGiftButton>
+              post.isGoal ? (
+                <HandleGiftButton disabled={post.isGoal}>
+                  編輯禮物
+                </HandleGiftButton>
+              ) : (
+                <HandleGiftButton as={Link} to="/givings/edit">
+                  編輯禮物
+                </HandleGiftButton>
+              )
             ) : user ? (
-              <HandleGiftButton onClick={() => handleToggleWantPopUp(post.id)}>
+              <HandleGiftButton
+                onClick={() => handleToggleWantPopUp(post.id)}
+                disabled={post.isGoal}
+              >
                 想要禮物
               </HandleGiftButton>
             ) : (
@@ -368,6 +392,7 @@ export default function ItemPage() {
                 post={post}
                 postMessageId={post.id}
                 postAuthorId={post.author._id}
+                postIsGoal={post.isGoal}
               ></Comments>
             )}
           </GiftIntro>
@@ -385,11 +410,16 @@ export default function ItemPage() {
                 setNewMessageInput={setNewMessageInput}
                 addNewComment={true}
                 handleAddQuestionSubmit={handleAddQuestionSubmit}
+                postIsGoal={post.isGoal}
               ></LargeTextArea>
             ) : null}
 
             {/* 顯示留言內容 */}
-            <Comments isApplyMessage={false} postMessageId={post.id}></Comments>
+            <Comments
+              isApplyMessage={false}
+              postMessageId={post.id}
+              postIsGoal={post.isGoal}
+            ></Comments>
           </GiftIntro>
         </GiftContent>
       </Container>
