@@ -2,24 +2,21 @@ import React from 'react'
 import styled from 'styled-components'
 import { BackstageTitle } from '../../components/heading'
 import Container from '../../components/Container'
-import {
-  BackstageSmallButton,
-  DangerSmallButton,
-} from '../../components/buttons'
+import { GraySmallButton, DangerSmallButton } from '../../components/buttons'
 import Pagination from '../../components/Pagination/BackstagePagination'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
-import ManageFaqAdd from '../../components/ManageFaqAdd'
-import ManageFaqEdit from '../../components/ManageFaqEdit'
+import ManageFaqAdd from '../../components/PopUp/ManageFaqAdd'
+import ManageFaqEdit from '../../components/PopUp/ManageFaqEdit'
 import useFaqs from '../../hooks/useFaqs'
+
+const Wrapper = styled(Container)`
+  padding: 0;
+  max-width: 80%;
+`
 
 const Title = styled(BackstageTitle)``
 
-const AddNewFaqButton = styled(BackstageSmallButton)`
-  background-color: ${(props) => props.theme.general_200};
-  &:hover {
-    background-color: ${(props) => props.theme.general_300};
-  }
-`
+const AddNewFaqButton = styled(GraySmallButton)``
 
 const FaqWrapper = styled.div`
   margin-bottom: 3rem;
@@ -79,14 +76,12 @@ const DeleteButton = styled(DangerSmallButton)`
 export default function ManageFaqPage() {
   const {
     faqs,
-    setFaqs,
     currentFaqs,
     addPopUp,
     handleToggleAddPopUp,
     handleInput,
     handleAddFaq,
     editPopUp,
-    editedFaq,
     handleToggleEditPopUp,
     updateFaqData,
     handleEditInput,
@@ -98,7 +93,7 @@ export default function ManageFaqPage() {
   } = useFaqs()
 
   return (
-    <Container>
+    <Wrapper>
       <Title>常見問題管理</Title>
       <AddNewFaqButton onClick={handleToggleAddPopUp}>新增問答</AddNewFaqButton>
       <FaqWrapper>
@@ -126,8 +121,6 @@ export default function ManageFaqPage() {
         })}
         {addPopUp && (
           <ManageFaqAdd
-            setFaqs={setFaqs}
-            faqs={faqs}
             handleToggleAddPopUp={handleToggleAddPopUp}
             handleInput={handleInput}
             handleAddFaq={handleAddFaq}
@@ -135,9 +128,6 @@ export default function ManageFaqPage() {
         )}
         {editPopUp && (
           <ManageFaqEdit
-            editedFaq={editedFaq}
-            setFaqs={setFaqs}
-            faqs={faqs}
             handleToggleEditPopUp={handleToggleEditPopUp}
             updateFaqData={updateFaqData}
             handleEditInput={handleEditInput}
@@ -151,6 +141,6 @@ export default function ManageFaqPage() {
         handleChangePage={handleChangePage}
         currentPage={currentPage}
       />
-    </Container>
+    </Wrapper>
   )
 }

@@ -9,18 +9,14 @@ import {
   Data,
   ButtonTableCell,
 } from '../../components/table'
-
 import Pagination from '../../components/Pagination/BackstagePagination'
-
 import {
   BackstageCheckBoxLabel,
   BackstageCheckBox,
   BackstageCheckBoxSpan,
   Select,
 } from '../../components/textField'
-
-import { BackstageSmallButton } from '../../components/buttons'
-
+import { GraySmallButton, BackstageSmallButton } from '../../components/buttons'
 import useManageMembers from '../../hooks/useManageMembers'
 
 const Title = styled(BackstageTitle)``
@@ -39,11 +35,8 @@ const SaveBtn = styled(BackstageSmallButton)`
   margin: 0 auto;
 `
 
-const EditBtn = styled(SaveBtn)`
-  background-color: ${(props) => props.theme.general_100};
-  &:hover {
-    background-color: ${(props) => props.theme.general_200};
-  }
+const EditBtn = styled(GraySmallButton)`
+  margin: 0 auto;
 `
 
 export default function ManageMemberPage() {
@@ -72,7 +65,7 @@ export default function ManageMemberPage() {
             <Heading>身份</Heading>
             <Heading>贈物文發文</Heading>
             <Heading>贈物文留言</Heading>
-            <Heading></Heading>
+            <Heading />
           </Row>
         </Head>
         {currentMembers.map((member) => {
@@ -89,7 +82,7 @@ export default function ManageMemberPage() {
                     onChange={(e) => {
                       handleChangeAccountAuthority(e)
                     }}
-                    disabled={isUpdating === member.id ? false : true}
+                    disabled={!(isUpdating === member.id)}
                   >
                     <IdentityOption value="admin">管理員</IdentityOption>
                     <IdentityOption value="user">一般會員</IdentityOption>
@@ -102,7 +95,7 @@ export default function ManageMemberPage() {
                       value="isAllowPost"
                       onChange={handleChangeAllow}
                       defaultChecked={member.isAllowPost}
-                      disabled={isUpdating === member.id ? false : true}
+                      disabled={!(isUpdating === member.id)}
                     />
                     <BackstageCheckBoxSpan />
                   </BackstageCheckBoxLabel>
@@ -114,7 +107,7 @@ export default function ManageMemberPage() {
                       value="isAllowMessage"
                       onChange={handleChangeAllow}
                       defaultChecked={member.isAllowMessage}
-                      disabled={isUpdating === member.id ? false : true}
+                      disabled={!(isUpdating === member.id)}
                     />
                     <BackstageCheckBoxSpan />
                   </BackstageCheckBoxLabel>
@@ -136,7 +129,7 @@ export default function ManageMemberPage() {
                         handleChangeMemberData(member.id)
                       }}
                     >
-                      編輯權限
+                      編輯
                     </EditBtn>
                   )}
                 </ButtonTableCell>
