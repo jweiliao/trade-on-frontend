@@ -6,8 +6,8 @@ export default function usePosts() {
   const [posts, setPosts] = useState([])
   const [currentPostsPage, setCurrentPostsPage] = useState(1)
   const [togglePublicStatus, setTogglePublicStatus] = useState(true)
-
-  const postsPerPage = 5
+  const WordLimit = 50
+  const postsPerPage = 15
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -18,100 +18,76 @@ export default function usePosts() {
     fetchPosts()
   }, [currentPostsPage, togglePublicStatus])
 
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [currentPostsPage])
+
   // Get current Posts
   const indexOfLastPost = currentPostsPage * postsPerPage
   const indexOfFirstPost = indexOfLastPost - postsPerPage
   const currentPosts = posts.slice(indexOfFirstPost, indexOfLastPost)
 
   const handleToggleIsPublic = (id, isPublic) => {
-    if (isPublic === true) {
-      try {
-        Swal.fire({
-          title: '下架贈物文',
-          text: '確定要下架嗎？',
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#e25151',
-          cancelButtonColor: '#B7B7B7',
-          cancelButtonText: '不，取消下架',
-          confirmButtonText: '是的，我要下架',
-          reverseButtons: true,
-        }).then((result) => {
-          if (result.isConfirmed) {
-            updatePostStatus(id).then((res) => {
-              // console.log(res.data.update)
-              // console.log(res.data.update.isPublic)
-              const updatedStatus = res.data.update
-              if (res.data.message === 'success') {
-                setTogglePublicStatus(!togglePublicStatus)
-                setPosts(
-                  posts.map((post) => {
-                    if (post.id !== updatedStatus.id) return post
-                    return {
-                      ...post,
-                      isPublic: updatedStatus.isPublic,
-                    }
-                  })
-                )
-              }
-            })
-            Swal.fire({
-              title: '下架成功',
-              text: '已將此筆贈物文下架',
-              icon: 'success',
-              confirmButtonColor: '#bae8e8',
-              confirmButtonText: '完成',
-            })
-          }
-        })
-      } catch (err) {
-        console.log(err.response)
-        Swal.fire('請稍候再試一次!', 'error')
-      }
+    if (isPublic) {
+      Swal.fire({
+        icon: 'warning',
+        title: '下架',
+        text: '確定要下架嗎？',
+        showCancelButton: true,
+        confirmButtonColor: '#e25151',
+        cancelButtonColor: '#B7B7B7',
+        cancelButtonText: '不，取消下架',
+        confirmButtonText: '是的，我要下架',
+        reverseButtons: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          updatePostStatus(id).then((res) => {
+            const updatedStatus = res.data.update
+            if (res.data.message === 'success') {
+              setTogglePublicStatus(!togglePublicStatus)
+              setPosts(
+                posts.map((post) => {
+                  if (post.id !== updatedStatus.id) return post
+                  return {
+                    ...post,
+                    isPublic: updatedStatus.isPublic,
+                  }
+                })
+              )
+            }
+          })
+        }
+      })
     } else {
-      try {
-        Swal.fire({
-          title: '上架贈物文',
-          text: '確定要上架嗎？',
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonColor: '#e25151',
-          cancelButtonColor: '#B7B7B7',
-          cancelButtonText: '不，取消上架',
-          confirmButtonText: '是的，我要上架',
-          reverseButtons: true,
-        }).then((result) => {
-          if (result.isConfirmed) {
-            updatePostStatus(id).then((res) => {
-              // console.log(res.data.update)
-              // console.log(res.data.update.isPublic)
-              const updatedStatus = res.data.update
-              if (res.data.message === 'success') {
-                setTogglePublicStatus(!togglePublicStatus)
-                setPosts(
-                  posts.map((post) => {
-                    if (post.id !== updatedStatus.id) return post
-                    return {
-                      ...post,
-                      isPublic: updatedStatus.isPublic,
-                    }
-                  })
-                )
-              }
-            })
-            Swal.fire({
-              title: '上架成功',
-              text: '已將此筆贈物文上架',
-              icon: 'success',
-              confirmButtonColor: '#bae8e8',
-              confirmButtonText: '完成',
-            })
-          }
-        })
-      } catch (err) {
-        console.log(err.response)
-        Swal.fire('請稍候再試一次!', 'error')
-      }
+      Swal.fire({
+        icon: 'question',
+        title: '上架',
+        text: '確定要上架嗎？',
+        showCancelButton: true,
+        confirmButtonColor: '#bae8e8',
+        cancelButtonColor: '#B7B7B7',
+        cancelButtonText: '不，取消上架',
+        confirmButtonText: '是的，我要上架',
+        reverseButtons: true,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          updatePostStatus(id).then((res) => {
+            const updatedStatus = res.data.update
+            if (res.data.message === 'success') {
+              setTogglePublicStatus(!togglePublicStatus)
+              setPosts(
+                posts.map((post) => {
+                  if (post.id !== updatedStatus.id) return post
+                  return {
+                    ...post,
+                    isPublic: updatedStatus.isPublic,
+                  }
+                })
+              )
+            }
+          })
+        }
+      })
     }
   }
 
@@ -119,8 +95,8 @@ export default function usePosts() {
 
   return {
     posts,
-    setPosts,
     currentPosts,
+    WordLimit,
     postsPerPage,
     handleToggleIsPublic,
     currentPostsPage,

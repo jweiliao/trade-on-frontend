@@ -9,7 +9,6 @@ export default function useFaqs() {
   const faqsPerPage = 10
   const [addPopUp, setAddPopUp] = useState(false)
   const [editPopUp, setEditPopUp] = useState(false)
-  const [editedFaq, setEditedFaq] = useState()
   const [newFaqData, setNewFaqData] = useState({
     question: '',
     answer: '',
@@ -30,6 +29,9 @@ export default function useFaqs() {
 
   useEffect(() => {
     window.scrollTo(0, 0)
+  }, [currentPage])
+
+  useEffect(() => {
     const indexOfLastFaq = currentPage * faqsPerPage
     const indexOfFirstFaq = indexOfLastFaq - faqsPerPage
     setCurrentFaqs(faqs.slice(indexOfFirstFaq, indexOfLastFaq))
@@ -39,21 +41,13 @@ export default function useFaqs() {
     if (currentFaqs.length === 0) setCurrentPage(1)
   }, [currentFaqs])
 
-  useEffect(() => {
-    if (editedFaq)
-      setUpdateFaqData({
-        question: editedFaq.question,
-        answer: editedFaq.answer,
-      })
-  }, [editedFaq])
-
   const handleToggleAddPopUp = () => {
     setAddPopUp(!addPopUp)
   }
 
   const handleToggleEditPopUp = (id, question, answer) => {
     setEditPopUp(!editPopUp)
-    setEditedFaq({ id, question, answer })
+    setUpdateFaqData({ id, question, answer })
   }
 
   const handleInput = (e) => {
@@ -69,12 +63,6 @@ export default function useFaqs() {
     addFaq(newFaqData).then((res) => {
       const newFaq = res.data.new
       if (res.data.message === 'success') {
-        Swal.fire({
-          icon: 'success',
-          title: '新增成功',
-          showConfirmButton: false,
-          timer: 1500,
-        })
         setFaqs([
           ...faqs,
           {
@@ -83,6 +71,7 @@ export default function useFaqs() {
             answer: newFaq.answer,
           },
         ])
+        window.scrollTo(0, document.body.scrollHeight)
         setCurrentPage(Math.ceil((faqs.length + 1) / faqsPerPage))
       }
     })
@@ -99,15 +88,9 @@ export default function useFaqs() {
 
   const handleUpdateFaq = (e) => {
     e.preventDefault()
-    updateFaq(editedFaq.id, updateFaqData).then((res) => {
+    updateFaq(updateFaqData.id, updateFaqData).then((res) => {
       const newFaq = res.data.update
       if (res.data.message === 'success') {
-        Swal.fire({
-          icon: 'success',
-          title: '更新成功',
-          showConfirmButton: false,
-          timer: 1500,
-        })
         setFaqs(
           faqs.map((faq) => {
             if (faq.id !== newFaq.id) return faq
@@ -140,12 +123,6 @@ export default function useFaqs() {
         deleteFaq(id).then((res) => {
           if (res.data.message === 'success') {
             setFaqs(faqs.filter((faq) => faq.id !== id))
-            Swal.fire({
-              icon: 'success',
-              title: '刪除成功',
-              showConfirmButton: false,
-              timer: 1500,
-            })
           }
         })
       }
@@ -156,14 +133,12 @@ export default function useFaqs() {
 
   return {
     faqs,
-    setFaqs,
     currentFaqs,
     addPopUp,
     handleToggleAddPopUp,
     handleInput,
     handleAddFaq,
     editPopUp,
-    editedFaq,
     handleToggleEditPopUp,
     updateFaqData,
     handleEditInput,
