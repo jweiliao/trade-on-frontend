@@ -222,6 +222,11 @@ export const BackstageCheckBoxLabel = styled(CheckBoxLabel)`
     background: ${(props) => props.theme.secondary_200};
     border: none;
   }
+
+  input:disabled ~ span {
+    opacity: 0.5;
+  }
+
   ${MEDIA_QUERY_SM} {
     position: relative;
     height: 1.25rem;

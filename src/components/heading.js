@@ -7,7 +7,7 @@ export const PageTitle = styled.h2`
 `
 
 export const BackstageTitle = styled(PageTitle)`
-  margin: 3rem 0 2rem;
+  margin: 3rem 0;
   ${MEDIA_QUERY_SM} {
     margin-top: 16rem;
   }
