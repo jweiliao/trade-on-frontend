@@ -28,7 +28,6 @@ instance.interceptors.response.use(
           Swal.fire('系統問題，請稍候')
           break
         default:
-          Swal.fire('發生錯誤！')
       }
     }
     return Promise.reject(err)
@@ -56,7 +55,8 @@ export const updateAvatar = (id, data) =>
 
 export const updateUserInfo = (id, data) => instance.put(`/users/${id}`, data)
 
-export const updateUserPassword = (id) => instance.put(`/users/${id}/password`)
+export const updateUserPassword = (id, data) =>
+  instance.put(`/users/${id}/password`, data)
 
 export const updateUserRole = (id) => instance.put(`/users/${id}/role`)
 

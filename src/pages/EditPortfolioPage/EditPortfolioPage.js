@@ -298,6 +298,28 @@ export default function EditPortfolioPage() {
 
   return (
     <Container>
+      <PersonalInfo>
+        <AvatarWrapper>
+          <Avatar src={(avatarUrl && `${avatarUrl.imgUrl}`) || null} />
+          <UploadAvatarBtn type="button" onClick={handleAvatar}>
+            編輯
+          </UploadAvatarBtn>
+          {AvPopUp && (
+            <AvatarUploader AvPwPopUp={AvPwPopUp} closeModal={AvCloseModal} />
+          )}
+        </AvatarWrapper>
+        <Email>{email || null}</Email>
+        {/* 點擊 "更改密碼" 的按鈕時，執行 handleEditPwClick */}
+        <EditPasswordBtn type="button" onClick={handleEditPwClick}>
+          更改密碼
+        </EditPasswordBtn>
+
+        {/* 如果 pwPopUp 的 state 為 true，則顯示設定新密碼的彈窗 */}
+        {/* 並且將 setPwPopUp、closeModal 當作 props 帶到彈窗的 component，以便彈窗執行操作時，同時更改 pwPopUp 的狀態 */}
+        {pwPopUp && (
+          <UpdatePortfolioPw setPwPopUp={setPwPopUp} closeModal={closeModal} />
+        )}
+      </PersonalInfo>
       <Formik
         enableReinitialize
         initialValues={initialValues}
@@ -306,34 +328,6 @@ export default function EditPortfolioPage() {
       >
         {(formik) => (
           <BorderWrapper>
-            <PersonalInfo>
-              <AvatarWrapper>
-                <Avatar src={`${avatarUrl}` || null} />
-                <UploadAvatarBtn type="button" onClick={handleAvatar}>
-                  編輯
-                </UploadAvatarBtn>
-                {AvPopUp && (
-                  <AvatarUploader
-                    AvPwPopUp={AvPwPopUp}
-                    closeModal={AvCloseModal}
-                  />
-                )}
-              </AvatarWrapper>
-              <Email>{email || null}</Email>
-              {/* 點擊 "更改密碼" 的按鈕時，執行 handleEditPwClick */}
-              <EditPasswordBtn type="button" onClick={handleEditPwClick}>
-                更改密碼
-              </EditPasswordBtn>
-
-              {/* 如果 pwPopUp 的 state 為 true，則顯示設定新密碼的彈窗 */}
-              {/* 並且將 setPwPopUp、closeModal 當作 props 帶到彈窗的 component，以便彈窗執行操作時，同時更改 pwPopUp 的狀態 */}
-              {pwPopUp && (
-                <UpdatePortfolioPw
-                  setPwPopUp={setPwPopUp}
-                  closeModal={closeModal}
-                />
-              )}
-            </PersonalInfo>
             <BasicInfo>
               <BasicInfoTitle>基本資料</BasicInfoTitle>
               <Name>
@@ -408,7 +402,7 @@ export default function EditPortfolioPage() {
               <CancelButton as={Link} to={'/portfolio'}>
                 取消
               </CancelButton>
-              <UpdateButton type="submit">提交</UpdateButton>
+              <UpdateButton type="button">提交</UpdateButton>
             </ButtonsWrapper>
           </BorderWrapper>
         )}

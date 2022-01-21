@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import styled from 'styled-components'
 import Container from './Container'
 import { PageTitle } from './heading'
@@ -8,6 +8,9 @@ import { MEDIA_QUERY_SM } from '../styles/breakpoints'
 import { Formik, Form } from 'formik'
 import * as Yup from 'yup'
 import FormikControl from './FormikControl'
+import { useHistory } from 'react-router'
+import AuthContext from '../contexts'
+import { updateUserPassword } from '../WebAPI'
 
 /* 彈窗出現時的遮罩背景 */
 const BackDrop = styled.div`
@@ -93,19 +96,10 @@ const PwUpdateButton = styled(SmallButton)`
 
 // 將從父層傳入的 setPwPopUp、closeModal 這些 props 帶入
 export default function UpdatePortfolioPw({ setPwPopUp, closeModal }) {
-  // 當點擊 "更新" 的按鈕時，執行 handleUpdate
-  const handleUpdate = () => {
-    // 1. 更新 pwPopUp 的 state 為 false （不顯示設定新密碼的彈窗）
-    setPwPopUp(false)
-
-    // 2. 跳出 "更新成功"的彈窗提示
-    Swal.fire({
-      icon: 'success',
-      title: '更新成功',
-      showConfirmButton: false,
-      timer: 1500,
-    })
-  }
+  const {
+    user: { id },
+  } = useContext(AuthContext)
+  const history = useHistory()
 
   // 當點擊 "取消" 的按鈕時，執行 handleCancelClick
   const handleCancelClick = () => {
@@ -113,20 +107,35 @@ export default function UpdatePortfolioPw({ setPwPopUp, closeModal }) {
     setPwPopUp(false)
   }
 
-  const initialValues = { password: '', newPassword: '', confirmPassword: '' }
+  const initialValues = {
+    oldPassword: '',
+    newPassword: '',
+    confirmNewPassword: '',
+  }
 
   const validationSchema = Yup.object({
-    password: Yup.string().required('此欄位為必填'),
+    oldPassword: Yup.string().required('此欄位為必填'),
     newPassword: Yup.string().required('此欄位為必填'),
-    confirmPassword: Yup.string().oneOf(
+    confirmNewPassword: Yup.string().oneOf(
       [Yup.ref('newPassword'), null],
       '請再次確認密碼'
     ),
   })
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    console.log('You clicked submit.')
+  const handleSubmit = (req) => {
+    updateUserPassword(id, req)
+      .then((res) => {
+        const { data } = res
+        console.log('data', data)
+        if (data.message === 'success; password changed.') {
+          history.push('/portfolio')
+        }
+      })
+      .catch((err) => {
+        if (err.response.status === 403) {
+          Swal.fire('目前密碼錯誤')
+        }
+      })
   }
 
   return (
@@ -153,7 +162,7 @@ export default function UpdatePortfolioPw({ setPwPopUp, closeModal }) {
                     type="password"
                     label="目前密碼"
                     placeholder="輸入目前密碼"
-                    name="password"
+                    name="oldPassword"
                   />
                 </InputContent>
                 <InputContent>
@@ -171,7 +180,7 @@ export default function UpdatePortfolioPw({ setPwPopUp, closeModal }) {
                     type="password"
                     label="確認密碼"
                     placeholder="再次輸入新密碼"
-                    name="confirmPassword"
+                    name="confirmNewPassword"
                   />
                 </InputContent>
               </ModifyPw>
@@ -183,9 +192,7 @@ export default function UpdatePortfolioPw({ setPwPopUp, closeModal }) {
                   取消
                 </PwCancelButton>
                 {/* 點擊 "更新密碼" 的按鈕時，執行 handleUpdate */}
-                <PwUpdateButton type="submit" onClick={handleUpdate}>
-                  送出
-                </PwUpdateButton>
+                <PwUpdateButton type="submit">送出</PwUpdateButton>
               </PwConfirmWrapper>
             </UpdatePwWrapper>
           )}

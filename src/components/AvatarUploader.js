@@ -109,65 +109,32 @@ export default function UpdatePortfolioPw({ AvPwPopUp, closeModal }) {
     user: { avatarUrl, email, nickname, id },
   } = useContext(AuthContext)
   // 當點擊 "更新" 的按鈕時，執行 handleUpdate
+  const [imageUrl, setImageUrl] = useState(null)
+  // const [avatar, setAvatar] = useState(avatarUrl)
   const handleUpdate = () => {
-    AvPwPopUp(false)
+    let avatarLink = new FormData()
+    avatarLink.append('imageUrl', imageUrl)
 
-    const albumId = 'GG8ZMKb'
-    const token = 'b23339c66ad5d10577964b20a0c4b847422a4726'
-    let formData = new FormData()
-    formData.append('image', imgUrl)
-    // formData.append('title', file.name)
-    // formData.append('description', renderSize(file.size))
-    formData.append('album', albumId)
-
-    const config = {
-      method: 'post',
-      async: true,
-      crossDomain: true,
-      processData: false,
-      contentType: false,
-      url: 'https://api.imgur.com/3/image',
-      data: formData,
-      headers: {
-        Authorization: 'Bearer ' + token,
-      },
-      mimeType: 'multipart/form-data',
-    }
-
-    axios(config)
-      .then(function ({ data }) {
-        // console.log(JSON.stringify(response.data))
-        const {
-          data: { link },
-        } = data
-        const avatarLink = {
-          avatarUrl: link,
+    updateAvatar(id, avatarLink)
+      .then((res) => {
+        const { data } = res
+        if (data.message === 'success') {
+          AvPwPopUp(false)
+          Swal.fire('圖片上傳', '更新成功', 'success')
+          const fetchUser = async () => {
+            try {
+              const { data } = await getMe()
+              console.log(data.userInfo.avatarUrl.imgUrl)
+              setUser(data.userInfo)
+            } catch (err) {
+              console.log(err)
+            }
+          }
+          fetchUser()
         }
-        updateAvatar(id, avatarLink)
-          .then((res) => {
-            // updateAvatar
-            Swal.fire({
-              icon: 'success',
-              title: '圖片上傳成功',
-              showConfirmButton: true,
-            })
-            console.log(`avatarLink`, avatarLink)
-            console.log(res.data.update)
-            setUser(res.data.update)
-          })
-          .then((err) => {
-            console.log(err)
-          })
-        // updateAvatar
       })
-      .catch(function (error) {
-        Swal.fire({
-          icon: 'error',
-          title: '圖片上傳失敗',
-          showConfirmButton: true,
-          text: '上傳過程發生預期外的錯誤',
-        })
-        console.log(error)
+      .catch((err) => {
+        console.log(err)
       })
   }
 
@@ -177,12 +144,7 @@ export default function UpdatePortfolioPw({ AvPwPopUp, closeModal }) {
     AvPwPopUp(false)
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    console.log('You clicked submit.')
-  }
-
-  const [imgUrl, setImgUrl] = useState()
+  // const [imgUrl, setImgUrl] = useState()
   const [upImg, setUpImg] = useState(null)
   const [crop, setCrop] = useState({
     unit: 'px',
@@ -191,7 +153,7 @@ export default function UpdatePortfolioPw({ AvPwPopUp, closeModal }) {
     aspect: 1,
   })
   const imgRef = useRef()
-  const [previewUrl, setPreviewUrl] = useState(null)
+  const [previewUrl, setPreviewUrl] = useState(avatarUrl && avatarUrl.imgUrl)
 
   const getBase64 = (image, callback) => {
     try {
@@ -259,7 +221,7 @@ export default function UpdatePortfolioPw({ AvPwPopUp, closeModal }) {
   /** default image on load (optional) */
   useEffect(() => {
     if (!upImg)
-      fetch(avatarUrl, { mode: 'cors' })
+      fetch(previewUrl, { mode: 'cors' })
         .then((response) => response.blob())
         .then((blob) => {
           const reader = new FileReader()
@@ -314,9 +276,23 @@ export default function UpdatePortfolioPw({ AvPwPopUp, closeModal }) {
           'image/jpeg',
           1
         )
-        setImgUrl(
-          canvas.toDataURL('image/png').replace('data:', '').replace(/^.+,/, '')
-        )
+        // setImgUrl(
+        //   canvas.toDataURL('image/png').replace('data:', '').replace(/^.+,/, '')
+        // )
+        const dataURLtoFile = (dataurl, filename) => {
+          const arr = dataurl.split(',')
+          const mime = arr[0].match(/:(.*?);/)[1]
+          const bstr = atob(arr[1])
+          let n = bstr.length
+          const u8arr = new Uint8Array(n)
+          while (n) {
+            u8arr[n - 1] = bstr.charCodeAt(n - 1)
+            n -= 1 // to make eslint happy
+          }
+          return new File([u8arr], filename, { type: mime })
+        }
+        const file = dataURLtoFile(canvas.toDataURL('image/png'))
+        setImageUrl(file)
       })
     }
 
