@@ -1,12 +1,13 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import { MEDIA_QUERY_MD } from '../../styles/breakpoints'
 import { MediumButton } from '../../components/buttons'
 import Container from '../../components/Container'
-import homebanner from '../../images/homeBanner.svg'
-import homeintro from '../../images/homeIntro.svg'
+import homeBanner from '../../images/homeBanner.svg'
+import homeIntro from '../../images/homeIntro.svg'
 import Carousel from '../../components/Carousel/Carousel'
+import { getPublicPosts } from '../../WebAPI'
 
 const Banner = styled.div`
   width: 100%;
@@ -111,6 +112,17 @@ const GivingPageButton = styled(MediumButton)`
 `
 
 export default function HomePage() {
+  const [posts, setPosts] = useState([])
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      const res = await getPublicPosts(12)
+      setPosts(res.data.allPosts)
+    }
+
+    fetchPosts()
+  }, [])
+
   return (
     <Container>
       <Banner>
@@ -119,15 +131,15 @@ export default function HomePage() {
           <SubTitle>美好的事物值得繼續傳遞</SubTitle>
         </BannerTextWrapper>
         <BannerImgWrapper>
-          <BannerImage src={homebanner} />
+          <BannerImage src={homeBanner} />
         </BannerImgWrapper>
       </Banner>
       <HomeRecommended>
-        <Carousel></Carousel>
+        <Carousel posts={posts} />
       </HomeRecommended>
       <Intro>
         <IntroImgWrapper>
-          <IntroImage src={homeintro} />
+          <IntroImage src={homeIntro} />
         </IntroImgWrapper>
         <IntroTextWrapper>
           <IntroTitle>想斷捨離，卻不知如何處理物品嗎？</IntroTitle>
@@ -138,7 +150,7 @@ export default function HomePage() {
             有時，你只是在尋找下一個懂得珍惜它的人。
           </IntroContent>
           <GivingPageButton as={Link} to="/givings">
-            送禮物
+            禮物區
           </GivingPageButton>
         </IntroTextWrapper>
       </Intro>
