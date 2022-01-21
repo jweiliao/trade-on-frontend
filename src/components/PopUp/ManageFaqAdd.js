@@ -1,8 +1,8 @@
 import styled from 'styled-components'
-import { InputLabel, Input, Textarea } from './textField'
-import { BackstageTitle } from './heading'
-import { SmallButton } from './buttons'
-import { MEDIA_QUERY_SM } from '../styles/breakpoints'
+import { InputLabel, Input, Textarea } from '../textField'
+import { BackstageTitle } from '../heading'
+import { SmallButton } from '../buttons'
+import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 
 export const BackDrop = styled.div`
   width: 100%;
@@ -92,8 +92,6 @@ export const AddButton = styled(SmallButton)`
 `
 
 export default function ManageFaqPageAdd({
-  setFaqs,
-  faqs,
   handleToggleAddPopUp,
   handleInput,
   handleAddFaq,

@@ -10,7 +10,7 @@ import {
   CancelButton,
   AddButton,
 } from './ManageFaqAdd'
-import { InputLabel } from './textField'
+import { InputLabel } from '../textField'
 
 const EditFaqWrapper = styled(AddFaqWrapper)``
 
@@ -19,9 +19,6 @@ const EditFaq = styled(AddFaq)``
 const UpdateButton = styled(AddButton)``
 
 export default function ManageFaqEdit({
-  editedFaq,
-  setFaqs,
-  faqs,
   handleToggleEditPopUp,
   updateFaqData,
   handleEditInput,
