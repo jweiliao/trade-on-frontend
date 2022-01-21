@@ -8,7 +8,7 @@ const config = {
 }
 
 const instance = axios.create({
-  baseURL: config.apiHost1,
+  baseURL: config.apiHost2,
 })
 
 instance.interceptors.request.use((config) => {
@@ -23,12 +23,12 @@ instance.interceptors.response.use(
   },
   (err) => {
     if (err.response) {
+      console.log(err.response)
       switch (err.response.status) {
         case 500:
           Swal.fire('系統問題，請稍候')
           break
         default:
-          Swal.fire('發生錯誤！')
       }
     }
     return Promise.reject(err)
@@ -59,8 +59,8 @@ export const updateUserInfo = (id, data) => instance.put(`/users/${id}`, data)
 export const updateUserPassword = (id, data) =>
   instance.put(`/users/${id}/password`, data)
 
-export const updateUserRole = (id, data) =>
-  instance.put(`/users/${id}/role`, data)
+export const updateUserAuthority = (id, data) =>
+  instance.put(`/users/${id}/auth`, data)
 
 export const deleteUser = (id) => instance.delete(`/users/${id}/delete`)
 
