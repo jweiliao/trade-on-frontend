@@ -16,7 +16,7 @@ import {
   BackstageCheckBoxSpan,
   Select,
 } from '../../components/textField'
-import { GraySmallButton, BackstageSmallButton } from '../../components/buttons'
+import { BackstageSmallButton } from '../../components/buttons'
 import useManageMembers from '../../hooks/useManageMembers'
 
 const Title = styled(BackstageTitle)``
@@ -35,7 +35,7 @@ const SaveBtn = styled(BackstageSmallButton)`
   margin: 0 auto;
 `
 
-const EditBtn = styled(GraySmallButton)`
+const EditBtn = styled(BackstageSmallButton)`
   margin: 0 auto;
 `
 

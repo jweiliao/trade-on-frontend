@@ -70,7 +70,7 @@ const ButtonsWrapper = styled.div`
   margin-left: 1rem;
 `
 
-const EditBtn = styled(GraySmallButton)`
+const EditBtn = styled(BackstageSmallButton)`
   width: 3.75rem;
 `
 
@@ -79,12 +79,13 @@ const DeleteBtn = styled(DangerSmallButton)`
   margin-left: 1rem;
 `
 
-const SaveBtn = styled(BackstageSmallButton)`
-  width: 3.75rem;
+const SaveBtn = styled(EditBtn)`
   margin-left: 1rem;
 `
 
-const CancelBtn = styled(EditBtn)``
+const CancelBtn = styled(GraySmallButton)`
+  width: 3.75rem;
+`
 
 const EditInput = styled(Input)`
   margin: 0;

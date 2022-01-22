@@ -9,13 +9,16 @@ import {
   Data,
   ButtonTableCell,
 } from '../../components/table'
-import { GraySmallButton, DangerSmallButton } from '../../components/buttons'
+import {
+  BackstageSmallButton,
+  DangerSmallButton,
+} from '../../components/buttons'
 import Pagination from '../../components/Pagination/BackstagePagination'
 import usePosts from '../../hooks/usePosts'
 
 const Title = styled(BackstageTitle)``
 
-const PublishBtn = styled(GraySmallButton)`
+const PublishBtn = styled(BackstageSmallButton)`
   margin: 0 auto;
 `
 

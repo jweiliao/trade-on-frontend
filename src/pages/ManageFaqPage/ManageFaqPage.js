@@ -2,7 +2,10 @@ import React from 'react'
 import styled from 'styled-components'
 import { BackstageTitle } from '../../components/heading'
 import Container from '../../components/Container'
-import { GraySmallButton, DangerSmallButton } from '../../components/buttons'
+import {
+  BackstageSmallButton,
+  DangerSmallButton,
+} from '../../components/buttons'
 import Pagination from '../../components/Pagination/BackstagePagination'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 import ManageFaqAdd from '../../components/PopUp/ManageFaqAdd'
@@ -16,7 +19,7 @@ const Wrapper = styled(Container)`
 
 const Title = styled(BackstageTitle)``
 
-const AddNewFaqButton = styled(GraySmallButton)``
+const AddNewFaqButton = styled(BackstageSmallButton)``
 
 const FaqWrapper = styled.div`
   margin-bottom: 3rem;
