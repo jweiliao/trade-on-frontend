@@ -3,7 +3,7 @@ import { MEDIA_QUERY_SM } from '../styles/breakpoints'
 
 export const Table = styled.table`
   border-collapse: collapse;
-  margin: 1rem auto;
+  margin: 3rem auto;
   width: 95%;
   table-layout: fixed;
 `

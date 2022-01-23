@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import Swal from 'sweetalert2'
-
 import { getAllUsers, updateUserAuthority } from '../WebAPI'
 
 export default function useManageMembers() {
@@ -12,7 +11,7 @@ export default function useManageMembers() {
     isAllowMessage: null,
   })
   const [currentManageMembersPage, setCurrentManageMembersPage] = useState(1)
-  const membersPerPage = 5
+  const membersPerPage = 20
 
   // 撈取所有 member 的資料,更新到 members 的 state 中
   useEffect(() => {
@@ -23,6 +22,10 @@ export default function useManageMembers() {
 
     fetchMembers()
   }, [])
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [currentManageMembersPage])
 
   // Get current Categories
   const indexOfLastMembers = currentManageMembersPage * membersPerPage
@@ -82,22 +85,17 @@ export default function useManageMembers() {
     const memberId = id
 
     // 串接 updateUserAuthority API 更新權限
-    try {
-      updateUserAuthority(memberId, updateAuthorityData).then((res) => {
-        if (res.data.message === 'success') {
-          Swal.fire({
-            icon: 'success',
-            title: '新增成功',
-            showConfirmButton: false,
-            timer: 1500,
-          })
-          setIsUpdating(false)
-        }
-      })
-    } catch (err) {
-      console.log(err)
-      Swal.fire('請稍候再試一次!', 'error')
-    }
+    updateUserAuthority(memberId, updateAuthorityData).then((res) => {
+      if (res.data.message === 'success') {
+        Swal.fire({
+          icon: 'success',
+          title: '更新成功',
+          showConfirmButton: false,
+          timer: 1500,
+        })
+        setIsUpdating(false)
+      }
+    })
   }
 
   const handleChangeManageMembersPage = (pageNumber) =>

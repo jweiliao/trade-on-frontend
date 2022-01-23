@@ -1,5 +1,4 @@
 import styled from 'styled-components'
-import { MEDIA_QUERY_SM } from '../styles/breakpoints'
 
 export const PageTitle = styled.h2`
   text-align: center;
@@ -7,10 +6,7 @@ export const PageTitle = styled.h2`
 `
 
 export const BackstageTitle = styled(PageTitle)`
-  margin: 3rem 0 2rem;
-  ${MEDIA_QUERY_SM} {
-    margin-top: 16rem;
-  }
+  margin: 3rem 0;
 `
 
 export const SubTitle = styled.h3`

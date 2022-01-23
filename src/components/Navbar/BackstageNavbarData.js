@@ -1,33 +1,40 @@
-import { FaDesktop, FaSignOutAlt } from 'react-icons/fa'
+import {
+  FaUserAlt,
+  FaGift,
+  FaLayerGroup,
+  FaQuestionCircle,
+  FaHome,
+  FaSignOutAlt,
+} from 'react-icons/fa'
 
 export const BackstageNavbarData = {
   BackstagePage: [
     {
       title: '會員',
       path: '/backstage/member',
-      icon: null,
-    },
-    {
-      title: '物品類別',
-      path: '/backstage/category',
-      icon: null,
-    },
-    {
-      title: '常見問題',
-      path: '/backstage/faq',
-      icon: null,
+      icon: <FaUserAlt />,
     },
     {
       title: '贈物文',
       path: '/backstage/giving',
-      icon: null,
+      icon: <FaGift />,
+    },
+    {
+      title: '物品分類',
+      path: '/backstage/category',
+      icon: <FaLayerGroup />,
+    },
+    {
+      title: '常見問題',
+      path: '/backstage/faq',
+      icon: <FaQuestionCircle />,
     },
   ],
-  FontPage: [
+  FrontPage: [
     {
       title: '前台',
       path: '/',
-      icon: <FaDesktop />,
+      icon: <FaHome />,
     },
     {
       title: '登出',

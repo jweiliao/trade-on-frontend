@@ -9,38 +9,33 @@ import {
   Data,
   ButtonTableCell,
 } from '../../components/table'
-
-import { BackstageSmallButton } from '../../components/buttons'
-
+import {
+  BackstageSmallButton,
+  DangerSmallButton,
+} from '../../components/buttons'
 import Pagination from '../../components/Pagination/BackstagePagination'
-
 import usePosts from '../../hooks/usePosts'
 
 const Title = styled(BackstageTitle)``
 
 const PublishBtn = styled(BackstageSmallButton)`
   margin: 0 auto;
-  background-color: ${(props) =>
-    props.isPublic ? props.theme.secondary_100 : props.theme.secondary};
-  color: ${(props) =>
-    props.isPublic ? props.theme.secondary : props.theme.general_000};
-  &:hover {
-    background-color: ${(props) =>
-      props.isPublic ? props.theme.secondary_200 : props.theme.secondary};
-  }
+`
+
+const SetPrivateBtn = styled(DangerSmallButton)`
+  margin: 0 auto;
 `
 
 export default function ManageGivingPage() {
   const {
     posts,
     currentPosts,
+    WordLimit,
     postsPerPage,
     handleToggleIsPublic,
     currentPostsPage,
     handleChangePostPage,
   } = usePosts()
-
-  console.log(posts)
 
   return (
     <>
@@ -52,8 +47,8 @@ export default function ManageGivingPage() {
             <Heading>暱稱</Heading>
             <Heading>物品名稱</Heading>
             <Heading>物品介紹</Heading>
-            <Heading>上架時間</Heading>
-            <Heading></Heading>
+            <Heading>更新時間</Heading>
+            <Heading />
           </Row>
         </Head>
         <Body>
@@ -63,15 +58,29 @@ export default function ManageGivingPage() {
                 <Data data-label="帳號">{post.author.email}</Data>
                 <Data data-label="暱稱">{post.author.nickname}</Data>
                 <Data data-label="物品名稱">{post.itemName}</Data>
-                <Data data-label="物品介紹">{post.description}</Data>
-                <Data data-label="上架時間">{post.createdAt}</Data>
+                <Data data-label="物品介紹">
+                  {post.description.slice(0, WordLimit)}
+                  {post.description.slice(WordLimit) && '...'}
+                </Data>
+                <Data data-label="更新時間">{post.createdAt}</Data>
                 <ButtonTableCell>
-                  <PublishBtn
-                    onClick={() => handleToggleIsPublic(post.id, post.isPublic)}
-                    isPublic={post.isPublic}
-                  >
-                    {post.isPublic ? '下架' : '上架'}
-                  </PublishBtn>
+                  {post.isPublic ? (
+                    <SetPrivateBtn
+                      onClick={() =>
+                        handleToggleIsPublic(post.id, post.isPublic)
+                      }
+                    >
+                      下架
+                    </SetPrivateBtn>
+                  ) : (
+                    <PublishBtn
+                      onClick={() =>
+                        handleToggleIsPublic(post.id, post.isPublic)
+                      }
+                    >
+                      上架
+                    </PublishBtn>
+                  )}
                 </ButtonTableCell>
               </Row>
             )
