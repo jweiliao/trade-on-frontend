@@ -7,16 +7,9 @@ export default function useFaqs() {
   const [currentFaqs, setCurrentFaqs] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
   const faqsPerPage = 10
-  const [addPopUp, setAddPopUp] = useState(false)
-  const [editPopUp, setEditPopUp] = useState(false)
-  const [newFaqData, setNewFaqData] = useState({
-    question: '',
-    answer: '',
-  })
-  const [updateFaqData, setUpdateFaqData] = useState({
-    question: '',
-    answer: '',
-  })
+  const [popUp, setPopUp] = useState(false)
+  const [faqData, setFaqData] = useState({})
+  const [errorMessages, setErrorMessages] = useState({})
 
   useEffect(() => {
     const fetchFaqs = async () => {
@@ -41,69 +34,84 @@ export default function useFaqs() {
     if (currentFaqs.length === 0) setCurrentPage(1)
   }, [currentFaqs])
 
-  const handleToggleAddPopUp = () => {
-    setAddPopUp(!addPopUp)
+  const validateFaqData = (values) => {
+    let errors = {}
+
+    if (!values.question.trim()) {
+      errors.question = '此欄位為必填'
+    }
+
+    if (!values.answer.trim()) {
+      errors.answer = '此欄位為必填'
+    }
+
+    return errors
   }
 
-  const handleToggleEditPopUp = (id, question, answer) => {
-    setEditPopUp(!editPopUp)
-    setUpdateFaqData({ id, question, answer })
+  const handleTogglePopUp = (id, question, answer) => {
+    setErrorMessages({})
+    setPopUp(!popUp)
+    if (id) {
+      setFaqData({ id, question, answer })
+    } else {
+      setFaqData({ question: '', answer: '' })
+    }
   }
 
   const handleInput = (e) => {
     const { name, value } = e.target
-    setNewFaqData({
-      ...newFaqData,
+    setFaqData({
+      ...faqData,
       [name]: value,
     })
-  }
-
-  const handleAddFaq = (e) => {
-    e.preventDefault()
-    addFaq(newFaqData).then((res) => {
-      const newFaq = res.data.new
-      if (res.data.message === 'success') {
-        setFaqs([
-          ...faqs,
-          {
-            id: newFaq.id,
-            question: newFaq.question,
-            answer: newFaq.answer,
-          },
-        ])
-        window.scrollTo(0, document.body.scrollHeight)
-        setCurrentPage(Math.ceil((faqs.length + 1) / faqsPerPage))
-      }
-    })
-    handleToggleAddPopUp()
-  }
-
-  const handleEditInput = (e) => {
-    const { name, value } = e.target
-    setUpdateFaqData({
-      ...updateFaqData,
-      [name]: value,
+    setErrorMessages({
+      ...errorMessages,
+      [e.target.name]: '',
     })
   }
 
-  const handleUpdateFaq = (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
-    updateFaq(updateFaqData.id, updateFaqData).then((res) => {
-      const newFaq = res.data.update
-      if (res.data.message === 'success') {
-        setFaqs(
-          faqs.map((faq) => {
-            if (faq.id !== newFaq.id) return faq
-            return {
-              ...faq,
+    if (Object.keys(validateFaqData(faqData)).length !== 0) {
+      setErrorMessages(validateFaqData(faqData))
+      return
+    }
+
+    if (faqData.id) {
+      updateFaq(faqData.id, faqData).then((res) => {
+        const newFaq = res.data.update
+        if (res.data.message === 'success') {
+          setFaqs(
+            faqs.map((faq) => {
+              if (faq.id !== newFaq.id) return faq
+              return {
+                ...faq,
+                question: newFaq.question,
+                answer: newFaq.answer,
+              }
+            })
+          )
+        }
+      })
+    } else {
+      addFaq(faqData).then((res) => {
+        const newFaq = res.data.new
+        if (res.data.message === 'success') {
+          setFaqs([
+            ...faqs,
+            {
+              id: newFaq.id,
               question: newFaq.question,
               answer: newFaq.answer,
-            }
-          })
-        )
-      }
-    })
-    handleToggleEditPopUp()
+            },
+          ])
+          window.scrollTo(0, document.body.scrollHeight)
+          setCurrentPage(Math.ceil((faqs.length + 1) / faqsPerPage))
+        }
+      })
+    }
+
+    handleTogglePopUp()
   }
 
   const handleDeleteFaq = (id) => {
@@ -117,7 +125,6 @@ export default function useFaqs() {
       cancelButtonText: '不，取消刪除',
       confirmButtonText: '是的，我要刪除',
       reverseButtons: true,
-      backdrop: true,
     }).then((result) => {
       if (result.isConfirmed) {
         deleteFaq(id).then((res) => {
@@ -134,15 +141,12 @@ export default function useFaqs() {
   return {
     faqs,
     currentFaqs,
-    addPopUp,
-    handleToggleAddPopUp,
+    popUp,
+    handleTogglePopUp,
     handleInput,
-    handleAddFaq,
-    editPopUp,
-    handleToggleEditPopUp,
-    updateFaqData,
-    handleEditInput,
-    handleUpdateFaq,
+    faqData,
+    errorMessages,
+    handleSubmit,
     handleDeleteFaq,
     faqsPerPage,
     currentPage,
