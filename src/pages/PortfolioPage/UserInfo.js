@@ -73,8 +73,8 @@ const TransactionType = styled.p`
   line-height: 1;
   position: relative;
   padding-left: 1.75rem;
-  opacity: ${({ $isSelected }) => {
-    return $isSelected ? (props) => 1 : (props) => 0.3
+  opacity: ${({ isSelected }) => {
+    return isSelected ? (props) => 1 : (props) => 0.3
   }};
   :before {
     position: absolute;
@@ -84,14 +84,14 @@ const TransactionType = styled.p`
     height: 1rem;
     width: 1rem;
     border: 0.1rem solid
-      ${({ $isSelected }) => {
-        return $isSelected
+      ${({ isSelected }) => {
+        return isSelected
           ? (props) => (props) => props.theme.primary_200
           : (props) => (props) => props.secondary
       }};
     border-radius: 0.25rem;
-    background: ${({ $isSelected }) => {
-      return $isSelected
+    background: ${({ isSelected }) => {
+      return isSelected
         ? (props) => (props) => props.theme.primary_200
         : (props) => (props) => props.theme.general_000
     }};
@@ -128,9 +128,6 @@ const EditButton = styled(SmallButton)`
 const UserInfo = ({ userData }) => {
   const { faceToFace, sevenEleven, familyMart } = shippingMethod
   const { user } = useContext(AuthContext)
-  let preferDealMethods = []
-  if (user.preferDealMethods && user.preferDealMethods.selectedMethods)
-    preferDealMethods = user.preferDealMethods.selectedMethods
 
   return (
     <Wrapper>
@@ -150,22 +147,25 @@ const UserInfo = ({ userData }) => {
           <TradeInfo>
             <PreferTradeMode>偏好交易方式</PreferTradeMode>
             <TransactionType
-              $isSelected={
-                preferDealMethods && preferDealMethods.includes('全家')
+              isSelected={
+                user.preferDealMethods &&
+                user.preferDealMethods.selectedMethods.includes('全家')
               }
             >
               {familyMart}
             </TransactionType>
             <TransactionType
-              $isSelected={
-                preferDealMethods && preferDealMethods.includes('7-11')
+              isSelected={
+                user.preferDealMethods &&
+                user.preferDealMethods.selectedMethods.includes('7-11')
               }
             >
               {sevenEleven}
             </TransactionType>
             <TransactionType
-              $isSelected={
-                preferDealMethods && preferDealMethods.includes('面交')
+              isSelected={
+                user.preferDealMethods &&
+                user.preferDealMethods.selectedMethods.includes('面交')
               }
             >
               {faceToFace}

@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import { PaginationContainer, PageItem } from './Pagination'
 
 const BackstagePageItem = styled(PageItem)`
-  color: ${(props) => props.theme.secondary};
   &:hover {
     background-color: ${(props) => props.theme.secondary_100};
   }
@@ -27,11 +26,11 @@ export const Pagination = ({
   }
 
   return (
-    <PaginationContainer $isShow={pageNumbers.length > 1 ? true : false}>
+    <PaginationContainer $isShow={pageNumbers.length > 1}>
       {pageNumbers.map((number) => {
         return (
           <BackstagePageItem
-            $isCurrent={number === currentPage ? true : false}
+            $isCurrent={number === currentPage}
             key={number}
             onClick={() => {
               handleChangePage(number)

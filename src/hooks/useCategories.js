@@ -10,10 +10,10 @@ import {
 export default function useCategories() {
   const [categories, setCategories] = useState([])
   const [currentCategoryPage, setCurrentCategoryPage] = useState(1)
-  const categoriesPerPage = 5
+  const categoriesPerPage = 15
 
   //  儲存新增分類的input 欄中輸入的值
-  const categoryCotentRef = useRef()
+  const categoryContentRef = useRef()
   const [newCategory, setNewCategory] = useState({
     categoryName: '',
   })
@@ -31,6 +31,10 @@ export default function useCategories() {
     fetchCategories()
   }, [])
 
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [currentCategoryPage])
+
   // Get current Categories
   const indexOfLastCategory = currentCategoryPage * categoriesPerPage
   const indexOfFirstCategory = indexOfLastCategory - categoriesPerPage
@@ -39,29 +43,26 @@ export default function useCategories() {
     indexOfLastCategory
   )
 
+  useEffect(() => {
+    if (currentCategories.length === 0) setCurrentCategoryPage(1)
+  }, [currentCategories])
+
   const handleNewCategory = (e) => {
     setNewCategory({
       categoryName: e.target.value,
     })
   }
-  // 當點擊 "新增" 按鈕時，執行 handleAddCategory
+
   const handleAddCategory = (e) => {
     e.preventDefault()
 
     // 如果 input  為空，不進行任何動作
-    if (categoryCotentRef.current.value === '') return
+    if (categoryContentRef.current.value.trim().length === 0) return
 
     try {
       addCategory(newCategory).then((res) => {
-        console.log(res.data)
         const newCategory = res.data.new
         if (res.data.message === 'success') {
-          Swal.fire({
-            icon: 'success',
-            title: '新增成功',
-            showConfirmButton: false,
-            timer: 1500,
-          })
           setCategories([
             ...categories,
             {
@@ -71,6 +72,18 @@ export default function useCategories() {
               lastModified: newCategory.lastModified,
             },
           ])
+          setCurrentCategoryPage(
+            Math.ceil((categories.length + 1) / categoriesPerPage)
+          )
+          window.scrollTo(0, document.body.scrollHeight)
+        }
+        if (res.data.message.includes('already exist')) {
+          Swal.fire({
+            icon: 'error',
+            title: '錯誤',
+            text: '分類名稱重複',
+            showConfirmButton: false,
+          })
         }
       })
     } catch (err) {
@@ -85,44 +98,26 @@ export default function useCategories() {
 
   const handleEditMessage = (e) => {
     const categoryId = e.target.id
-    console.log(categoryId)
-    if (editValue === '') {
-      e.preventDefault()
-    }
     const editData = {
       categoryName: editValue,
       compareId: categoryId,
     }
-    console.log(editData)
-    try {
-      updateCategory(editData.compareId, editData).then((res) => {
-        console.log(res.data)
-        const updatedCategory = res.data.update
-        if (res.data.message === 'success') {
-          //跳出 "更新成功"的彈窗提示
-          Swal.fire({
-            icon: 'success',
-            title: '更新成功',
-            showConfirmButton: false,
-            timer: 1500,
+    updateCategory(editData.compareId, editData).then((res) => {
+      const updatedCategory = res.data.update
+      if (res.data.message === 'success') {
+        setCategories(
+          categories.map((category) => {
+            if (category.id !== updatedCategory.id) return category
+            return {
+              ...category,
+              categoryName: updatedCategory.categoryName,
+            }
           })
-          setCategories(
-            categories.map((category) => {
-              if (category.id !== updatedCategory.id) return category
-              return {
-                ...category,
-                categoryName: updatedCategory.categoryName,
-              }
-            })
-          )
-          setIsUpdating(false)
-        }
-      })
-    } catch (err) {
-      console.log(err)
-      Swal.fire('請稍候再試一次!', 'error')
-    }
-    setEditValue('')
+        )
+        setIsUpdating(false)
+        setEditValue('')
+      }
+    })
   }
 
   const handleDeleteCategory = (id) => {
@@ -139,22 +134,11 @@ export default function useCategories() {
       backdrop: true,
     }).then((result) => {
       if (result.isConfirmed) {
-        deleteCategory(id)
-          .then((res) => {
-            if (res.data.message === 'success') {
-              setCategories(categories.filter((category) => category.id !== id))
-              Swal.fire({
-                icon: 'success',
-                title: '刪除成功',
-                showConfirmButton: false,
-                timer: 1500,
-              })
-            }
-          })
-          .catch((err) => {
-            console.log(err)
-            Swal.fire('發生錯誤！')
-          })
+        deleteCategory(id).then((res) => {
+          if (res.data.message === 'success') {
+            setCategories(categories.filter((category) => category.id !== id))
+          }
+        })
       }
     })
   }
@@ -167,7 +151,7 @@ export default function useCategories() {
     setCategories,
     handleNewCategory,
     handleAddCategory,
-    categoryCotentRef,
+    categoryContentRef,
     newCategory,
     handleEditMessage,
     isUpdating,

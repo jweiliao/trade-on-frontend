@@ -20,7 +20,12 @@ export const Input = styled.input`
   margin-top: 1.2rem;
   padding: 0 0.5rem;
   color: ${(props) => props.theme.secondary};
-  border: 1px solid ${(props) => props.borderColor};
+  border: 1px solid
+    ${({ isWarning }) => {
+      return isWarning
+        ? (props) => props.theme.danger_100
+        : (props) => props.theme.general_300
+    }};
   border-radius: 0.25rem;
   outline: none;
   ::placeholder,
@@ -53,7 +58,12 @@ export const Textarea = styled.textarea`
   padding: 0.5rem;
   margin-top: 1.2rem;
   color: ${(props) => props.theme.secondary};
-  border: 0.1rem solid ${(props) => props.theme.general_300};
+  border: 0.1rem solid
+    ${({ isWarning }) => {
+      return isWarning
+        ? (props) => props.theme.danger_100
+        : (props) => props.theme.general_300
+    }};
   border-radius: 0.25rem;
   resize: none;
   outline: none;
@@ -74,7 +84,12 @@ export const Select = styled.select`
   width: 100%;
   margin-top: 1.2rem;
   padding: 0 0.5rem;
-  border: 1px solid ${(props) => props.borderColor};
+  border: 1px solid
+    ${({ isWarning }) => {
+      return isWarning
+        ? (props) => props.theme.danger_100
+        : (props) => props.theme.general_300
+    }};
   border-radius: 0.25rem;
   outline: none;
   color: ${(props) => props.theme.secondary};
@@ -195,7 +210,7 @@ export const CheckBoxSpan = styled.span`
   }
 `
 
-const BackstageCheckBoxLabel = styled(CheckBoxLabel)`
+export const BackstageCheckBoxLabel = styled(CheckBoxLabel)`
   margin: 0;
   padding: 0;
   position: static;
@@ -207,15 +222,20 @@ const BackstageCheckBoxLabel = styled(CheckBoxLabel)`
     background: ${(props) => props.theme.secondary_200};
     border: none;
   }
+
+  input:disabled ~ span {
+    opacity: 0.5;
+  }
+
   ${MEDIA_QUERY_SM} {
     position: relative;
     height: 1.25rem;
   }
 `
 
-const BackstageCheckBox = styled(CheckBox)``
+export const BackstageCheckBox = styled(CheckBox)``
 
-const BackstageCheckBoxSpan = styled(CheckBoxSpan)`
+export const BackstageCheckBoxSpan = styled(CheckBoxSpan)`
   top: 50%;
   left: 50%;
   transform: translateX(-50%) translateY(-50%);

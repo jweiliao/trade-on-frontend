@@ -9,15 +9,17 @@ import {
   Data,
   ButtonTableCell,
 } from '../../components/table'
-import { BackstageInputCheckBox, Select } from '../../components/textField'
+import Pagination from '../../components/Pagination/BackstagePagination'
 import {
-  BackstageSmallButton,
-  BackstagePageButton,
-} from '../../components/buttons'
+  BackstageCheckBoxLabel,
+  BackstageCheckBox,
+  BackstageCheckBoxSpan,
+  Select,
+} from '../../components/textField'
+import { BackstageSmallButton } from '../../components/buttons'
+import useManageMembers from '../../hooks/useManageMembers'
 
 const Title = styled(BackstageTitle)``
-
-const Checkbox = styled(BackstageInputCheckBox)``
 
 const IdentitySelect = styled(Select)`
   height: 1.8rem;
@@ -33,14 +35,25 @@ const SaveBtn = styled(BackstageSmallButton)`
   margin: 0 auto;
 `
 
-const PaginationWrapper = styled.ul`
-  display: flex;
-  justify-content: center;
-  width: 100%;
-  margin: 2rem 0 4rem;
+const EditBtn = styled(BackstageSmallButton)`
+  margin: 0 auto;
 `
 
 export default function ManageMemberPage() {
+  const {
+    members,
+    currentMembers,
+    currentManageMembersPage,
+    membersPerPage,
+    handleChangeManageMembersPage,
+    handleChangeAccountAuthority,
+    handleChangeAllow,
+    handleChangeMember,
+    isUpdating,
+    setIsUpdating,
+    handleChangeMemberData,
+  } = useManageMembers()
+
   return (
     <>
       <Title>會員管理</Title>
@@ -52,56 +65,85 @@ export default function ManageMemberPage() {
             <Heading>身份</Heading>
             <Heading>贈物文發文</Heading>
             <Heading>贈物文留言</Heading>
-            <Heading></Heading>
+            <Heading />
           </Row>
         </Head>
-        <Body>
-          <Row>
-            <Data data-label="帳號">admin</Data>
-            <Data data-label="暱稱">Admin</Data>
-            <Data data-label="身份">
-              <IdentitySelect>
-                <IdentityOption>管理員</IdentityOption>
-                <IdentityOption>一般會員</IdentityOption>
-              </IdentitySelect>
-            </Data>
-            <Data data-label="贈物文發文">
-              <Checkbox isChecked />
-            </Data>
-            <Data data-label="贈物文留言">
-              <Checkbox isChecked />
-            </Data>
-            <ButtonTableCell>
-              <SaveBtn>儲存</SaveBtn>
-            </ButtonTableCell>
-          </Row>
-          <Row>
-            <Data data-label="帳號">jane0901</Data>
-            <Data data-label="暱稱">Jane</Data>
-            <Data data-label="身份">
-              <IdentitySelect>
-                <IdentityOption>管理員</IdentityOption>
-                <IdentityOption selected>一般會員</IdentityOption>
-              </IdentitySelect>
-            </Data>
-            <Data data-label="贈物文發文">
-              <Checkbox />
-            </Data>
-            <Data data-label="贈物文留言">
-              <Checkbox />
-            </Data>
-            <ButtonTableCell>
-              <SaveBtn>儲存</SaveBtn>
-            </ButtonTableCell>
-          </Row>
-        </Body>
+        {currentMembers.map((member) => {
+          return (
+            <Body key={member.id}>
+              <Row>
+                <Data data-label="帳號">{member.email}</Data>
+                <Data data-label="暱稱">{member.nickname}</Data>
+                <Data data-label="身份">
+                  {/* 在編輯權限的狀態時，才可以編輯，否則 disabled */}
+                  <IdentitySelect
+                    id={member.id}
+                    defaultValue={member.accountAuthority}
+                    onChange={(e) => {
+                      handleChangeAccountAuthority(e)
+                    }}
+                    disabled={!(isUpdating === member.id)}
+                  >
+                    <IdentityOption value="admin">管理員</IdentityOption>
+                    <IdentityOption value="user">一般會員</IdentityOption>
+                  </IdentitySelect>
+                </Data>
+                <Data data-label="贈物文發文">
+                  <BackstageCheckBoxLabel>
+                    <BackstageCheckBox
+                      id={member.id}
+                      value="isAllowPost"
+                      onChange={handleChangeAllow}
+                      defaultChecked={member.isAllowPost}
+                      disabled={!(isUpdating === member.id)}
+                    />
+                    <BackstageCheckBoxSpan />
+                  </BackstageCheckBoxLabel>
+                </Data>
+                <Data data-label="贈物文留言">
+                  <BackstageCheckBoxLabel>
+                    <BackstageCheckBox
+                      id={member.id}
+                      value="isAllowMessage"
+                      onChange={handleChangeAllow}
+                      defaultChecked={member.isAllowMessage}
+                      disabled={!(isUpdating === member.id)}
+                    />
+                    <BackstageCheckBoxSpan />
+                  </BackstageCheckBoxLabel>
+                </Data>
+                <ButtonTableCell>
+                  {/* 在編輯權限的狀態時，顯示 "儲存" 按鈕 */}
+                  {isUpdating === member.id ? (
+                    <SaveBtn
+                      id={member.id}
+                      onClick={() => handleChangeMember(member.id)}
+                    >
+                      儲存
+                    </SaveBtn>
+                  ) : (
+                    <EditBtn
+                      id={member.id}
+                      onClick={() => {
+                        setIsUpdating(member.id)
+                        handleChangeMemberData(member.id)
+                      }}
+                    >
+                      編輯
+                    </EditBtn>
+                  )}
+                </ButtonTableCell>
+              </Row>
+            </Body>
+          )
+        })}
       </Table>
-      <PaginationWrapper>
-        <BackstagePageButton>&lt;</BackstagePageButton>
-        <BackstagePageButton>1</BackstagePageButton>
-        <BackstagePageButton>2</BackstagePageButton>
-        <BackstagePageButton>&gt;</BackstagePageButton>
-      </PaginationWrapper>
+      <Pagination
+        dataPerPage={membersPerPage}
+        totalData={members.length}
+        handleChangePage={handleChangeManageMembersPage}
+        currentPage={currentManageMembersPage}
+      />
     </>
   )
 }

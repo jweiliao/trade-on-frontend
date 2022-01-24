@@ -1,10 +1,10 @@
 import styled from 'styled-components'
-import { InputLabel, Input, Textarea } from './textField'
-import { BackstageTitle } from './heading'
-import { SmallButton } from './buttons'
-import { MEDIA_QUERY_SM } from '../styles/breakpoints'
+import { InputLabel, Input, Textarea, InputErrorMessage } from '../textField'
+import { BackstageTitle } from '../heading'
+import { SmallButton } from '../buttons'
+import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 
-export const BackDrop = styled.div`
+const BackDrop = styled.div`
   width: 100%;
   height: 100%;
   position: fixed;
@@ -14,7 +14,7 @@ export const BackDrop = styled.div`
   background-color: rgba(0, 0, 0, 0.3);
 `
 
-export const AddFaqWrapper = styled.div`
+const Form = styled.form`
   z-index: 100;
   width: 500px;
   padding: 10px 50px;
@@ -33,13 +33,13 @@ export const AddFaqWrapper = styled.div`
   }
 `
 
-export const Title = styled(BackstageTitle)`
+const Title = styled(BackstageTitle)`
   ${MEDIA_QUERY_SM} {
     margin-top: 3rem;
   }
 `
 
-export const AddFaq = styled.form`
+const InputArea = styled.div`
   max-width: 100%;
   display: flex;
   flex-direction: column;
@@ -49,16 +49,16 @@ export const AddFaq = styled.form`
   margin-bottom: 30px;
 `
 
-export const QuestionInput = styled(Input)`
+const FaqQuestion = styled(Input)`
   width: 100%;
 `
 
-export const AnswerInput = styled(Textarea)`
+const FaqAnswer = styled(Textarea)`
   width: 100%;
   height: 7.5rem;
 `
 
-export const ConfirmButtonsWrapper = styled.div`
+const ConfirmButtons = styled.div`
   display: flex;
   justify-content: center;
   margin-bottom: 50px;
@@ -68,7 +68,7 @@ export const ConfirmButtonsWrapper = styled.div`
   }
 `
 
-export const CancelButton = styled(SmallButton)`
+const CancelButton = styled(SmallButton)`
   background-color: ${(props) => props.theme.general_200};
   &:hover {
     background-color: ${(props) => props.theme.general_300};
@@ -78,7 +78,7 @@ export const CancelButton = styled(SmallButton)`
   }
 `
 
-export const AddButton = styled(SmallButton)`
+const SubmitButton = styled(SmallButton)`
   margin-left: 27px;
   background-color: ${(props) => props.theme.secondary_100};
   :hover {
@@ -91,39 +91,51 @@ export const AddButton = styled(SmallButton)`
   }
 `
 
-export default function ManageFaqPageAdd({
-  setFaqs,
-  faqs,
-  handleToggleAddPopUp,
+export default function FaqPopUp({
+  handleTogglePopUp,
   handleInput,
-  handleAddFaq,
+  handleSubmit,
+  faqData,
+  errorMessages,
 }) {
   return (
     <>
-      <BackDrop onClick={handleToggleAddPopUp} />
-      <AddFaqWrapper>
-        <Title>新增常見問題</Title>
-        <AddFaq>
+      <BackDrop onClick={handleTogglePopUp} />
+      <Form onSubmit={handleSubmit}>
+        <Title>{faqData.id ? '編輯' : '新增'}常見問題</Title>
+        <InputArea>
           <InputLabel>問題</InputLabel>
-          <QuestionInput
+          <FaqQuestion
             name="question"
             placeholder="請輸入問題"
+            value={faqData ? faqData.question : null}
             onChange={handleInput}
+            isWarning={errorMessages.question}
           />
+          {errorMessages.question && (
+            <InputErrorMessage>{errorMessages.question}</InputErrorMessage>
+          )}
           <InputLabel>回答</InputLabel>
-          <AnswerInput
+          <FaqAnswer
             name="answer"
             placeholder="請輸入回答"
+            value={faqData ? faqData.answer : null}
             onChange={handleInput}
+            isWarning={errorMessages.answer}
           />
-        </AddFaq>
-        <ConfirmButtonsWrapper>
-          <CancelButton onClick={handleToggleAddPopUp}>取消</CancelButton>
-          <AddButton type="submit" onClick={handleAddFaq}>
-            新增
-          </AddButton>
-        </ConfirmButtonsWrapper>
-      </AddFaqWrapper>
+          {errorMessages.answer && (
+            <InputErrorMessage>{errorMessages.answer}</InputErrorMessage>
+          )}
+        </InputArea>
+        <ConfirmButtons>
+          <CancelButton type="button" onClick={handleTogglePopUp}>
+            取消
+          </CancelButton>
+          <SubmitButton type="submit">
+            {faqData.id ? '更新' : '新增'}
+          </SubmitButton>
+        </ConfirmButtons>
+      </Form>
     </>
   )
 }

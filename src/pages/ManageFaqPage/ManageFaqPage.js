@@ -8,26 +8,25 @@ import {
 } from '../../components/buttons'
 import Pagination from '../../components/Pagination/BackstagePagination'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
-import ManageFaqAdd from '../../components/ManageFaqAdd'
-import ManageFaqEdit from '../../components/ManageFaqEdit'
+import FaqPopUp from '../../components/PopUp/FaqPopUp'
 import useFaqs from '../../hooks/useFaqs'
+
+const Wrapper = styled(Container)`
+  padding: 0;
+  max-width: 80%;
+`
 
 const Title = styled(BackstageTitle)``
 
-const AddNewFaqButton = styled(BackstageSmallButton)`
-  background-color: ${(props) => props.theme.general_200};
-  &:hover {
-    background-color: ${(props) => props.theme.general_300};
-  }
-`
+const AddButton = styled(BackstageSmallButton)``
 
-const FaqWrapper = styled.div`
+const Faqs = styled.div`
   margin-bottom: 3rem;
   display: flex;
   flex-direction: column;
 `
 
-const FaqContent = styled.div`
+const Faq = styled.div`
   border-bottom: 1px solid ${(props) => props.theme.general_500};
   padding: 2rem 0;
   display: flex;
@@ -38,7 +37,7 @@ const FaqContent = styled.div`
   }
 `
 
-const FaqItem = styled.div`
+const Contents = styled.div`
   display: flex;
   flex-direction: column;
   margin-right: 1rem;
@@ -58,16 +57,17 @@ const Answer = styled.p`
   font-size: 1rem;
   line-height: 1.5;
   letter-spacing: 0.5px;
+  white-space: pre-line;
 `
 
-const FaqUpdateWrapper = styled.div`
+const Buttons = styled.div`
   display: flex;
   ${MEDIA_QUERY_SM} {
     margin-top: 20px;
   }
 `
 
-const EditButton = styled(AddNewFaqButton)`
+const EditButton = styled(AddButton)`
   width: 60px;
 `
 
@@ -79,18 +79,13 @@ const DeleteButton = styled(DangerSmallButton)`
 export default function ManageFaqPage() {
   const {
     faqs,
-    setFaqs,
     currentFaqs,
-    addPopUp,
-    handleToggleAddPopUp,
+    popUp,
+    handleTogglePopUp,
     handleInput,
-    handleAddFaq,
-    editPopUp,
-    editedFaq,
-    handleToggleEditPopUp,
-    updateFaqData,
-    handleEditInput,
-    handleUpdateFaq,
+    faqData,
+    errorMessages,
+    handleSubmit,
     handleDeleteFaq,
     faqsPerPage,
     currentPage,
@@ -98,21 +93,21 @@ export default function ManageFaqPage() {
   } = useFaqs()
 
   return (
-    <Container>
+    <Wrapper>
       <Title>常見問題管理</Title>
-      <AddNewFaqButton onClick={handleToggleAddPopUp}>新增問答</AddNewFaqButton>
-      <FaqWrapper>
+      <AddButton onClick={() => handleTogglePopUp()}>新增問答</AddButton>
+      <Faqs>
         {currentFaqs.map((faq) => {
           return (
-            <FaqContent key={faq.id}>
-              <FaqItem>
+            <Faq key={faq.id}>
+              <Contents>
                 <Question>{faq.question}</Question>
                 <Answer>{faq.answer}</Answer>
-              </FaqItem>
-              <FaqUpdateWrapper>
+              </Contents>
+              <Buttons>
                 <EditButton
                   onClick={() =>
-                    handleToggleEditPopUp(faq.id, faq.question, faq.answer)
+                    handleTogglePopUp(faq.id, faq.question, faq.answer)
                   }
                 >
                   編輯
@@ -120,37 +115,26 @@ export default function ManageFaqPage() {
                 <DeleteButton onClick={() => handleDeleteFaq(faq.id)}>
                   刪除
                 </DeleteButton>
-              </FaqUpdateWrapper>
-            </FaqContent>
+              </Buttons>
+            </Faq>
           )
         })}
-        {addPopUp && (
-          <ManageFaqAdd
-            setFaqs={setFaqs}
-            faqs={faqs}
-            handleToggleAddPopUp={handleToggleAddPopUp}
-            handleInput={handleInput}
-            handleAddFaq={handleAddFaq}
-          />
-        )}
-        {editPopUp && (
-          <ManageFaqEdit
-            editedFaq={editedFaq}
-            setFaqs={setFaqs}
-            faqs={faqs}
-            handleToggleEditPopUp={handleToggleEditPopUp}
-            updateFaqData={updateFaqData}
-            handleEditInput={handleEditInput}
-            handleUpdateFaq={handleUpdateFaq}
-          />
-        )}
-      </FaqWrapper>
+      </Faqs>
       <Pagination
         dataPerPage={faqsPerPage}
         totalData={faqs.length}
         handleChangePage={handleChangePage}
         currentPage={currentPage}
       />
-    </Container>
+      {popUp && (
+        <FaqPopUp
+          handleTogglePopUp={handleTogglePopUp}
+          handleInput={handleInput}
+          handleSubmit={handleSubmit}
+          faqData={faqData}
+          errorMessages={errorMessages}
+        />
+      )}
+    </Wrapper>
   )
 }
