@@ -5,12 +5,10 @@ import { PageTitle } from './heading'
 import { SmallButton } from './buttons'
 import Swal from 'sweetalert2'
 import { MEDIA_QUERY_SM } from '../styles/breakpoints'
-import axios from 'axios'
 import ReactCrop from 'react-image-crop'
 import 'react-image-crop/dist/ReactCrop.css'
 import AuthContext from '../contexts'
-import { getMe, updateAvatar, updateUserInfo } from '../WebAPI'
-import { getAuthToken } from '../utils'
+import { getMe, updateAvatar } from '../WebAPI'
 
 /* 彈窗出現時的遮罩背景 */
 const BackDrop = styled.div`
@@ -106,7 +104,7 @@ const PreviewImg = styled.div`
 export default function UpdatePortfolioPw({ AvPwPopUp, closeModal }) {
   const {
     setUser,
-    user: { avatarUrl, email, nickname, id },
+    user: { avatarUrl, id },
   } = useContext(AuthContext)
   // 當點擊 "更新" 的按鈕時，執行 handleUpdate
   const [imageUrl, setImageUrl] = useState(null)
@@ -169,7 +167,7 @@ export default function UpdatePortfolioPw({ AvPwPopUp, closeModal }) {
 
   const onSelectFile = (event) => {
     if (event.target.files && event.target.files.length > 0) {
-      let validExts = new Array('.jpg', '.jpeg', '.png', '.gif')
+      let validExts = ['.jpg', '.jpeg', '.png', '.gif']
       let fileExt = event.target.files[0].name
       fileExt = fileExt.substring(fileExt.lastIndexOf('.'))
 
@@ -228,7 +226,7 @@ export default function UpdatePortfolioPw({ AvPwPopUp, closeModal }) {
           reader.onloadend = () => setUpImg(reader.result)
           reader.readAsDataURL(blob)
         })
-  }, [upImg])
+  }, [upImg, previewUrl])
 
   useEffect(() => {
     const createCropPreview = async (image, crop, fileName) => {
