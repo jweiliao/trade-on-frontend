@@ -136,6 +136,20 @@ export default function useFaqs() {
     })
   }
 
+  const handleToggleFaq = (clickedFaq) => {
+    setCurrentFaqs(
+      currentFaqs.map((faq) => {
+        if (clickedFaq.id === faq.id) {
+          return {
+            ...faq,
+            isShowed: !faq.isShowed,
+          }
+        }
+        return faq
+      })
+    )
+  }
+
   const handleChangePage = (pageNumber) => setCurrentPage(pageNumber)
 
   return {
@@ -148,6 +162,7 @@ export default function useFaqs() {
     errorMessages,
     handleSubmit,
     handleDeleteFaq,
+    handleToggleFaq,
     faqsPerPage,
     currentPage,
     handleChangePage,
