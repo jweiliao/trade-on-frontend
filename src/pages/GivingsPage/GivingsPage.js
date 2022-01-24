@@ -21,7 +21,7 @@ const Banner = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 5rem;
+  margin-bottom: 2rem;
   ${MEDIA_QUERY_MD} {
     flex-direction: column;
   }

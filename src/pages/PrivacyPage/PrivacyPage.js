@@ -5,7 +5,9 @@ import { PageTitle } from '../../components/heading'
 
 /* Block - 區塊 */
 const Block = styled.div`
-  margin-bottom: 40px;
+  :not(:last-of-type) {
+    margin-bottom: 40px;
+  }
 `
 
 /* Paragraph - 段落 */
