@@ -1,5 +1,6 @@
 import styled from 'styled-components'
-import { BackstageTitle } from '../../components/heading'
+import Container from '../../components/Container'
+import { PageTitle } from '../../components/heading'
 import {
   Table,
   Head,
@@ -19,7 +20,9 @@ import {
 import { BackstageSmallButton } from '../../components/buttons'
 import useManageMembers from '../../hooks/useManageMembers'
 
-const Title = styled(BackstageTitle)``
+const Wrapper = styled(Container)`
+  max-width: 78rem;
+`
 
 const IdentitySelect = styled(Select)`
   height: 1.8rem;
@@ -55,8 +58,8 @@ export default function ManageMemberPage() {
   } = useManageMembers()
 
   return (
-    <>
-      <Title>會員管理</Title>
+    <Wrapper>
+      <PageTitle>會員管理</PageTitle>
       <Table>
         <Head>
           <Row>
@@ -68,10 +71,10 @@ export default function ManageMemberPage() {
             <Heading />
           </Row>
         </Head>
-        {currentMembers.map((member) => {
-          return (
-            <Body key={member.id}>
-              <Row>
+        <Body>
+          {currentMembers.map((member) => {
+            return (
+              <Row key={member.id}>
                 <Data data-label="帳號">{member.email}</Data>
                 <Data data-label="暱稱">{member.nickname}</Data>
                 <Data data-label="身份">
@@ -134,9 +137,9 @@ export default function ManageMemberPage() {
                   )}
                 </ButtonTableCell>
               </Row>
-            </Body>
-          )
-        })}
+            )
+          })}
+        </Body>
       </Table>
       <Pagination
         dataPerPage={membersPerPage}
@@ -144,6 +147,6 @@ export default function ManageMemberPage() {
         handleChangePage={handleChangeManageMembersPage}
         currentPage={currentManageMembersPage}
       />
-    </>
+    </Wrapper>
   )
 }
