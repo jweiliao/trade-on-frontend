@@ -1,16 +1,16 @@
 import React, { useContext } from 'react'
 import styled from 'styled-components'
-import Container from './Container'
-import { PageTitle } from './heading'
-import { SmallButton } from './buttons'
+import Container from '../Container'
+import { PageTitle } from '../heading'
+import { SmallButton } from '../buttons'
 import Swal from 'sweetalert2'
-import { MEDIA_QUERY_SM } from '../styles/breakpoints'
+import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 import { Formik, Form } from 'formik'
 import * as Yup from 'yup'
-import FormikControl from './FormikControl'
+import FormikControl from '../FormikControl'
 import { useHistory } from 'react-router'
-import AuthContext from '../contexts'
-import { updateUserPassword } from '../WebAPI'
+import AuthContext from '../../contexts'
+import { updateUserPassword } from '../../WebAPI'
 
 /* 彈窗出現時的遮罩背景 */
 const BackDrop = styled.div`

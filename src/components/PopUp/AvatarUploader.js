@@ -1,14 +1,14 @@
 import React, { useState, useRef, useContext, useEffect } from 'react'
 import styled from 'styled-components'
-import Container from './Container'
-import { PageTitle } from './heading'
-import { SmallButton } from './buttons'
+import Container from '../Container'
+import { PageTitle } from '../heading'
+import { SmallButton } from '../buttons'
 import Swal from 'sweetalert2'
-import { MEDIA_QUERY_SM } from '../styles/breakpoints'
+import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 import ReactCrop from 'react-image-crop'
 import 'react-image-crop/dist/ReactCrop.css'
-import AuthContext from '../contexts'
-import { getMe, updateAvatar } from '../WebAPI'
+import AuthContext from '../../contexts'
+import { getMe, updateAvatar } from '../../WebAPI'
 
 /* 彈窗出現時的遮罩背景 */
 const BackDrop = styled.div`
