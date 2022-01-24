@@ -4,7 +4,7 @@ export const PaginationContainer = styled.ul`
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-bottom: 3rem;
+  margin-top: 3rem;
   color: ${(props) => props.theme.secondary_300};
   display: ${({ $isShow }) => {
     return $isShow ? 'static' : 'none'

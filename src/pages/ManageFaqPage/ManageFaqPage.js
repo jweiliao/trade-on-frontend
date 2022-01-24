@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { BackstageTitle } from '../../components/heading'
+import { PageTitle } from '../../components/heading'
 import Container from '../../components/Container'
 import {
   BackstageSmallButton,
@@ -11,27 +11,19 @@ import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 import FaqPopUp from '../../components/PopUp/FaqPopUp'
 import useFaqs from '../../hooks/useFaqs'
 
-const Wrapper = styled(Container)`
-  padding: 0;
-  max-width: 80%;
-`
-
-const Title = styled(BackstageTitle)``
-
 const AddButton = styled(BackstageSmallButton)``
 
 const Faqs = styled.div`
-  margin-bottom: 3rem;
   display: flex;
   flex-direction: column;
 `
 
 const Faq = styled.div`
   border-bottom: 1px solid ${(props) => props.theme.general_500};
-  padding: 2rem 0;
+  padding: 1.5rem 0;
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   ${MEDIA_QUERY_SM} {
     flex-direction: column;
   }
@@ -42,15 +34,16 @@ const Contents = styled.div`
   flex-direction: column;
   margin-right: 1rem;
   ${MEDIA_QUERY_SM} {
+    width: 100%;
     margin-right: 0;
   }
 `
 
 const Question = styled.h3`
-  font-size: 1.5rem;
+  font-size: 1.375rem;
   font-weight: 500;
   line-height: 2rem;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 `
 
 const Answer = styled.p`
@@ -62,18 +55,23 @@ const Answer = styled.p`
 
 const Buttons = styled.div`
   display: flex;
+  flex-direction: column;
   ${MEDIA_QUERY_SM} {
-    margin-top: 20px;
+    flex-direction: row;
+    width: 100%;
+    margin-top: 1.25rem;
+    justify-content: center;
   }
 `
 
-const EditButton = styled(AddButton)`
-  width: 60px;
-`
+const EditButton = styled(AddButton)``
 
 const DeleteButton = styled(DangerSmallButton)`
-  width: 60px;
-  margin-left: 1rem;
+  margin-top: 1rem;
+  ${MEDIA_QUERY_SM} {
+    margin-top: 0rem;
+    margin-left: 1rem;
+  }
 `
 
 export default function ManageFaqPage() {
@@ -93,8 +91,8 @@ export default function ManageFaqPage() {
   } = useFaqs()
 
   return (
-    <Wrapper>
-      <Title>常見問題管理</Title>
+    <Container>
+      <PageTitle>常見問題管理</PageTitle>
       <AddButton onClick={() => handleTogglePopUp()}>新增問答</AddButton>
       <Faqs>
         {currentFaqs.map((faq) => {
@@ -135,6 +133,6 @@ export default function ManageFaqPage() {
           errorMessages={errorMessages}
         />
       )}
-    </Wrapper>
+    </Container>
   )
 }
