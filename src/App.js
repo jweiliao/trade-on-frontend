@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext, lazy, Suspense } from 'react'
-import AuthContext from './contexts'
+import AuthContext, { LoadingContext } from './contexts'
 import Navbar from './components/Navbar/Navbar'
 import { Footer } from './components/Footer/Footer'
 import BackstageNavbar from './components/Navbar/BackstageNavbar'
@@ -14,6 +14,7 @@ import { getMe } from './WebAPI'
 import { getAuthToken, setAuthToken } from './utils'
 import Loading from './components/Loading'
 import jwt_decode from 'jwt-decode'
+import ClipLoader from 'react-spinners/ClipLoader'
 const HomePage = lazy(() => import('./pages/HomePage'))
 const LoginPage = lazy(() => import('./pages/LoginPage'))
 const RegisterPage = lazy(() => import('./pages/RegisterPage'))
@@ -47,10 +48,12 @@ const ScrollToTop = () => {
 
 const Home = () => {
   const { user } = useContext(AuthContext)
+  const { isLoading } = useContext(LoadingContext)
   return (
     <>
       <Navbar />
       <ScrollToTop />
+      {isLoading && <Loading />}
       <Switch>
         <Route exact path="/" component={HomePage} />
         {!user && <Route path="/login" component={LoginPage} />}
@@ -96,6 +99,7 @@ const Backstage = () => {
 }
 
 export default function App() {
+  const [isLoading, setIsLoading] = useState(false)
   const [user, setUser] = useState(
     (getAuthToken() && jwt_decode(getAuthToken()).sub) || null
   )
@@ -122,16 +126,18 @@ export default function App() {
 
   return (
     <AuthContext.Provider value={{ user, setUser }}>
-      <Suspense fallback={<Loading />}>
-        <Router>
-          <Switch>
-            {user && user.accountAuthority === 'admin' && (
-              <Route path="/backstage" component={Backstage} />
-            )}
-            <Route path="/" component={Home} />
-          </Switch>
-        </Router>
-      </Suspense>
+      <LoadingContext.Provider value={{ isLoading, setIsLoading }}>
+        <Suspense fallback={<Loading />}>
+          <Router>
+            <Switch>
+              {user && user.accountAuthority === 'admin' && (
+                <Route path="/backstage" component={Backstage} />
+              )}
+              <Route path="/" component={Home} />
+            </Switch>
+          </Router>
+        </Suspense>
+      </LoadingContext.Provider>
     </AuthContext.Provider>
   )
 }
