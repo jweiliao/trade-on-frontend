@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import Container from '../../components/Container'
-import { BackstageTitle } from '../../components/heading'
+import { PageTitle } from '../../components/heading'
 import {
   BackstageSmallButton,
   GraySmallButton,
@@ -11,14 +11,6 @@ import { FaPlus } from 'react-icons/fa'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 import Pagination from '../../components/Pagination/BackstagePagination'
 import useCategories from '../../hooks/useCategories'
-
-const Wrapper = styled(Container)`
-  padding: 0;
-  max-width: 80%;
-  margin: 3rem auto;
-`
-
-const Title = styled(BackstageTitle)``
 
 const InputWrapper = styled.form`
   width: 55%;
@@ -50,9 +42,7 @@ const AddBtn = styled.button`
   transform: translateY(-50%);
 `
 
-const Categories = styled.div`
-  margin-bottom: 3rem;
-`
+const Categories = styled.div``
 
 const Category = styled.form`
   border-bottom: solid 0.1rem ${(props) => props.theme.general_500};
@@ -121,8 +111,8 @@ export default function ManageCategoryPage() {
   } = useCategories()
 
   return (
-    <Wrapper>
-      <Title>物品分類管理</Title>
+    <Container>
+      <PageTitle>物品分類管理</PageTitle>
       <InputWrapper>
         <AddBtn onClick={handleAddCategory}>
           <FaPlus />
@@ -200,6 +190,6 @@ export default function ManageCategoryPage() {
         handleChangePage={handleChangeCategoryPage}
         currentPage={currentCategoryPage}
       />
-    </Wrapper>
+    </Container>
   )
 }

@@ -1,5 +1,6 @@
 import styled from 'styled-components'
-import { BackstageTitle } from '../../components/heading'
+import Container from '../../components/Container'
+import { PageTitle } from '../../components/heading'
 import {
   Table,
   Head,
@@ -16,7 +17,9 @@ import {
 import Pagination from '../../components/Pagination/BackstagePagination'
 import usePosts from '../../hooks/usePosts'
 
-const Title = styled(BackstageTitle)``
+const Wrapper = styled(Container)`
+  max-width: 78rem;
+`
 
 const PublishBtn = styled(BackstageSmallButton)`
   margin: 0 auto;
@@ -38,8 +41,8 @@ export default function ManageGivingPage() {
   } = usePosts()
 
   return (
-    <>
-      <Title>贈物文管理</Title>
+    <Wrapper>
+      <PageTitle>贈物文管理</PageTitle>
       <Table>
         <Head>
           <Row>
@@ -57,7 +60,10 @@ export default function ManageGivingPage() {
               <Row key={post.id}>
                 <Data data-label="帳號">{post.author.email}</Data>
                 <Data data-label="暱稱">{post.author.nickname}</Data>
-                <Data data-label="物品名稱">{post.itemName}</Data>
+                <Data data-label="物品名稱">
+                  {post.itemName.slice(0, WordLimit)}
+                  {post.itemName.slice(WordLimit) && '...'}
+                </Data>
                 <Data data-label="物品介紹">
                   {post.description.slice(0, WordLimit)}
                   {post.description.slice(WordLimit) && '...'}
@@ -93,6 +99,6 @@ export default function ManageGivingPage() {
         handleChangePage={handleChangePostPage}
         currentPage={currentPostsPage}
       />
-    </>
+    </Wrapper>
   )
 }

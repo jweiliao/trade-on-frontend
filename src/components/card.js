@@ -4,7 +4,6 @@ export const Cards = styled.div`
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  margin-bottom: 3rem;
 `
 
 export const Card = styled.div`
@@ -13,6 +12,9 @@ export const Card = styled.div`
   border-radius: 1.25rem;
   overflow: hidden;
   margin: 1rem;
+  :nth-last-child(-n + 7) {
+    margin-bottom: 0rem;
+  }
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   &:hover {
     img {
@@ -49,6 +51,5 @@ export const CardTitle = styled.p`
 `
 
 export const EmptyCard = styled.div`
-  width: 12.5rem;
-  margin: 1rem;
+  width: 14.5rem;
 `
