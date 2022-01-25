@@ -14,7 +14,6 @@ import { getMe } from './WebAPI'
 import { getAuthToken, setAuthToken } from './utils'
 import Loading from './components/Loading'
 import jwt_decode from 'jwt-decode'
-import ClipLoader from 'react-spinners/ClipLoader'
 const HomePage = lazy(() => import('./pages/HomePage'))
 const LoginPage = lazy(() => import('./pages/LoginPage'))
 const RegisterPage = lazy(() => import('./pages/RegisterPage'))
