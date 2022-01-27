@@ -7,7 +7,7 @@ import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 import { Link } from 'react-router-dom'
 import { Formik, Form } from 'formik'
 import FormikControl from '../../components/FormikControl'
-import { ImageUpload } from '../../components/FileUpload/ImageUpload'
+import { ImageUpload } from './ImageUpload'
 import usePost from '../../hooks/usePost'
 import { district } from '../../constants/cities'
 

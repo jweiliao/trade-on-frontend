@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
-import { InputLabel, InputErrorMessage } from '../textField'
-import { Img, ImgWrapper } from '../img'
+import { InputLabel, InputErrorMessage } from '../../components/textField'
+import { Img, ImgWrapper } from '../../components/img'
 import { FaTrashAlt } from 'react-icons/fa'
 import ImageUploading from 'react-images-uploading'
 
@@ -59,32 +59,24 @@ const DropUpdate = styled.div`
 
 const ErrorMessage = styled(InputErrorMessage)``
 
-export const ImageUpload = ({
-  images,
-  acceptImagesType,
-  maxImagesNumber,
-  maxFileSize,
-  handleImagesChange,
-  handleImagesError,
-  imageErrorMessage,
-}) => {
+export const ImageUpload = (props) => {
   return (
     <>
       <Title>物品圖片</Title>
       <ImageUploading
         multiple
         dataURLKey="imgUrl"
-        value={images}
-        acceptType={acceptImagesType}
-        maxNumber={maxImagesNumber}
-        maxFileSize={maxFileSize}
-        onChange={handleImagesChange}
-        onError={handleImagesError}
+        value={props.images}
+        acceptType={props.acceptImagesType}
+        maxNumber={props.maxImagesNumber}
+        maxFileSize={props.maxFileSize}
+        onChange={props.handleImagesChange}
+        onError={props.handleImagesError}
       >
         {({ onImageUpload, onImageRemove, dragProps, isDragging }) => (
           <>
             <Imgs>
-              {images.map((image, index) => (
+              {props.images.map((image, index) => (
                 <ImgContainer key={index}>
                   <Img src={image.imgUrl} alt="物品圖片" />
                   <DeleteBtn
@@ -97,7 +89,7 @@ export const ImageUpload = ({
                   </DeleteBtn>
                 </ImgContainer>
               ))}
-              {images.length < maxImagesNumber && (
+              {props.images.length < props.maxImagesNumber && (
                 <DropUpdate
                   isDragging={isDragging}
                   onClick={onImageUpload}
@@ -107,7 +99,7 @@ export const ImageUpload = ({
                 </DropUpdate>
               )}
             </Imgs>
-            <ErrorMessage>{imageErrorMessage}</ErrorMessage>
+            <ErrorMessage>{props.imageErrorMessage}</ErrorMessage>
           </>
         )}
       </ImageUploading>
