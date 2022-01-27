@@ -3,10 +3,9 @@ import AuthContext from '../../contexts'
 import { setAuthToken } from '../../utils'
 import { login } from '../../WebAPI'
 import { Link } from 'react-router-dom'
-import { useHistory } from 'react-router'
 import styled from 'styled-components'
 import Container from '../../components/Container'
-import { TextTab } from '../../components/tabs'
+import { TextTab } from '../../components/Tab/tabs'
 import { SuperLargeButton } from '../../components/buttons'
 import { Formik, Form } from 'formik'
 import * as Yup from 'yup'
@@ -39,7 +38,6 @@ const LoginBtn = styled(SuperLargeButton)`
 `
 
 export default function LoginPage() {
-  const history = useHistory()
   const { setUser } = useContext(AuthContext)
 
   const initialValues = { email: '', password: '' }
@@ -54,12 +52,13 @@ export default function LoginPage() {
     if (res.data.message === 'success') {
       setAuthToken(res.data.token)
       setUser(res.data.userInfo)
-      history.push('/givings')
       return
     }
     if (res.data.error) {
+      console.log(res.data)
       Swal.fire({
         icon: 'error',
+        title: '登入失敗',
         text: '帳號或密碼輸入錯誤',
         showConfirmButton: false,
         timer: 1500,
