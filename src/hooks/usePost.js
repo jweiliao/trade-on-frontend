@@ -148,6 +148,14 @@ export default function usePost() {
     }
   }
 
+  const handleChange = (e, formik) => {
+    const { value } = e.target
+    const selectedCityOfDistricts = [district[value]][0]
+    setDistrictOptions(selectedCityOfDistricts)
+    formik.setFieldValue('region', value)
+    formik.setFieldValue('district', selectedCityOfDistricts[0].value)
+  }
+
   const handleSubmit = (values) => {
     setIsLoading(true)
     let postData = new FormData()
@@ -198,6 +206,7 @@ export default function usePost() {
     imageErrorMessage,
     handleImagesChange,
     handleImagesError,
+    handleChange,
     handleSubmit,
   }
 }
