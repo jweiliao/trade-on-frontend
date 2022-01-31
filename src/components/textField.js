@@ -46,11 +46,6 @@ export const Input = styled.input`
 
 export const InputPassword = styled(Input).attrs({ type: 'password' })``
 
-export const InputFile = styled.input.attrs({ type: 'file' })`
-  margin-top: 1.2rem;
-  accept: 'image/png, image/jpeg';
-`
-
 export const Textarea = styled.textarea`
   display: block;
   height: 10rem;
@@ -163,7 +158,7 @@ export const CheckBoxLabel = styled.label`
   font-size: 1.125rem;
   font-style: normal;
   font-weight: normal;
-  line-height: 1.25;
+  line-height: 1.5;
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -171,6 +166,10 @@ export const CheckBoxLabel = styled.label`
   user-select: none;
   :hover span {
     background: ${(props) => props.theme.primary_100};
+  }
+
+  input:disabled ~ span {
+    opacity: 0.5;
   }
 `
 export const CheckBox = styled.input.attrs({ type: 'checkbox' })`
@@ -187,7 +186,7 @@ export const CheckBox = styled.input.attrs({ type: 'checkbox' })`
 
 export const CheckBoxSpan = styled.span`
   position: absolute;
-  top: 0;
+  top: 0.2rem;
   left: 0;
   height: 1.25rem;
   width: 1.25rem;
@@ -221,10 +220,6 @@ export const BackstageCheckBoxLabel = styled(CheckBoxLabel)`
   input:checked ~ span {
     background: ${(props) => props.theme.secondary_200};
     border: none;
-  }
-
-  input:disabled ~ span {
-    opacity: 0.5;
   }
 
   ${MEDIA_QUERY_SM} {

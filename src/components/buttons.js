@@ -70,7 +70,7 @@ export const MediumButton = styled(SmallButton)`
 export const LargeButton = styled(SmallButton)`
   width: 245px;
   height: 51px;
-  padding: 12px 42px;
+  padding: 0;
   font-size: 18px;
   line-height: 27px;
   letter-spacing: 0.5px;
