@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import { FooterData } from './FooterData'
 import { Link } from 'react-router-dom'
-import { MEDIA_QUERY_SM, MEDIA_QUERY_MD } from '../../styles/breakpoints'
+import { MEDIA_QUERY_MD } from '../../styles/breakpoints'
 
 const FooterRow = styled.footer`
   background-color: ${(props) => props.theme.general_400};
