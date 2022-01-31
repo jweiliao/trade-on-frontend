@@ -9,7 +9,6 @@ import { Formik, Form } from 'formik'
 import FormikControl from '../../components/FormikControl'
 import { ImageUpload } from './ImageUpload'
 import usePost from '../../hooks/usePost'
-import { district } from '../../constants/cities'
 
 const ItemInfoTitle = styled(SubTitle)`
   margin: 3rem 0;
@@ -86,7 +85,6 @@ export default function PostGiftPage() {
     shippingOptions,
     regionOptions,
     districtOptions,
-    setDistrictOptions,
     images,
     acceptImagesType,
     maxImagesNumber,
@@ -94,6 +92,7 @@ export default function PostGiftPage() {
     imageErrorMessage,
     handleImagesChange,
     handleImagesError,
+    handleChange,
     handleSubmit,
   } = usePost()
 
@@ -166,14 +165,7 @@ export default function PostGiftPage() {
                   options={regionOptions}
                   defaultOption={true}
                   onChange={(e) => {
-                    const { value } = e.target
-                    const selectedCityOfDistricts = [district[value]][0]
-                    setDistrictOptions(selectedCityOfDistricts)
-                    formik.setFieldValue('region', value)
-                    formik.setFieldValue(
-                      'district',
-                      selectedCityOfDistricts[0].value
-                    )
+                    handleChange(e, formik)
                   }}
                 />
               </Region>

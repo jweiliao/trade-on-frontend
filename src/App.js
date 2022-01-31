@@ -74,6 +74,8 @@ const Home = () => {
         <Route path="/faq" component={FaqPage} />
         <Route path="/privacy" component={PrivacyPage} />
         <Route path="/terms" component={TermsPage} />
+        <Redirect from="/login" to="/givings" />
+        <Redirect from="/register" to="/givings" />
         <Redirect from="*" to="/" />
       </Switch>
       <Footer />

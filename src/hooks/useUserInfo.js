@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react'
 import { useHistory } from 'react-router'
 import * as Yup from 'yup'
-import AuthContext from '../contexts'
+import AuthContext, { LoadingContext } from '../contexts'
 import shippingMethod from '../constants/shippingMethod'
 import { cities, district } from '../constants/cities'
 import { updateUserInfo } from '../WebAPI'
@@ -12,6 +12,7 @@ export default function usePost() {
     user: { account, nickname, id, introduction, preferDealMethods },
     setUser,
   } = useContext(AuthContext)
+  const { setIsLoading } = useContext(LoadingContext)
   const { faceToFace, sevenEleven, familyMart } = shippingMethod
   const shippingOptions = [
     { key: sevenEleven, value: '7-11' },
@@ -96,12 +97,14 @@ export default function usePost() {
   }
 
   const handleSubmit = (data) => {
+    setIsLoading(true)
     updateUserInfo(id, data).then((res) => {
       const { data } = res
       if (data.message === 'success') {
         setUser(data.update)
         history.push('/portfolio')
       }
+      setIsLoading(false)
     })
   }
 
