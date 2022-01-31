@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react'
 import { useHistory } from 'react-router'
 import { useParams } from 'react-router-dom'
-import AuthContext from '../contexts'
+import AuthContext, { LoadingContext } from '../contexts'
 import {
   getTransaction,
   cancelTransaction,
@@ -16,6 +16,7 @@ export default function useTradeRecord() {
   const history = useHistory()
   const { id: tradeRecordId } = useParams()
   const { user } = useContext(AuthContext)
+  const { setIsLoading } = useContext(LoadingContext)
   const [isGiver, setIsGiver] = useState(null)
   const [tradeRecord, setTradeRecord] = useState([])
   const [otherUser, setOtherUser] = useState({})
@@ -31,7 +32,6 @@ export default function useTradeRecord() {
     storeName: '',
   })
   const [errorMessages, setErrorMessages] = useState({})
-  const [isSubmitting, setIsSubmitting] = useState(false)
 
   useEffect(() => {
     const fetchTradeRecord = async () => {
@@ -154,11 +154,21 @@ export default function useTradeRecord() {
   const handelUpdateStatus = (id) => {
     switch (status) {
       case toFillInfo:
-        setErrorMessages(validateShippingInfo(shippingInfo))
-        setIsSubmitting(true)
+        if (Object.keys(validateShippingInfo(shippingInfo)).length !== 0) {
+          setErrorMessages(validateShippingInfo(shippingInfo))
+          return
+        }
+        setIsLoading(true)
+        updateShippingInfo(tradeRecordId, shippingInfo).then((res) => {
+          if (res.data.message === 'success') {
+            setTradeRecord(res.data.updated)
+          }
+          setIsLoading(false)
+        })
         break
 
       case toCharge:
+        setIsLoading(true)
         checkTransactionPayment(id).then((res) => {
           if (res.data.message === 'success') {
             setTradeRecord({
@@ -166,10 +176,12 @@ export default function useTradeRecord() {
               isPaid: true,
             })
           }
+          setIsLoading(false)
         })
         break
 
       case delivering:
+        setIsLoading(true)
         checkTransactionComplete(id).then((res) => {
           if (res.data.message === 'success') {
             setTradeRecord({
@@ -177,6 +189,7 @@ export default function useTradeRecord() {
               isCompleted: true,
             })
           }
+          setIsLoading(false)
         })
         break
 
@@ -184,16 +197,6 @@ export default function useTradeRecord() {
         break
     }
   }
-
-  useEffect(() => {
-    if (Object.keys(errorMessages).length === 0 && isSubmitting) {
-      updateShippingInfo(tradeRecordId, shippingInfo).then((res) => {
-        if (res.data.message === 'success') {
-          setTradeRecord(res.data.updated)
-        }
-      })
-    }
-  }, [errorMessages, isSubmitting, shippingInfo, tradeRecordId])
 
   return {
     isGiver,

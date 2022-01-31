@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react'
 import { useHistory } from 'react-router'
 import { useParams } from 'react-router-dom'
-import AuthContext from '../contexts'
+import AuthContext, { LoadingContext } from '../contexts'
 import * as Yup from 'yup'
 import shippingMethod from '../constants/shippingMethod'
 import { cities, district } from '../constants/cities'
@@ -10,6 +10,7 @@ import { getAllCategories, getPost, addPost, updatePost } from '../WebAPI'
 export default function usePost() {
   const { faceToFace, sevenEleven, familyMart } = shippingMethod
   const { user } = useContext(AuthContext)
+  const { setIsLoading } = useContext(LoadingContext)
   const history = useHistory()
   const { id: postId } = useParams()
   const [initialValues, setInitialValues] = useState({
@@ -34,7 +35,7 @@ export default function usePost() {
   const regionOptions = cities
   const [districtOptions, setDistrictOptions] = useState([])
   const [images, setImages] = useState([])
-  const DefaultPostImg = 'https://imgur.com/'
+  const DefaultPostImg = 'https://i.imgur.com/NGhlZr4.jpg'
   const acceptImagesType = ['jpg', 'gif', 'png']
   const maxImagesNumber = 10
   const maxFileSize = 10485760 // 單位：Byte
@@ -148,6 +149,7 @@ export default function usePost() {
   }
 
   const handleSubmit = (values) => {
+    setIsLoading(true)
     let postData = new FormData()
     for (let i = 0; i < images.length; i++) {
       if (images[i].file) {
@@ -165,6 +167,7 @@ export default function usePost() {
         if (res.data.message === 'success') {
           history.push(`/givings/${res.data.new.id}`)
         }
+        setIsLoading(false)
       })
       return
     }
@@ -174,6 +177,7 @@ export default function usePost() {
       if (res.data.message === 'success') {
         history.push(`/givings/${postId}`)
       }
+      setIsLoading(false)
     })
   }
 

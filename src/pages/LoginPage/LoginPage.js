@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import AuthContext from '../../contexts'
+import AuthContext, { LoadingContext } from '../../contexts'
 import { setAuthToken } from '../../utils'
 import { login } from '../../WebAPI'
 import { Link } from 'react-router-dom'
@@ -39,20 +39,19 @@ const LoginBtn = styled(SuperLargeButton)`
 
 export default function LoginPage() {
   const { setUser } = useContext(AuthContext)
-
+  const { setIsLoading } = useContext(LoadingContext)
   const initialValues = { email: '', password: '' }
-
   const validationSchema = Yup.object({
     email: Yup.string().required('此欄位為必填'),
     password: Yup.string().required('此欄位為必填'),
   })
 
   const handleLogin = async (values) => {
+    setIsLoading(true)
     const res = await login(values)
     if (res.data.message === 'success') {
       setAuthToken(res.data.token)
       setUser(res.data.userInfo)
-      return
     }
     if (res.data.error) {
       console.log(res.data)
@@ -64,6 +63,7 @@ export default function LoginPage() {
         timer: 1500,
       })
     }
+    setIsLoading(false)
   }
 
   return (

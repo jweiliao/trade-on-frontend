@@ -1,5 +1,5 @@
 import { useState, useRef, useContext, useEffect } from 'react'
-import AuthContext from '../contexts'
+import AuthContext, { LoadingContext } from '../contexts'
 import { updateAvatar } from '../WebAPI'
 import Swal from 'sweetalert2'
 
@@ -8,6 +8,7 @@ export default function useAvatar() {
     user: { avatarUrl, id },
     setUser,
   } = useContext(AuthContext)
+  const { setIsLoading } = useContext(LoadingContext)
   const imgRef = useRef()
   const [imgUploaded, setImgUploaded] = useState(null)
   const [previewUrl, setPreviewUrl] = useState(null)
@@ -84,6 +85,7 @@ export default function useAvatar() {
   }
 
   const handleUpdateAvatar = (prop) => {
+    setIsLoading(true)
     let avatarFile = new FormData()
     avatarFile.append('imageUrl', imageFile)
     updateAvatar(id, avatarFile).then((res) => {
@@ -92,6 +94,7 @@ export default function useAvatar() {
         setUser(data.update)
         prop.handleToggleAvatarPopUp()
       }
+      setIsLoading(false)
     })
   }
 

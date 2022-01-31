@@ -1,5 +1,5 @@
 import React, { useContext } from 'react'
-import AuthContext from '../../contexts'
+import AuthContext, { LoadingContext } from '../../contexts'
 import { setAuthToken } from '../../utils'
 import { register } from '../../WebAPI'
 import styled from 'styled-components'
@@ -50,14 +50,13 @@ const AgreeItemLink = styled(Link)`
 
 export default function RegisterPage() {
   const { setUser } = useContext(AuthContext)
-
+  const { setIsLoading } = useContext(LoadingContext)
   const initialValues = {
     email: '',
     nickname: '',
     password: '',
     confirmPassword: '',
   }
-
   const validationSchema = Yup.object({
     email: Yup.string().email('信箱格式不正確').required('此欄位為必填'),
     nickname: Yup.string().required('此欄位為必填'),
@@ -73,6 +72,7 @@ export default function RegisterPage() {
   })
 
   const handleRegister = async (values) => {
+    setIsLoading(true)
     try {
       const res = await register(values)
       if (res.status === 200) {
@@ -91,6 +91,7 @@ export default function RegisterPage() {
         })
       }
     }
+    setIsLoading(false)
   }
 
   return (
