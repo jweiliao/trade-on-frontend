@@ -4,7 +4,7 @@ export const PaginationContainer = styled.ul`
   width: 100%;
   display: flex;
   justify-content: center;
-  margin-bottom: 3rem;
+  margin-top: 3rem;
   color: ${(props) => props.theme.secondary_300};
   display: ${({ $isShow }) => {
     return $isShow ? 'static' : 'none'
@@ -31,13 +31,12 @@ export const PageItem = styled.li`
   :not(:first-child) {
     border-left: 0px;
   }
-  color: ${(props) => props.theme.primary_300};
   &:hover {
-    background-color: ${(props) => props.theme.primary_100};
+    background-color: ${(props) => props.theme.primary_200};
   }
   background-color: ${({ $isCurrent }) => {
     return $isCurrent
-      ? (props) => props.theme.primary_100
+      ? (props) => props.theme.primary_200
       : (props) => props.theme.general_000
   }};
 `
@@ -55,11 +54,11 @@ export const Pagination = ({
   }
 
   return (
-    <PaginationContainer $isShow={pageNumbers.length > 1 ? true : false}>
+    <PaginationContainer $isShow={pageNumbers.length > 1}>
       {pageNumbers.map((number) => {
         return (
           <PageItem
-            $isCurrent={number === currentPage ? true : false}
+            $isCurrent={number === currentPage}
             key={number}
             onClick={() => {
               handleChangePage(number)

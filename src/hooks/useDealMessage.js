@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 import { getDealMessages, addMessage, deleteMessage } from '../WebAPI'
 
@@ -9,16 +9,20 @@ export default function useDealMessage() {
   const [days, setDays] = useState([])
   const isTextAreaDisabled = value.trim().length === 0
 
-  useEffect(() => {
-    const fetchMessage = async () => {
+  const fetchMessage = useCallback(() => {
+    const fetchingMessage = async () => {
       const {
         data: { dealMessages },
       } = await getDealMessages(tradeRecordId)
       if (dealMessages) setMessages(dealMessages)
     }
 
-    fetchMessage()
+    fetchingMessage()
   }, [tradeRecordId])
+
+  useEffect(() => {
+    fetchMessage()
+  }, [fetchMessage])
 
   useEffect(() => {
     let daysData = []
@@ -56,7 +60,7 @@ export default function useDealMessage() {
     }
     addMessage(newMessage).then((res) => {
       if (res.data.message === 'success') {
-        setMessages([...messages, res.data.new])
+        fetchMessage()
         setValue('')
       }
     })

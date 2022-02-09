@@ -10,8 +10,8 @@ import {
   EmptyCard,
 } from '../../components/card'
 import UserInfo from './UserInfo'
-import BehaviorTab from '../../components/BehaviorTab'
-import StatusTab from '../../components/StatusTab'
+import BehaviorTab from '../../components/Tab/BehaviorTab'
+import StatusTab from '../../components/Tab/StatusTab'
 import Pagination from '../../components/Pagination/Pagination'
 import { Link } from 'react-router-dom'
 import useUserRecord from '../../hooks/useUserRecord'
@@ -20,7 +20,7 @@ const TransactionsWrapper = styled(Cards)`
   border: ${(props) => props.theme.general_300} solid 1px;
   border-top: 0px;
   border-radius: 0px 0px 4px 4px;
-  padding: 2rem 1.25rem 1rem;
+  padding: 3rem 1.25rem;
   min-height: 40vh;
 `
 

@@ -43,10 +43,16 @@ export const DangerSmallButton = styled(SmallButton)`
 `
 
 export const BackstageSmallButton = styled(SmallButton)`
-  border: solid 0.06rem ${(props) => props.theme.general_500};
   background: ${(props) => props.theme.secondary_100};
   &:hover {
     background: ${(props) => props.theme.secondary_200};
+  }
+`
+
+export const GraySmallButton = styled(SmallButton)`
+  background-color: ${(props) => props.theme.general_200};
+  &:hover {
+    background-color: ${(props) => props.theme.general_300};
   }
 `
 
@@ -64,7 +70,7 @@ export const MediumButton = styled(SmallButton)`
 export const LargeButton = styled(SmallButton)`
   width: 245px;
   height: 51px;
-  padding: 12px 42px;
+  padding: 0;
   font-size: 18px;
   line-height: 27px;
   letter-spacing: 0.5px;

@@ -20,7 +20,12 @@ export const Input = styled.input`
   margin-top: 1.2rem;
   padding: 0 0.5rem;
   color: ${(props) => props.theme.secondary};
-  border: 1px solid ${(props) => props.borderColor};
+  border: 1px solid
+    ${({ isWarning }) => {
+      return isWarning
+        ? (props) => props.theme.danger_100
+        : (props) => props.theme.general_300
+    }};
   border-radius: 0.25rem;
   outline: none;
   ::placeholder,
@@ -41,11 +46,6 @@ export const Input = styled.input`
 
 export const InputPassword = styled(Input).attrs({ type: 'password' })``
 
-export const InputFile = styled.input.attrs({ type: 'file' })`
-  margin-top: 1.2rem;
-  accept: 'image/png, image/jpeg';
-`
-
 export const Textarea = styled.textarea`
   display: block;
   height: 10rem;
@@ -53,7 +53,12 @@ export const Textarea = styled.textarea`
   padding: 0.5rem;
   margin-top: 1.2rem;
   color: ${(props) => props.theme.secondary};
-  border: 0.1rem solid ${(props) => props.theme.general_300};
+  border: 0.1rem solid
+    ${({ isWarning }) => {
+      return isWarning
+        ? (props) => props.theme.danger_100
+        : (props) => props.theme.general_300
+    }};
   border-radius: 0.25rem;
   resize: none;
   outline: none;
@@ -74,7 +79,12 @@ export const Select = styled.select`
   width: 100%;
   margin-top: 1.2rem;
   padding: 0 0.5rem;
-  border: 1px solid ${(props) => props.borderColor};
+  border: 1px solid
+    ${({ isWarning }) => {
+      return isWarning
+        ? (props) => props.theme.danger_100
+        : (props) => props.theme.general_300
+    }};
   border-radius: 0.25rem;
   outline: none;
   color: ${(props) => props.theme.secondary};
@@ -148,7 +158,7 @@ export const CheckBoxLabel = styled.label`
   font-size: 1.125rem;
   font-style: normal;
   font-weight: normal;
-  line-height: 1.25;
+  line-height: 1.5;
   cursor: pointer;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -156,6 +166,10 @@ export const CheckBoxLabel = styled.label`
   user-select: none;
   :hover span {
     background: ${(props) => props.theme.primary_100};
+  }
+
+  input:disabled ~ span {
+    opacity: 0.5;
   }
 `
 export const CheckBox = styled.input.attrs({ type: 'checkbox' })`
@@ -172,7 +186,7 @@ export const CheckBox = styled.input.attrs({ type: 'checkbox' })`
 
 export const CheckBoxSpan = styled.span`
   position: absolute;
-  top: 0;
+  top: 0.2rem;
   left: 0;
   height: 1.25rem;
   width: 1.25rem;
@@ -207,6 +221,7 @@ export const BackstageCheckBoxLabel = styled(CheckBoxLabel)`
     background: ${(props) => props.theme.secondary_200};
     border: none;
   }
+
   ${MEDIA_QUERY_SM} {
     position: relative;
     height: 1.25rem;

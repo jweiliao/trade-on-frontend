@@ -1,12 +1,11 @@
 import React, { useContext } from 'react'
-import AuthContext from '../../contexts'
+import AuthContext, { LoadingContext } from '../../contexts'
 import { setAuthToken } from '../../utils'
 import { register } from '../../WebAPI'
-import { useHistory } from 'react-router'
 import styled from 'styled-components'
 import Container from '../../components/Container'
 import { Link } from 'react-router-dom'
-import { TextTab } from '../../components/tabs'
+import { TextTab } from '../../components/Tab/tabs'
 import { SuperLargeButton } from '../../components/buttons'
 import { Formik, Form } from 'formik'
 import * as Yup from 'yup'
@@ -50,16 +49,14 @@ const AgreeItemLink = styled(Link)`
 `
 
 export default function RegisterPage() {
-  const history = useHistory()
   const { setUser } = useContext(AuthContext)
-
+  const { setIsLoading } = useContext(LoadingContext)
   const initialValues = {
     email: '',
     nickname: '',
     password: '',
     confirmPassword: '',
   }
-
   const validationSchema = Yup.object({
     email: Yup.string().email('信箱格式不正確').required('此欄位為必填'),
     nickname: Yup.string().required('此欄位為必填'),
@@ -75,24 +72,26 @@ export default function RegisterPage() {
   })
 
   const handleRegister = async (values) => {
+    setIsLoading(true)
     try {
       const res = await register(values)
       if (res.status === 200) {
         setAuthToken(res.data.token)
         setUser(res.data.newUser)
-        history.push('/givings')
       }
     } catch (err) {
       if (err.response.data.error === 'User already exist') {
         Swal.fire({
           icon: 'error',
-          text: '信箱已被註冊',
-          showConfirmButton: false,
-          timer: 1500,
+          title: '錯誤',
+          showConfirmButton: true,
+          confirmButtonColor: '#B7B7B7',
+          confirmButtonText: '關閉',
+          text: '此信箱已經註冊',
         })
-        return
       }
     }
+    setIsLoading(false)
   }
 
   return (

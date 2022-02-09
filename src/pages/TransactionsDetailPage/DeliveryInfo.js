@@ -52,6 +52,7 @@ const DeliveryInfo = ({
                   name="name"
                   value={shippingInfo.name}
                   onChange={handleChange}
+                  isWarning={errorMessages.name}
                 />
                 {errorMessages.name && (
                   <InputErrorMessage>{errorMessages.name}</InputErrorMessage>
@@ -62,6 +63,7 @@ const DeliveryInfo = ({
                   name="cellPhone"
                   value={shippingInfo.cellPhone}
                   onChange={handleChange}
+                  isWarning={errorMessages.cellPhone}
                 />
                 {errorMessages.cellPhone && (
                   <InputErrorMessage>
@@ -74,6 +76,7 @@ const DeliveryInfo = ({
                   name="storeCode"
                   value={shippingInfo.storeCode}
                   onChange={handleChange}
+                  isWarning={errorMessages.storeCode}
                 />
                 {errorMessages.storeCode && (
                   <InputErrorMessage>
@@ -86,6 +89,7 @@ const DeliveryInfo = ({
                   name="storeName"
                   value={shippingInfo.storeName}
                   onChange={handleChange}
+                  isWarning={errorMessages.storeName}
                 />
                 {errorMessages.storeName && (
                   <InputErrorMessage>
@@ -107,8 +111,8 @@ const DeliveryInfo = ({
           )}
           <Detail>運費：60 元</Detail>
           <Detail>
-            帳號：({tradeRecord.owner && tradeRecord.owner.account.bankCode})
-            {tradeRecord.owner && tradeRecord.owner.account.accountNum}
+            帳號：({tradeRecord.paymentInfo && tradeRecord.paymentInfo.bankCode}
+            ){tradeRecord.paymentInfo && tradeRecord.paymentInfo.accountNum}
           </Detail>
         </Content>
       )

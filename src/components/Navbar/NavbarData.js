@@ -1,7 +1,6 @@
 import React from 'react'
 import * as FaIcons from 'react-icons/fa'
 import * as BsIcons from 'react-icons/bs'
-import * as RiIcons from 'react-icons/ri'
 import * as IoIcons from 'react-icons/io5'
 import * as ImIcons from 'react-icons/im'
 
@@ -41,7 +40,7 @@ export const NavbarData = [
   {
     title: '後台管理',
     path: '/backstage',
-    icon: <RiIcons.RiKey2Fill size={iconSize} />,
+    icon: <ImIcons.ImCog size={iconSize} />,
     isShow: true,
   },
   {

@@ -14,14 +14,14 @@ import {
 } from '../../components/card'
 import Pagination from '../../components/Pagination/Pagination'
 import givingsbanner from '../../images/givingsBanner.svg'
-import { getAllPosts } from '../../WebAPI'
+import { getPublicPosts } from '../../WebAPI'
 
 const Banner = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 5rem;
+  margin-bottom: 2rem;
   ${MEDIA_QUERY_MD} {
     flex-direction: column;
   }
@@ -68,7 +68,7 @@ export default function GivingsPage() {
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const res = await getAllPosts(100)
+      const res = await getPublicPosts(1000)
       setPosts(res.data.allPosts)
     }
 

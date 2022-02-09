@@ -1,19 +1,8 @@
+import * as FaIcons from 'react-icons/fa'
+const iconSize = 30
+
 export const FooterData = {
-  about: [
-    {
-      title: '關於 TRADE ON',
-      link: null,
-    },
-    {
-      title: '關於我們',
-      link: '/about',
-    },
-  ],
   help: [
-    {
-      title: '幫助',
-      link: null,
-    },
     {
       title: '常見問題',
       link: '/faq',
@@ -29,19 +18,15 @@ export const FooterData = {
   ],
   follow: [
     {
-      title: '追蹤 TRADE ON',
-      link: null,
+      title: <FaIcons.FaGithub size={iconSize} />,
+      link: 'https://github.com/Jane0901/trade-on-frontend',
     },
     {
-      title: 'Instagram',
+      title: <FaIcons.FaInstagram size={iconSize} />,
       link: '#',
     },
     {
-      title: 'Facebook',
-      link: '#',
-    },
-    {
-      title: 'Youtube',
+      title: <FaIcons.FaFacebookSquare size={iconSize} />,
       link: '#',
     },
   ],

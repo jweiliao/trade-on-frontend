@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { TextTab } from './tabs'
 
 const TabsWrapper = styled.div`
-  margin: 3rem 0 2rem;
+  margin: 3rem 0 1.5rem;
   display: flex;
   justify-content: center;
   text-align: center;

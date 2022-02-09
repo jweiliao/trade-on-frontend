@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext, lazy, Suspense } from 'react'
-import AuthContext from './contexts'
+import AuthContext, { LoadingContext } from './contexts'
 import Navbar from './components/Navbar/Navbar'
 import { Footer } from './components/Footer/Footer'
 import BackstageNavbar from './components/Navbar/BackstageNavbar'
@@ -20,8 +20,7 @@ const RegisterPage = lazy(() => import('./pages/RegisterPage'))
 const AboutPage = lazy(() => import('./pages/AboutPage'))
 const GivingsPage = lazy(() => import('./pages/GivingsPage'))
 const ItemPage = lazy(() => import('./pages/ItemPage'))
-const AddGiftPage = lazy(() => import('./pages/AddGiftPage'))
-const EditGiftsPage = lazy(() => import('./pages/EditGiftsPage'))
+const PostGiftPage = lazy(() => import('./pages/PostGiftPage'))
 const PortfolioPage = lazy(() => import('./pages/PortfolioPage'))
 const EditPortfolioPage = lazy(() => import('./pages/EditPortfolioPage'))
 const TransactionsPage = lazy(() => import('./pages/TransactionsPage'))
@@ -48,18 +47,20 @@ const ScrollToTop = () => {
 
 const Home = () => {
   const { user } = useContext(AuthContext)
+  const { isLoading } = useContext(LoadingContext)
   return (
     <>
       <Navbar />
       <ScrollToTop />
+      {isLoading && <Loading />}
       <Switch>
         <Route exact path="/" component={HomePage} />
         {!user && <Route path="/login" component={LoginPage} />}
         {!user && <Route path="/register" component={RegisterPage} />}
         <Route path="/about" component={AboutPage} />
         <Route exact path="/givings" component={GivingsPage} />
-        {user && <Route path="/givings/add" component={AddGiftPage} />}
-        {user && <Route path="/givings/edit" component={EditGiftsPage} />}
+        <Route exact path="/givings/add" component={PostGiftPage} />
+        {user && <Route path="/givings/edit/:id" component={PostGiftPage} />}
         <Route exact strict path="/givings/:id" component={ItemPage} />
         {user && <Route path="/portfolio/edit" component={EditPortfolioPage} />}
         <Route exact path="/portfolio/:id" component={PortfolioPage} />
@@ -73,6 +74,8 @@ const Home = () => {
         <Route path="/faq" component={FaqPage} />
         <Route path="/privacy" component={PrivacyPage} />
         <Route path="/terms" component={TermsPage} />
+        <Redirect from="/login" to="/givings" />
+        <Redirect from="/register" to="/givings" />
         <Redirect from="*" to="/" />
       </Switch>
       <Footer />
@@ -84,6 +87,7 @@ const Backstage = () => {
   return (
     <>
       <BackstageNavbar />
+      <ScrollToTop />
       <Switch>
         <Route path="/backstage/member" component={ManageMemberPage} />
         <Route path="/backstage/category" component={ManageCategoryPage} />
@@ -96,6 +100,7 @@ const Backstage = () => {
 }
 
 export default function App() {
+  const [isLoading, setIsLoading] = useState(false)
   const [user, setUser] = useState(
     (getAuthToken() && jwt_decode(getAuthToken()).sub) || null
   )
@@ -112,7 +117,6 @@ export default function App() {
           }
           setUser(data.userInfo)
         } catch (err) {
-          console.log(err.response)
           setUser(null)
           setAuthToken('')
         }
@@ -123,16 +127,18 @@ export default function App() {
 
   return (
     <AuthContext.Provider value={{ user, setUser }}>
-      <Suspense fallback={<Loading />}>
-        <Router>
-          <Switch>
-            {user && user.accountAuthority === 'admin' && (
-              <Route path="/backstage" component={Backstage} />
-            )}
-            <Route path="/" component={Home} />
-          </Switch>
-        </Router>
-      </Suspense>
+      <LoadingContext.Provider value={{ isLoading, setIsLoading }}>
+        <Suspense fallback={<Loading />}>
+          <Router>
+            <Switch>
+              {user && user.accountAuthority === 'admin' && (
+                <Route path="/backstage" component={Backstage} />
+              )}
+              <Route path="/" component={Home} />
+            </Switch>
+          </Router>
+        </Suspense>
+      </LoadingContext.Provider>
     </AuthContext.Provider>
   )
 }

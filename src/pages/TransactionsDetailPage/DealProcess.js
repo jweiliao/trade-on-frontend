@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { ChevronTab } from '../../components/tabs'
+import { ChevronTab } from '../../components/Tab/tabs'
 import dealStatus from '../../constants/dealStatus'
 
 const ProcessWrapper = styled.div`

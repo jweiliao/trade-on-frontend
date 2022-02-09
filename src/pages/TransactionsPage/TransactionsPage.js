@@ -3,21 +3,22 @@ import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import Container from '../../components/Container'
 import { PageTitle } from '../../components/heading'
-import { Img, ImgWrapper, ImgCircleWrapper } from '../../components/img'
+import { Img, ImgWrapper } from '../../components/img'
 import { SmallButton, DangerSmallButton } from '../../components/buttons'
-import BehaviorTab from '../../components/BehaviorTab'
-import StatusTab from '../../components/StatusTab'
+import BehaviorTab from '../../components/Tab/BehaviorTab'
+import StatusTab from '../../components/Tab/StatusTab'
 import Pagination from '../../components/Pagination/Pagination'
 import { MEDIA_QUERY_SM, MEDIA_QUERY_MD } from '../../styles/breakpoints'
 import shippingMethod from '../../constants/shippingMethod'
 import dealStatus from '../../constants/dealStatus'
+import User from './User'
 import useTransactions from '../../hooks/useTransactions'
 
 const Transactions = styled.div`
   border: ${(props) => props.theme.general_300} solid 1px;
   border-top: 0px;
   border-radius: 0px 0px 4px 4px;
-  padding: 2rem 8% 0;
+  padding: 3rem;
   min-height: 50vh;
 `
 
@@ -26,44 +27,19 @@ const Transaction = styled.div`
     border-top: ${(props) => props.theme.general_500} solid 1px;
   }
   padding: 2rem 0;
-  &:last-of-type {
-    margin-bottom: 3rem;
+  &:first-of-type {
+    padding-top: 0;
   }
-`
-
-const User = styled.div`
-  display: flex;
-  margin-bottom: 0.75rem;
-`
-
-const Avatar = styled(ImgCircleWrapper)`
-  position: relative;
-  display: inline-block;
-  min-width: 1.5rem;
-  min-height: 1.5rem;
-`
-
-const Email = styled.p`
-  margin-left: 0.5rem;
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  color: ${(props) => props.theme.primary_300};
-`
-
-const Nickname = styled.span`
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  color: ${(props) => props.theme.primary_300};
+  &:last-of-type {
+    padding-bottom: 0;
+  }
 `
 
 const ContentAndButtons = styled.div`
   display: flex;
   justify-content: space-between;
-  ${MEDIA_QUERY_MD} {
+  margin-top: 0.75rem;
+  ${MEDIA_QUERY_SM} {
     display: block;
   }
 `
@@ -122,38 +98,25 @@ const Buttons = styled.div`
   flex-direction: column;
   justify-content: space-between;
   margin-left: 2rem;
-  ${MEDIA_QUERY_MD} {
-    margin: 1rem 0 0;
-    width: 100%;
-    flex-direction: row;
-  }
   ${MEDIA_QUERY_SM} {
+    margin: 1rem 0 0;
     flex-direction: column;
     align-items: center;
   }
 `
 
 const TransactionsDetailLink = styled(SmallButton)`
-  ${MEDIA_QUERY_MD} {
-    width: 100%;
-    margin: 0 1rem;
-  }
   ${MEDIA_QUERY_SM} {
     width: 100%;
     max-width: 19rem;
-    margin-bottom: 1rem;
   }
 `
 
 const CancelDealBtn = styled(DangerSmallButton)`
-  ${MEDIA_QUERY_MD} {
-    width: 100%;
-    margin: 0 1rem;
-  }
   ${MEDIA_QUERY_SM} {
     width: 100%;
     max-width: 19rem;
-    margin: 0;
+    margin-top: 1rem;
   }
 `
 
@@ -194,29 +157,11 @@ export default function TransactionsPage() {
         {currentTransactions.map((transaction) => {
           return (
             <Transaction key={transaction.id}>
-              <User>
-                <Avatar>
-                  <Img
-                    src={
-                      behaviorFilter === give
-                        ? transaction.dealer.avatarUrl.imgUrl
-                        : transaction.owner.avatarUrl.imgUrl
-                    }
-                  />
-                </Avatar>
-                <Email>
-                  {behaviorFilter === give
-                    ? transaction.dealer.email
-                    : transaction.owner.email}
-                </Email>
-                <Nickname>
-                  {behaviorFilter === give
-                    ? transaction.dealer.nickname &&
-                      `(${transaction.dealer.nickname})`
-                    : transaction.owner.nickname &&
-                      `(${transaction.owner.nickname})`}
-                </Nickname>
-              </User>
+              <User
+                give={give}
+                behaviorFilter={behaviorFilter}
+                transaction={transaction}
+              />
               <ContentAndButtons>
                 <Content>
                   <PostImg>

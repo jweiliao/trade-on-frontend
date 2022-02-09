@@ -24,10 +24,7 @@ const User = styled.div`
   margin-top: 1rem;
   display: flex;
   justify-content: center;
-  width: 80%;
-  ${MEDIA_QUERY_SM} {
-    max-width: 100%;
-  }
+  max-width: 80%;
 `
 
 const Email = styled.p`
@@ -49,49 +46,55 @@ const NickName = styled.span`
 const Introduce = styled.p`
   line-height: 1.5;
   font-size: 1.2rem;
+  white-space: pre-line;
   max-width: 80%;
   ${MEDIA_QUERY_SM} {
     max-width: 100%;
   }
 `
 
+const EditButton = styled(SmallButton)`
+  margin-top: 1rem;
+`
+
 const TradeInfo = styled.div`
   width: 100%;
   border: ${(props) => props.theme.general_300} solid 1px;
   border-radius: 4px;
-  margin-top: 1rem;
-  padding: 2rem;
+  margin-top: 3rem;
+  padding: 3rem;
+  ${MEDIA_QUERY_SM} {
+    padding: 3rem 2rem;
+  }
 `
 
-const PreferTradeMode = styled(SubTitle)`
-  font-size: 1.125rem;
-  line-height: 1.5;
-`
+const PreferTradeMode = styled(SubTitle)``
 
 const TransactionType = styled.p`
   margin: 1rem 0;
-  line-height: 1;
+  font-size: 1.125rem;
+  line-height: 1.25;
   position: relative;
   padding-left: 1.75rem;
-  opacity: ${({ $isSelected }) => {
-    return $isSelected ? (props) => 1 : (props) => 0.3
+  opacity: ${({ isSelected }) => {
+    return isSelected ? (props) => 1 : (props) => 0.3
   }};
   :before {
     position: absolute;
     content: '';
-    top: 0;
+    top: 0.2rem;
     left: 0;
     height: 1rem;
     width: 1rem;
     border: 0.1rem solid
-      ${({ $isSelected }) => {
-        return $isSelected
+      ${({ isSelected }) => {
+        return isSelected
           ? (props) => (props) => props.theme.primary_200
           : (props) => (props) => props.secondary
       }};
     border-radius: 0.25rem;
-    background: ${({ $isSelected }) => {
-      return $isSelected
+    background: ${({ isSelected }) => {
+      return isSelected
         ? (props) => (props) => props.theme.primary_200
         : (props) => (props) => props.theme.general_000
     }};
@@ -100,7 +103,7 @@ const TransactionType = styled.p`
     content: '';
     position: absolute;
     left: 0.35rem;
-    top: 0.15rem;
+    top: 0.35rem;
     width: 0.3rem;
     height: 0.6rem;
     border: solid white;
@@ -112,25 +115,17 @@ const TransactionType = styled.p`
 `
 
 const Account = styled(PreferTradeMode)`
-  margin-top: 1.5rem;
+  margin-top: 3rem;
 `
 
 const AccountNum = styled.p`
   font-size: 1.125rem;
   line-height: 1.5;
-  margin-top: 1rem;
-`
-
-const EditButton = styled(SmallButton)`
-  margin-top: 1rem;
 `
 
 const UserInfo = ({ userData }) => {
   const { faceToFace, sevenEleven, familyMart } = shippingMethod
   const { user } = useContext(AuthContext)
-  let preferDealMethods = []
-  if (user.preferDealMethods && user.preferDealMethods.selectedMethods)
-    preferDealMethods = user.preferDealMethods.selectedMethods
 
   return (
     <Wrapper>
@@ -150,25 +145,31 @@ const UserInfo = ({ userData }) => {
           <TradeInfo>
             <PreferTradeMode>偏好交易方式</PreferTradeMode>
             <TransactionType
-              $isSelected={
-                preferDealMethods && preferDealMethods.includes('全家')
-              }
-            >
-              {familyMart}
-            </TransactionType>
-            <TransactionType
-              $isSelected={
-                preferDealMethods && preferDealMethods.includes('7-11')
+              isSelected={
+                user.preferDealMethods &&
+                user.preferDealMethods.selectedMethods.includes('7-11')
               }
             >
               {sevenEleven}
             </TransactionType>
             <TransactionType
-              $isSelected={
-                preferDealMethods && preferDealMethods.includes('面交')
+              isSelected={
+                user.preferDealMethods &&
+                user.preferDealMethods.selectedMethods.includes('全家')
+              }
+            >
+              {familyMart}
+            </TransactionType>
+            <TransactionType
+              isSelected={
+                user.preferDealMethods &&
+                user.preferDealMethods.selectedMethods.includes('面交')
               }
             >
               {faceToFace}
+              {user.preferDealMethods &&
+                user.preferDealMethods.faceToFace &&
+                `(${user.preferDealMethods.faceToFace.region}${user.preferDealMethods.faceToFace.district})`}
             </TransactionType>
             <Account>匯款資訊</Account>
             <AccountNum>
