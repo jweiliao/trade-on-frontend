@@ -62,9 +62,6 @@ export const updateUserPassword = (id, data) =>
 export const updateUserAuthority = (id, data) =>
   instance.put(`/users/${id}/auth`, data)
 
-export const updateUserAuthority = async (id, data) =>
-  await instance.put(`/users/${id}/auth`, data)
-
 export const deleteUser = (id) => instance.delete(`/users/${id}/delete`)
 
 // 贈物文
