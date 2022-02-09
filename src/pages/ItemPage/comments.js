@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import AuthContext from '../../contexts'
 import styled from 'styled-components'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
@@ -8,18 +8,23 @@ import LargeTextArea from './textArea'
 // 引入操作留言的 hook
 import useComments from '../../hooks/useComments'
 
-// 引入操作 "給他禮物" 按鈕的 hook
+// 引入 "給與物品" 彈窗的 hook
+import useGiveItemPopup from '../../hooks/useGiveItemPopup'
+
+// 引入操作 "給與物品" 彈窗 "確認" 按鈕的 hook
 import useGiveItem from '../../hooks/useGiveItem'
 
 // 引入 "給他禮物" 按鈕點擊後的彈窗 component
 import ManageGiveItem from '../../components/ManageGiveItem'
+
+import ManageWantItem from '../../components/ManageWantItem'
 
 /* CommentsContainer - 留言的整個區塊 */
 const CommentsContainer = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   ${MEDIA_QUERY_SM} {
     // width: 90%;
   }
@@ -30,6 +35,7 @@ const IntroContent = styled.div`
   font-size: 16px;
   line-height: 1.5;
   letter-spacing: 0.5px;
+  margin-top: 30px;
   margin-bottom: 50px;
 `
 
@@ -66,12 +72,20 @@ const CommentContent = styled.div`
   font-size: 16px;
   line-height: 1.5;
   letter-spacing: 0.5px;
+  white-space: pre-line;
 `
 
 /* CommentBottom - 留言的最下方 */
 const CommentBottom = styled.div`
   display: flex;
   justify-content: space-between;
+  // 如果完成交易，則不可回覆、編輯、刪除留言
+  ${({ postIsGoal }) =>
+    postIsGoal &&
+    `
+      pointer-events: none;
+      opacity: 0.4;
+    `}
 `
 
 /* CommentTime - 留言的最下方的發送留言時間 */
@@ -195,6 +209,12 @@ export function Comments({
   post,
   postMessageId,
   postAuthorId,
+  postIsGoal,
+  isDealLimit,
+  setIsDealLimit,
+  addNewComment,
+  wantPopUp,
+  handleToggleWantPopUp,
 }) {
   // 拿到 登入後的使用者資料
   const { user } = useContext(AuthContext)
@@ -219,21 +239,77 @@ export function Comments({
     setNewMessageInput,
     handleReplySubmit,
     isReplying,
+    handleAddQuestionSubmit,
+    applyMsgs,
+    setApplyMsgs,
+    handleAddNewApplySubmit,
   } = useComments(isApplyMessage, postMessageId)
 
-  // 帶入 useGiveItem 中的 givePopUp, handleToggleGivePopUp,applyMsgId
-  const { givePopUp, handleToggleGivePopUp, applyMsgId } = useGiveItem()
+  const [applyMsgIsDealing, setApplyMsgIsDealing] = useState(false)
+  // 從 useGiveItemPopup 中引入 givePopUp, handleToggleGivePopUp,applyMsgId
+  const { givePopUp, handleToggleGivePopUp, applyMsgId, applyMsgDealMethod } =
+    useGiveItemPopup()
 
-  // 設定 isAccept 的 state：當 "送他禮物" 的按鈕執行且彈窗資料填入成功後，state 更新為 true
-  const [isAccept, setIsAccept] = useState(false)
+  // 從 useGiveItem 中引入 isDealing
+  // const { applyMsgIsDealing } = useGiveItem(
+  //   handleToggleGivePopUp,
+  //   applyMsgId,
+  //   setApplyMsgIsDealing
+  // )
 
+  // console.log('isDealing', applyMsgIsDealing)
   return (
     <CommentsContainer>
+      {/* 點擊 "想要禮物" 按鈕後,顯示申請索取的彈出視窗 */}
+      {wantPopUp && (
+        <ManageWantItem
+          isApplyMessage={isApplyMessage}
+          post={post}
+          postMessageId={postMessageId}
+          handleToggleWantPopUp={handleToggleWantPopUp}
+          applyMsgs={applyMsgs}
+          setApplyMsgs={setApplyMsgs}
+          handleAddNewApplySubmit={handleAddNewApplySubmit}
+        />
+      )}
+      {/* 如果 givePopUp 的 state 為 true，顯示 "贈與物品"的彈窗，並帶入所需的 props 值 */}
+      {givePopUp && (
+        <ManageGiveItem
+          isApplyMessage={isApplyMessage}
+          post={post}
+          postMessageId={post.id}
+          applyDealMethod={applyMsgDealMethod}
+          handleToggleGivePopUp={handleToggleGivePopUp}
+          applyMsgId={applyMsgId}
+          isDealLimit={isDealLimit}
+          setIsDealLimit={setIsDealLimit}
+          setApplyMsgIsDealing={setApplyMsgIsDealing}
+        />
+      )}
+      {/* 填寫詢問留言的區塊，登入後顯示並可留言 */}
+      {user ? (
+        !isApplyMessage ? (
+          <LargeTextArea
+            isApplyMessage={isApplyMessage}
+            post={post}
+            newMessageInput={newMessageInput}
+            setNewMessageInput={setNewMessageInput}
+            addNewComment={addNewComment}
+            handleAddQuestionSubmit={handleAddQuestionSubmit}
+            postIsGoal={post.isGoal}
+          ></LargeTextArea>
+        ) : null
+      ) : null}
       {/* 主留言 */}
       {/* 判斷是否有留言，且留言為請求索取，還是提問；
       有留言時顯示留言，否則顯示 "目前沒有資料" */}
-      {JSON.stringify(isApplyMessageOrNot(applyMainMsgs, mainMsgs)) ===
-        '{}' && <IntroContent>目前沒有資料</IntroContent>}
+      {JSON.stringify(isApplyMessageOrNot(applyMainMsgs, mainMsgs)) === '{}' ? (
+        <IntroContent>目前沒有資料</IntroContent>
+      ) : (
+        isApplyMessageOrNot(applyMainMsgs, mainMsgs).length === 0 && (
+          <IntroContent>目前沒有資料</IntroContent>
+        )
+      )}
       {isApplyMessageOrNot(applyMainMsgs, mainMsgs).length > 0 &&
         isApplyMessageOrNot(applyMainMsgs, mainMsgs).map((msg) => (
           <>
@@ -243,33 +319,27 @@ export function Comments({
                 {/* 留言最上方的留言者暱稱 */}
                 <CommentNickname>{msg.author.nickname}</CommentNickname>
                 {/* "送他禮物" 按鈕 */}
-                {/* 在"想要禮物" 區塊內"，如果登入者為發文者，若還未完成贈送，顯示 "送他禮物" 按鈕，否則顯示 "已贈送" 按鈕 */}
+                {/* 在"想要禮物" 區塊內"，如果登入者為發文者，若還未成立了交易。，顯示 "送他禮物" 按鈕，否則顯示 "物品贈送中" 按鈕 */}
                 {/* 如果登入者非發問者，不顯示任何按鈕 */}
                 {user && user.id === postAuthorId
                   ? isApplyMessage &&
-                    (isAccept ? (
-                      // disable "已贈送" 按鈕，讓它不執行任何操作
-                      <GivingGift disabled={true}>已贈送</GivingGift>
+                    (msg.isDealing ? (
+                      // 後端資料顯示 isDealing 為 true，disable "物品贈送中" 按鈕，讓它不執行任何操作
+                      <GivingGift disabled={true}>物品贈送中</GivingGift>
+                    ) : applyMsgIsDealing === msg.id ? (
+                      // 贈與物品彈窗 "確認" 按鈕點擊並成功進入交易後，disable "物品贈送中" 按鈕，讓它不執行任何操作
+                      <GivingGift disabled={true}>物品贈送中</GivingGift>
                     ) : (
-                      // 點擊 "送他禮物" 按鈕後，執行 handleToggleGivePopUp 並帶入 message 的 id
-                      <GivingGift onClick={() => handleToggleGivePopUp(msg.id)}>
+                      // 若物品不在交易中，點擊 "送他禮物" 按鈕後，執行 handleToggleGivePopUp 並帶入 message 的 id、applyDealMethod
+                      <GivingGift
+                        onClick={() =>
+                          handleToggleGivePopUp(msg.id, msg.applyDealMethod)
+                        }
+                      >
                         送他禮物
                       </GivingGift>
                     ))
                   : null}
-                {/* 如果 givePopUp 的 state 為 true，顯示 "送他禮物"的彈窗，並帶入所需的 props 值 */}
-                {givePopUp && (
-                  <ManageGiveItem
-                    isApplyMessage={isApplyMessage}
-                    post={post}
-                    postMessageId={post.id}
-                    applyDealMethod={msg.applyDealMethod}
-                    handleToggleGivePopUp={handleToggleGivePopUp}
-                    applyMsgId={applyMsgId}
-                    isAccept={isAccept}
-                    setIsAccept={setIsAccept}
-                  />
-                )}
               </CommentTop>
 
               {/* 留言的留言內容 */}
@@ -310,7 +380,7 @@ export function Comments({
               )}
 
               {/* 留言的最下方 */}
-              <CommentBottom>
+              <CommentBottom postIsGoal={postIsGoal}>
                 <CommentTime>{msg.lastModified}</CommentTime>
                 {/* 留言的最下方的留言更新區塊 */}
                 {/* 登入者可以回覆留言，登入者為該留言者時才可以編輯、刪除該留言 */}
@@ -326,7 +396,9 @@ export function Comments({
                           | 編輯留言
                         </CommentEdit>
                         <CommentDelete
-                          onClick={() => handleDeleteMessage(msg.id)}
+                          onClick={() =>
+                            handleDeleteMessage(msg.id, msg.isDealing)
+                          }
                         >
                           | 刪除留言
                         </CommentDelete>
@@ -419,7 +491,10 @@ export function Comments({
                                   </CommentEdit>
                                   <CommentDelete
                                     onClick={() =>
-                                      handleDeleteMessage(subMsg.id)
+                                      handleDeleteMessage(
+                                        subMsg.id,
+                                        subMsg.isDealing
+                                      )
                                     }
                                   >
                                     | 刪除留言

@@ -3,8 +3,10 @@ import AuthContext from '../../contexts'
 import styled from 'styled-components'
 import { Link, useParams } from 'react-router-dom'
 import Container from '../../components/Container'
-import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
+import { MEDIA_QUERY_SM, MEDIA_QUERY_MD } from '../../styles/breakpoints'
 import { LargeButton } from '../../components/buttons'
+import itemGoal from '../../images/itemGoal.svg'
+import { Img, ImgCircleWrapper } from '../../components/img'
 
 // 引入 react icons
 import * as FaIcons from 'react-icons/fa'
@@ -17,20 +19,8 @@ import AsNavFor from './AsNavFor'
 // 引入 留言
 import { Comments } from './comments'
 
-// 引入填寫留言的區塊
-import LargeTextArea from './textArea'
-
 // 引入撈取單筆 post 的 API
 import { getPost } from '../../WebAPI'
-
-// 引入操作留言的 hook
-import useComments from '../../hooks/useComments'
-
-// 引入操作 "想要禮物" 按鈕的 hook
-import useWantItem from '../../hooks/useWantItem'
-
-// 引入 "想要禮物" 按鈕點擊後的彈窗 component
-import ManageWantItem from '../../components/ManageWantItem'
 
 /* 禮物詳情頁最上方 "物品" 資訊的全部區塊 */
 const GiftDetails = styled.div`
@@ -70,9 +60,10 @@ const DetailRight = styled.div`
   line-height: 1.5;
   letter-spacing: 0.15px;
   margin-left: 25px;
+
   ${MEDIA_QUERY_SM} {
     width: 100%;
-    margin-bottom: 100px;
+    margin-bottom: 250px;
   }
 `
 /* "物品" 資訊右側：贈物者資訊 */
@@ -84,13 +75,29 @@ const Donor = styled.div`
 `
 
 /* 贈物者頭像 */
-const DonorAvatar = styled.img`
-  width: 50px;
-  height: 50px;
-  margin-right: 17px;
-  border-radius: 50%;
-  // background-color: ${(props) => props.theme.primary_200};
+const AvatarImg = styled(ImgCircleWrapper)`
+  min-width: 50px;
+  min-height: 50px;
+  margin-right: 1rem;
   cursor: pointer;
+  // border: none;
+  ${MEDIA_QUERY_MD} {
+    position: relative;
+    left: 0;
+  }
+  ${MEDIA_QUERY_SM} {
+    max-width: 50px;
+    max-height: 50px;
+    margin: 0 auto 1rem;
+  }
+`
+
+/* 贈物者頭像圖片 */
+const UserImg = styled(Img)`
+  min-width: 50px;
+  min-height: 50px;
+  object-fit: cover;
+  object-position: center center;
 `
 
 /* 贈物者暱稱 */
@@ -121,10 +128,22 @@ const GiftDetail = styled.ul`
   letter-spacing: 0.5px;
 `
 
+/* 分類、寄送地點、寄送方式、物品狀態、運費支付 */
+const GiftItems = styled.li`
+  display: flex;
+  margin-bottom: 30px;
+  align-items: flex-start;
+  ${MEDIA_QUERY_SM} {
+    margin-bottom: 30px;
+  }
+`
+
 /* 每一項物品細節前的 icon */
 const Icon = styled.div`
   width: 26px;
   height: 26px;
+  display: block;
+  margin-top: 0.4em;
   color: ${(props) => props.theme.primary_300};
 `
 
@@ -133,17 +152,13 @@ const Label = styled.div`
   margin-left: 17px;
   font-size: 1.35rem;
   ${MEDIA_QUERY_SM} {
-    font-size: 4vmin;
+    font-size: 3.5vmin;
   }
 `
 
-/* 分類、寄送地點、寄送方式、物品狀態、運費支付 */
-const GiftItems = styled.li`
-  display: flex;
-  margin-bottom: 45px;
-  ${MEDIA_QUERY_SM} {
-    margin-bottom: 30px;
-  }
+/* 每一項寄送方式的內容 */
+const TradingOptions = styled.div`
+  margin-top: 6px;
 `
 
 /* "編輯禮物" 、"想要禮物" 按鈕 */
@@ -187,6 +202,18 @@ const IntroContent = styled.div`
   line-height: 1.5;
   letter-spacing: 0.5px;
   margin-bottom: 50px;
+  white-space: pre-line;
+`
+/* 交易完成時顯示的圖片 */
+const GoalImage = styled.img`
+  max-width: 25%;
+  margin-left: 33px;
+  margin-bottom: -26px;
+
+  ${MEDIA_QUERY_SM} {
+    margin-left: 15px;
+    margin-bottom: -18px;
+  }
 `
 
 export default function ItemPage() {
@@ -195,20 +222,23 @@ export default function ItemPage() {
 
   // 取得 URL 上 id 的參數
   const { id } = useParams()
-  // console.log('id', id)
 
-  // 帶入 useWantItem 中的 wantPopUp, handleToggleWantPopUp,
-  const { wantPopUp, handleToggleWantPopUp } = useWantItem()
+  // 設定申請索取的彈出視窗的 state
+  const [wantPopUp, setWantPopUp] = useState(false)
 
-  // 將參數帶入並取得 useComments 中 handleSubmit function
-  // 參數:false => 判斷是否索取 / id => post 的 id
-  const { handleAddQuestionSubmit } = useComments(false, id)
+  // toggle 彈出視窗：若已顯示，則收起彈窗；否則跳出彈窗
+  const handleToggleWantPopUp = (id) => {
+    setWantPopUp(!wantPopUp)
+  }
 
   // 設定 post 的 state
   const [post, setPost] = useState({})
 
-  // 設定 新增留言的 state
-  const [newMessageInput, setNewMessageInput] = useState('')
+  // 設定是否已在交易進程的 state
+  const [isDealLimit, setIsDealLimit] = useState(false)
+
+  // 設定 icon 尺寸的 state
+  const iconSize = 25
 
   useEffect(() => {
     // 串接拿到單筆的 post 的 API
@@ -217,10 +247,12 @@ export default function ItemPage() {
       // 成功拿到資料後，將資料更新到 post 的 state
       if (res.data.message === 'success') {
         setPost(res.data.post)
+        setIsDealLimit(res.data.isDealLimit)
       }
     }
 
     fetchPost()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -242,8 +274,13 @@ export default function ItemPage() {
             {post.author && post.author._id && (
               <Donor>
                 {/* 贈物者頭像 */}
+                {/* <Link to={`/portfolio/${post.author._id}`}>
+                  <DonorAvatar src={post.author.avatarUrl.imgUrl}></DonorAvatar>
+                </Link> */}
                 <Link to={`/portfolio/${post.author._id}`}>
-                  <DonorAvatar src={post.author.avatarUrl}></DonorAvatar>
+                  <AvatarImg>
+                    <UserImg src={post.author.avatarUrl.imgUrl} />
+                  </AvatarImg>
                 </Link>
 
                 {/* 贈物者暱稱 */}
@@ -254,14 +291,17 @@ export default function ItemPage() {
             )}
 
             {/* "物品" 資訊右側：物品名稱 */}
-            <GiftTitle> {post.itemName}</GiftTitle>
+            <GiftTitle>
+              {post.itemName}
+              {post.isGoal ? <GoalImage src={itemGoal} /> : null}
+            </GiftTitle>
 
             {/* "物品" 資訊右側：物品細節 */}
             <GiftDetail>
               {/* 分類 */}
               <GiftItems>
                 <Icon>
-                  <FaIcons.FaTags />
+                  <FaIcons.FaTags size={iconSize} />
                 </Icon>
                 <Label>{post.category && post.category.categoryName}</Label>
               </GiftItems>
@@ -271,7 +311,7 @@ export default function ItemPage() {
               {post.tradingOptions && post.tradingOptions.faceToFace && (
                 <GiftItems>
                   <Icon>
-                    <ImIcons.ImLocation />
+                    <ImIcons.ImLocation size={iconSize} />
                   </Icon>
                   <Label>
                     {post.tradingOptions.faceToFace.region}
@@ -280,29 +320,10 @@ export default function ItemPage() {
                 </GiftItems>
               )}
 
-              {/* 寄送方式 */}
-              <GiftItems>
-                <Icon>
-                  <FaIcons.FaTruckLoading />
-                </Icon>
-                <Label>
-                  寄送方式：
-                  {/* 面交、7-11 店到店、全家店到店 */}
-                  {post.tradingOptions &&
-                    post.tradingOptions.selectedMethods &&
-                    post.tradingOptions.selectedMethods.map((item) => {
-                      if (item === '面交') return '面交'
-                      if (item === '7-11') return '7-11 店到店 / '
-                      if (item === '全家') return '全家店到店 / '
-                      return false
-                    })}
-                </Label>
-              </GiftItems>
-
               {/* 物品狀態 */}
               <GiftItems>
                 <Icon>
-                  <FaIcons.FaInfoCircle />
+                  <FaIcons.FaInfoCircle size={iconSize} />
                 </Icon>
                 <Label>物品狀態： {post.itemStatus}</Label>
               </GiftItems>
@@ -310,36 +331,77 @@ export default function ItemPage() {
               {/* 運費支付 */}
               <GiftItems>
                 <Icon>
-                  <MdIcons.MdMonetizationOn />
+                  <MdIcons.MdMonetizationOn size={iconSize + 3} />
                 </Icon>
-                <Label>運費支付：{post.payer}支付運費</Label>
+                <Label>運費支付：由{post.payer}支付</Label>
+              </GiftItems>
+
+              {/* 寄送方式 */}
+              <GiftItems>
+                <Icon>
+                  <FaIcons.FaTruckLoading size={iconSize} />
+                </Icon>
+                <Label>
+                  寄送方式：
+                  <br />
+                  {/* 面交、7-11 店到店、全家店到店 */}
+                  {/* {post.tradingOptions &&
+                    post.tradingOptions.selectedMethods &&
+                    post.tradingOptions.selectedMethods
+                      .map((item) => {
+                        if (item === '面交') return '面交'
+                        if (item === '7-11') return '7-11 店到店'
+                        if (item === '全家') return '全家店到店'
+                        return false
+                      })
+                      .join('/')} */}
+                  {post.tradingOptions &&
+                    post.tradingOptions.selectedMethods &&
+                    post.tradingOptions.selectedMethods.map((item, index) => {
+                      if (item === '面交')
+                        return <TradingOptions key={index}>面交</TradingOptions>
+                      if (item === '7-11')
+                        return (
+                          <TradingOptions key={index}>
+                            7-11 店到店
+                          </TradingOptions>
+                        )
+                      if (item === '全家')
+                        return (
+                          <TradingOptions key={index}>
+                            全家 店到店
+                          </TradingOptions>
+                        )
+                      return false
+                    })}
+                </Label>
               </GiftItems>
             </GiftDetail>
 
             {/* 判斷是否為發文者，顯示不同的按鈕 */}
             {/* 當登入者與發文者為同一人時,顯示 "編輯禮物" 按鈕,否則顯示 "想要禮物" 按鈕 */}
+            {/* 當交易的數量總和已達到上限， "想要禮物" 按鈕變成 "贈送中"，且顯示 disabled，不讓索取者提出新索取*/}
             {user && post.author && user.id === post.author._id ? (
-              <HandleGiftButton as={Link} to="/givings/edit">
-                編輯禮物
-              </HandleGiftButton>
+              post.isGoal ? (
+                <HandleGiftButton disabled={post.isGoal}>
+                  編輯禮物
+                </HandleGiftButton>
+              ) : (
+                <HandleGiftButton as={Link} to={`/givings/edit/${post.id}`}>
+                  編輯禮物
+                </HandleGiftButton>
+              )
             ) : user ? (
-              <HandleGiftButton onClick={() => handleToggleWantPopUp(post.id)}>
-                想要禮物
+              <HandleGiftButton
+                onClick={() => handleToggleWantPopUp(post.id)}
+                disabled={post.isDealLimit}
+              >
+                {post.isDealLimit ? '物品贈送中' : '想要禮物'}
               </HandleGiftButton>
             ) : (
               <HandleGiftButton as={Link} to="/login">
                 想要禮物
               </HandleGiftButton>
-            )}
-
-            {/* 點擊 "想要禮物" 按鈕後,顯示申請索取的彈出視窗 */}
-            {wantPopUp && (
-              <ManageWantItem
-                isApplyMessage={true}
-                post={post}
-                postMessageId={post.id}
-                handleToggleWantPopUp={handleToggleWantPopUp}
-              />
             )}
           </DetailRight>
         </GiftDetails>
@@ -359,7 +421,7 @@ export default function ItemPage() {
           {/* 禮物詳情頁的 "想要禮物" 區塊 */}
           <GiftIntro>
             {/* 想要禮物的標題 */}
-            <IntroTitle>想要禮物</IntroTitle>
+            <IntroTitle style={{ marginBottom: '20px' }}>想要禮物</IntroTitle>
             {/* 想要禮物的內文 */}
             {/* 留言內容 */}
             {post.author && (
@@ -368,6 +430,11 @@ export default function ItemPage() {
                 post={post}
                 postMessageId={post.id}
                 postAuthorId={post.author._id}
+                postIsGoal={post.isGoal}
+                isDealLimit={isDealLimit}
+                setIsDealLimit={setIsDealLimit}
+                wantPopUp={wantPopUp}
+                handleToggleWantPopUp={handleToggleWantPopUp}
               ></Comments>
             )}
           </GiftIntro>
@@ -375,21 +442,16 @@ export default function ItemPage() {
           {/* 禮物詳情頁的 "留言" 區塊 */}
           <GiftIntro>
             {/* 留言的標題 */}
-            <IntroTitle>留言</IntroTitle>
-            {/* 填寫留言的區塊，登入後顯示並可留言 */}
-            {user ? (
-              <LargeTextArea
-                isApplyMessage={false}
-                post={post}
-                newMessageInput={newMessageInput}
-                setNewMessageInput={setNewMessageInput}
-                addNewComment={true}
-                handleAddQuestionSubmit={handleAddQuestionSubmit}
-              ></LargeTextArea>
-            ) : null}
+            <IntroTitle style={{ marginBottom: '20px' }}>留言</IntroTitle>
 
             {/* 顯示留言內容 */}
-            <Comments isApplyMessage={false} postMessageId={post.id}></Comments>
+            <Comments
+              isApplyMessage={false}
+              postMessageId={post.id}
+              postIsGoal={post.isGoal}
+              post={post}
+              addNewComment={true}
+            ></Comments>
           </GiftIntro>
         </GiftContent>
       </Container>

@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import { SmallButton } from '../../components/buttons'
+import { Textarea } from '../../components/textField'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 
 /* Form - 整個區塊 */
@@ -8,20 +9,15 @@ const Form = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  margin-top: 50px;
+  margin-top: 20px;
   margin-bottom: 50px;
   max-width: 557px;
 `
 
 /* TextArea - 輸入留言的地方 */
-const TextArea = styled.textarea`
-  width: 100%;
+const TextArea = styled(Textarea)`
+  height: 8rem;
   font-size: 16px;
-  line-height: 1.5;
-  letter-spacing: 0.5px;
-  border: 1px solid ${(props) => props.theme.general_500};
-  outline: none;
-  resize: none;
   padding: 15px;
   padding-left: 30px;
   &:focus {
@@ -45,6 +41,7 @@ const LargeTextArea = ({
   handleAddQuestionSubmit,
   addNewComment,
   relatedMsg,
+  postIsGoal,
 }) => {
   return (
     <>
@@ -59,6 +56,7 @@ const LargeTextArea = ({
           value={newMessageInput}
           onChange={(e) => setNewMessageInput(e.target.value)}
           required
+          disabled={postIsGoal}
         ></TextArea>
 
         {/* 送出留言的按鈕 */}
@@ -75,6 +73,7 @@ const LargeTextArea = ({
                 )
               : handleReplySubmit(relatedMsg, isApplyMessage)
           }
+          disabled={postIsGoal}
         >
           送出留言
         </MessageSubmitButton>
