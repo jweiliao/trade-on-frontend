@@ -24,6 +24,10 @@
   object-position: center center;
 }
 
+.slick-slider {
+  display: inline-block;
+}
+
 /* 下方小圖 */
 .thumbnail_slider-wrap {
   width: 447px;
@@ -33,18 +37,20 @@
 
 /* 小圖 */
 .thumbnail_sliders-item .thumbnail_slider-img {
-  width: 96%;
+  /* width: 96%; */
+  width: 98%;
   height: 90px;
   margin-top: 5px;
   object-fit: cover;
 }
 
 @media only screen and (max-width: 768px) {
+  /* 輪播圖的整個區塊 */
   .sliders-wrap {
     margin-left: 10px;
     justify-content: center;
   }
-
+  /* 小圖 */
   .thumbnail_sliders-item .thumbnail_slider-img {
     width: 77%;
     height: 90px;

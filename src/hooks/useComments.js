@@ -15,7 +15,7 @@ import {
 // 2. postMessageId => 此留言的 id
 export default function useComments(isApplyMessage, postMessageId) {
   // 設定 詢問留言 的 state
-  const [questionMsgs, setQuestionMsgs] = useState({})
+  const [questionMsgs, setQuestionMsgs] = useState([])
 
   // 設定 詢問留言 的主留言 state
   const [mainMsgs, setMainMsgs] = useState({})
@@ -67,6 +67,7 @@ export default function useComments(isApplyMessage, postMessageId) {
         // 拿到回傳的所有留言
         const messages = res.data.postMessages
         console.log('resMessage', res.data.postMessages)
+
         if (messages && messages[0]) {
           messages.map((msg) => {
             // 如果為詢問留言，將資料更新到 questionMsgs 的 state
@@ -82,6 +83,8 @@ export default function useComments(isApplyMessage, postMessageId) {
             } else {
               setQuestionMsgs(msg.messages)
             }
+
+            return false
           })
         }
       }
@@ -151,20 +154,19 @@ export default function useComments(isApplyMessage, postMessageId) {
     try {
       // 串接新增詢問留言的 API，並帶入 newMessage
       addMessage(newMessage).then((res) => {
-        // console.log('questionMsgs', questionMsgs)
-        // console.log('mainMsgs', mainMsgs)
+        console.log('新增留言 API 回傳', res.data.new)
+        console.log('questionMsgs', questionMsgs)
 
         const newMsgRes = res.data.new
-        console.log('新增留言 API 回傳', newMsgRes)
 
         // 如果新增詢問留言成功
         if (res.data.message === 'success') {
           // 將回傳的值新增到 questionMsgs 的 state
-          isApplyMessageOrNot(
-            setApplyMsgs,
-            setQuestionMsgs
-          )([...isApplyMessageOrNot(applyMsgs, questionMsgs), newMsgRes])
-          // setQuestionMsgs(...questionMsgs, newMsgRes)
+          // isApplyMessageOrNot(
+          //   setApplyMsgs,
+          //   setQuestionMsgs
+          // )([...isApplyMessageOrNot(applyMsgs, questionMsgs), newMsgRes])
+          setQuestionMsgs([...questionMsgs, newMsgRes])
         }
       })
     } catch (err) {
@@ -194,8 +196,6 @@ export default function useComments(isApplyMessage, postMessageId) {
   // 新增回覆留言
   const handleReplySubmit = (relatedMsg, isApplyMessage) => {
     // e.preventDefault()
-    // console.log('relatedMsg', newMessageInput, relatedMsg)
-    // console.log('postMessageId', postMessageId)
 
     // 變數 newMessage 為串接回覆留言的 API，要帶入的物件參數 "content"、"messageType"、 "relatedMsg"、"relatedId"
     const newMessage = {
@@ -208,9 +208,9 @@ export default function useComments(isApplyMessage, postMessageId) {
     try {
       // 串接回覆留言的 API，並帶入 relatedMsg、 newMessage
       replyMessage(relatedMsg, newMessage).then((res) => {
-        // console.log('回覆 API 的 res', res.data.new)
+        console.log('回覆 API 的 res', res.data.new)
         // console.log('詢問留言', questionMsgs)
-
+        console.log('索取留言', applyMsgs)
         const replyMsgRes = res.data.new
 
         // 如果新增回覆留言成功
@@ -249,7 +249,7 @@ export default function useComments(isApplyMessage, postMessageId) {
       applyMsgs,
       questionMsgs
     ).map((msg) => {
-      if (msg.id !== msgId) return
+      if (msg.id !== msgId) return msg
       if (msg.id === msgId) {
         if (msg.applyDealMethod === 'faceToFace') {
           return 'faceToFace'
@@ -263,6 +263,7 @@ export default function useComments(isApplyMessage, postMessageId) {
           return 'sevenEleven'
         }
       }
+      return false
     })
 
     // 變數 editMsg 為串接更新留言的 API，要帶入的物件參數 "content"、"chooseDealMethod"
@@ -276,6 +277,7 @@ export default function useComments(isApplyMessage, postMessageId) {
     try {
       // 串接更新留言的 API，並帶入 msgId、editMsg
       updateMessage(msgId, editMsg).then((res) => {
+        console.log('questionMsgsUpdate', questionMsgs)
         const updatedMsgRes = res.data.update
         console.log(res.data.update)
 
@@ -317,7 +319,20 @@ export default function useComments(isApplyMessage, postMessageId) {
   }
 
   // 刪除留言
-  const handleDeleteMessage = (id) => {
+  const handleDeleteMessage = (id, isDealing) => {
+    console.log('questionMsgsDelete', questionMsgs)
+
+    // 交易進行時，不讓留言記錄被索取者刪除
+    if (isDealing) {
+      Swal.fire({
+        icon: 'warning',
+        title: '交易進行中，不可刪除留言',
+        showConfirmButton: false,
+        timer: 1500,
+      })
+      return
+    }
+
     // 跳出彈窗確認是否刪除
     Swal.fire({
       title: '刪除',
@@ -350,6 +365,7 @@ export default function useComments(isApplyMessage, postMessageId) {
                       ...msg,
                       isDeleted: true,
                     }
+                  return false
                 })
               )
             }
@@ -369,6 +385,7 @@ export default function useComments(isApplyMessage, postMessageId) {
                       ...msg,
                       isDeleted: true,
                     }
+                  return false
                 })
               )
             }

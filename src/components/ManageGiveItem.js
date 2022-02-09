@@ -12,8 +12,8 @@ import { acceptTransaction, getAllTransactions } from '../WebAPI'
 // 引入 InputErrorMessage 這個 component
 import { InputErrorMessage } from './textField'
 
-// 引入操作留言的 hook
-import useComments from '../hooks/useComments'
+// 引入操作 "給他禮物" 按鈕的 hook
+import useGiveItem from './../hooks/useGiveItem'
 
 /* 彈窗底下的遮罩 */
 const BackDrop = styled.div`
@@ -76,6 +76,10 @@ const BankInfo = styled.div`
 /* 收款資訊輸入欄  */
 const BankInfoInput = styled(Input)`
   width: 100%;
+  border-color: ${(props) => props.theme.general_500};
+  &:focus {
+    border-color: ${(props) => props.theme.general_600};
+  }
 `
 
 /* 彈窗下方操作按鈕們的全部區塊 */
@@ -116,124 +120,16 @@ const GiveButton = styled(SmallButton)`
 
 export default function ManageGiveItem({
   post,
+  postMessageId,
   applyDealMethod,
   handleToggleGivePopUp,
   applyMsgId,
-  setIsAccept,
+  isDealLimit,
+  setIsDealLimit,
+  setApplyMsgIsDealing,
 }) {
-  // 設定 transactions 的 state，預設為空陣列
-  const [transactions, setTransactions] = useState([])
-
-  // 設定 新增交易 newTransactionData 的 state，預設為交易數量為 1，收款資訊為 null
-  const [newTransactionData, setNewTransactionData] = useState({
-    amount: 1,
-    accountNum: null,
-    bankCode: null,
-  })
-
-  // 設定 錯誤訊息 errorMessages 的 state，預設為空物件
-  const [errorMessages, setErrorMessages] = useState({})
-
-  // 設定 是否為提交 isSubmitting 的 state，預設為 false
-  const [isSubmitting, setIsSubmitting] = useState(false)
-
-  // 為了方便查看交易資訊，之後會刪除
-  useEffect(() => {
-    fetchTransactions()
-  }, [])
-
-  const fetchTransactions = async () => {
-    // 串接拿到所有交易進程 的 API
-    const { data } = await getAllTransactions(1000)
-    if (data.message === 'No deal submitted yet.') return
-    // 成功拿到資料後，將資料更新到 transactions 的 state
-    setTransactions(data.allTransactions)
-  }
-
-  // 當輸入框內有值時
-  const handleInput = (e) => {
-    const { name, value } = e.target
-    // 將輸入的值更新到 newTransactionData 的 state
-    setNewTransactionData({
-      ...newTransactionData,
-      [name]: value,
-    })
-    // 清空 errorMessages 的 state
-    setErrorMessages({
-      ...errorMessages,
-      [e.target.name]: '',
-    })
-  }
-
-  // 驗證輸入內容的格式
-  const validateBankInfo = (values) => {
-    let errors = {}
-    // 如果沒有輸入任何的值，則顯示'此欄位為必填'
-    if (!values.bankCode) {
-      errors.bankCode = '此欄位為必填'
-      // 如果有輸入值，則驗證是否符合格式
-    } else if (!/^\d{3}$/.test(values.bankCode)) {
-      errors.bankCode = '銀行代碼格式不正確'
-    }
-
-    if (!values.accountNum) {
-      // 如果沒有輸入任何的值，則顯示'此欄位為必填'
-      errors.accountNum = '此欄位為必填'
-      // 如果有輸入值，則驗證是否符合格式
-    } else if (!/^\d{10,14}$/.test(values.accountNum)) {
-      errors.accountNum = '銀行帳號格式不正確'
-    }
-
-    return errors
-  }
-
-  useEffect(() => {
-    // 如果沒有出現錯誤訊息，且提交狀態為 true，則執行新增交易
-    if (Object.keys(errorMessages).length === 0 && isSubmitting) {
-      // console.log('newTransactionData', newTransactionData)
-
-      // 串接新增交易的 API，並帶入 applyMsgId，newTransactionData
-      acceptTransaction(applyMsgId, newTransactionData)
-        .then((res) => {
-          // const newTransactionData = res.data
-          // console.log(newTransactionData)
-
-          // 如果新增交易成功
-          if (res.data.message === 'success') {
-            Swal.fire({
-              icon: 'success',
-              title: '交易成立',
-              showConfirmButton: false,
-              timer: 1500,
-            })
-            // 更新 isAccept 的狀態為 true
-            setIsAccept(true)
-          }
-        })
-        .catch((err) => {
-          console.log(err)
-          Swal.fire('發生錯誤！')
-        })
-
-      // toggle 給與禮物彈窗：若已顯示彈窗隱藏，否則就顯示
-      handleToggleGivePopUp()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [errorMessages])
-
-  // console.log('receptapply', applyMsgId)
-  // console.log('transactions', transactions)
-
-  // 點擊 "確認" 按鈕後
-  const handleGiveItem = (e) => {
-    e.preventDefault()
-
-    // 驗證輸入框內的格式
-    setErrorMessages(validateBankInfo(newTransactionData))
-
-    // 更新 isSubmitting 的 state 為 true
-    setIsSubmitting(true)
-  }
+  const { errorMessages, handleInput, handleGiveItem, confirmGiveItem } =
+    useGiveItem(handleToggleGivePopUp, applyMsgId)
 
   return (
     <>
@@ -243,7 +139,7 @@ export default function ManageGiveItem({
       <GiveItemWrapper>
         <Title>贈與物品</Title>
         <GiveDetail>物品名稱：{post ? post.itemName : '暫無'}</GiveDetail>
-        <GiveDetail>物品數量： {post ? post.quantity : 0} 個</GiveDetail>
+        <GiveDetail>物品數量： {post ? 1 : 0} 個</GiveDetail>
         {/* 顯示索取者選擇的寄送方式 */}
         <GiveDetail>
           寄送方式：
@@ -294,10 +190,22 @@ export default function ManageGiveItem({
           {/* 點擊 "取消" 按鈕後，隱藏索取請求的彈窗 */}
           <CancelButton onClick={handleToggleGivePopUp}>取消</CancelButton>
 
+          {/* 如果達到交易數量的極限，則無法繼續贈送，除非有人取消交易 */}
+
           {/* 點擊 "確認" 按鈕，執行 "handleGiveItem" */}
-          <GiveButton type="submit" onClick={handleGiveItem}>
+          <GiveButton
+            type="submit"
+            disabled={post.isDealLimit}
+            onClick={() => {
+              handleGiveItem(applyDealMethod)
+              confirmGiveItem(setApplyMsgIsDealing)
+            }}
+          >
             確認
           </GiveButton>
+          {post.isDealLimit ? (
+            <InputErrorMessage>物品都在交易中，不能再送囉！</InputErrorMessage>
+          ) : null}
         </ConfirmButtonsWrapper>
       </GiveItemWrapper>
     </>

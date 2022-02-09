@@ -18,13 +18,19 @@ export default function AsNavFor({ post }) {
   const [nav2, setNav2] = useState([])
   // 設定帶入的資料
   const [recommended, setRecommended] = useState([])
+  // 設定每次顯示的圖片數量
+  const [totalSlides, setTotalSlides] = useState(3)
 
-  // 撈 post 的 imgUrls 資料，並帶入 recommended 的 state
+  // 撈 post 的 imgUrls 資料，
   useEffect(() => {
     if (post && post.imgUrls) {
+      // imgUrls 資料帶入 recommended 的 state
       setRecommended(post.imgUrls)
+      // imgUrls 帶入 totalSlides 的 state 中，如果圖片數量大於等於 3 ，每次顯示 3 張；
+      // 如果圖片小於 3，每次顯示物品的總圖片張數；
+      setTotalSlides(post.imgUrls.length >= 3 ? 3 : post.imgUrls.length)
     }
-  }, [post])
+  }, [post, totalSlides])
 
   return (
     // 輪播圖的整個區塊
@@ -38,11 +44,11 @@ export default function AsNavFor({ post }) {
         speed={1000} // 輪播速度
       >
         {/* 這邊用 map 撈出 recommended 中每一個推薦物品 */}
-        {recommended.map((current) => (
+        {recommended.map((current, index) => (
           // 包住整個大圖的區塊
-          <li className="sliders-item" key={current.id}>
+          <li className="sliders-item" key={index}>
             {/* 圖片 */}
-            <img className="slider-img" alt={'object'} src={current} />
+            <img className="slider-img" alt={'object'} src={current.imgUrl} />
           </li>
         ))}
       </Slider>
@@ -52,21 +58,21 @@ export default function AsNavFor({ post }) {
         className="thumbnail_sliders"
         asNavFor={nav1} // 與 nav1 連結
         ref={(slider2) => setNav2(slider2)}
-        slidesToShow={3} // 每次顯示的圖片
+        slidesToShow={totalSlides} // 每次顯示的圖片
         swipeToSlide={true} // 可以滑動換下一張
         focusOnSelect={true} // 不太確定是什麼
         arrows={false} // 左右是否顯示箭頭
         speed={1000} // 輪播速度
       >
         {/* 這邊用 map 撈出recommended 中每一個推薦物品 */}
-        {recommended.map((current) => (
+        {recommended.map((current, index) => (
           // 包住整個小圖的區塊
-          <li className="thumbnail_sliders-item" key={current.id}>
+          <li className="thumbnail_sliders-item" key={index}>
             {/* 圖片 */}
             <img
               className="thumbnail_slider-img"
               alt={'object'}
-              src={current}
+              src={current.imgUrl}
             />
           </li>
         ))}

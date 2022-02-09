@@ -1,19 +1,14 @@
-import { useState } from 'react'
 import styled from 'styled-components'
 import { Textarea } from './textField'
 import { BackstageTitle } from './heading'
 import { SmallButton } from './buttons'
-import Swal from 'sweetalert2'
 import { MEDIA_QUERY_SM } from '../styles/breakpoints'
-
-// 引入新增留言 API
-import { addMessage } from '../WebAPI'
 
 // 引入 radio 相關 component
 import { RadioItem, RadioButtonLabel, RadioButton } from './textField'
 
-// 引入操作留言的 hook
-import useComments from '../hooks/useComments'
+// 引入 useWantItem
+import useWantItem from './../hooks/useWantItem'
 
 /* 彈窗底下的遮罩 */
 const BackDrop = styled.div`
@@ -113,60 +108,24 @@ export default function ManageGiveItem({
   post,
   postMessageId,
   handleToggleWantPopUp,
+  applyMsgs,
+  setApplyMsgs,
 }) {
-  // console.log('post', post)
-
-  // 設定索取留言內容的 state，預設為空值
-  const [newApplyInput, setNewApplyInput] = useState('')
-
-  // 設定寄送方式選項的 state，預設為空值
-  const [select, setSelect] = useState('')
-
-  // 帶入 useComments 中的 applyMsgs, setApplyMsgs
-  const { applyMsgs, setApplyMsgs } = useComments(isApplyMessage, postMessageId)
-
-  const handleWantItem = (e) => {
-    // e.preventDefault()
-
-    // 變數 newApply 為串接新增索取的 API，並帶入參數 "content"、"messageType"、"chooseDealMethod"、"relatedId"
-    const newApply = {
-      content: newApplyInput,
-      messageType: 'apply',
-      chooseDealMethod: select,
-      relatedId: postMessageId,
-    }
-
-    // console.log('newTransactionData', newApply)
-
-    try {
-      // 串接新增索取請求的 API，並帶入 newApply
-      addMessage(newApply)
-        .then((res) => {
-          // 如果新增索取請求成功
-          if (res.data.message === 'success') {
-            const replyMsgRes = res.data.new
-            // 將回傳的值新增到 applyMsgs 的 state
-            setApplyMsgs([...applyMsgs, replyMsgRes])
-          }
-        })
-        .catch((err) => {
-          Swal.fire({
-            icon: 'error',
-            title: 'Oops...',
-            text: '寄送方式必填喔！',
-            timer: 1500,
-          })
-        })
-    } catch (err) {
-      console.log(err)
-    }
-    // 索取請求的留言內容清空
-    setNewApplyInput('')
-
-    // toggle 索取請求彈窗：若已顯示彈窗隱藏，否則就顯示
-    handleToggleWantPopUp()
-  }
-
+  const {
+    select,
+    setSelect,
+    newApplyInput,
+    setNewApplyInput,
+    handleWantItem,
+    toggle,
+  } = useWantItem(
+    applyMsgs,
+    setApplyMsgs,
+    isApplyMessage,
+    post,
+    postMessageId,
+    handleToggleWantPopUp
+  )
   return (
     <>
       {/* 彈窗底下的遮罩，點擊彈窗以外的地方，會收回彈窗  */}
@@ -242,12 +201,15 @@ export default function ManageGiveItem({
                 </RadioItem>
               )
             }
+            return false
           })}
 
         {/* 彈窗下方操作按鈕們的全部區塊 */}
         <ConfirmButtonsWrapper>
           {/* 點擊 "取消" 按鈕後，隱藏索取請求的彈窗 */}
-          <CancelButton onClick={handleToggleWantPopUp}>取消</CancelButton>
+          <CancelButton onClick={toggle ? handleToggleWantPopUp : undefined}>
+            取消
+          </CancelButton>
 
           {/* 點擊 "確認" 按鈕，執行 "handleWantItem" */}
           <GiveButton type="submit" onClick={handleWantItem}>

@@ -131,7 +131,6 @@ const CancelBtn = styled(SaveBtn)`
 export default function ManageCategoryPage() {
   const {
     categories,
-    setCategories,
     handleNewCategory,
     handleAddCategory,
     categoryCotentRef,
