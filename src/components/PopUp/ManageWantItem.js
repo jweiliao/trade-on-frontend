@@ -1,44 +1,27 @@
 import styled from 'styled-components'
-import { Textarea } from './textField'
-import { BackstageTitle } from './heading'
-import { SmallButton } from './buttons'
-import { MEDIA_QUERY_SM } from '../styles/breakpoints'
+import { Textarea } from '../textField'
+import { BackstageTitle } from '../heading'
+import { SmallButton } from '../buttons'
+import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 
 // 引入 radio 相關 component
-import { RadioItem, RadioButtonLabel, RadioButton } from './textField'
+import { RadioItem, RadioButtonLabel, RadioButton } from '../textField'
+
+// 引入 彈窗底下的遮罩 component
+import Backdrop from '../../components/PopUp/Backdrop'
+
+// 引入彈窗 component
+import PopUp from '../../components/PopUp/PopUp'
 
 // 引入 useWantItem
-import useWantItem from './../hooks/useWantItem'
+import useWantItem from '../../hooks/useWantItem'
 
 /* 彈窗底下的遮罩 */
-const BackDrop = styled.div`
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  z-index: 50;
-  left: 0;
-  top: 0;
-  background-color: rgba(0, 0, 0, 0.3);
-`
+const PopUpBackDrop = styled(Backdrop)``
 
 /* 整個索取請求的彈窗 */
-const GiveItemWrapper = styled.div`
-  z-index: 100;
-  width: 500px;
-  padding: 0px 50px;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  border: 1px solid ${(props) => props.theme.general_500};
-  border-radius: 4px;
-  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
-  transition: all 0.5s ease-out;
-  ${MEDIA_QUERY_SM} {
-    margin-top: 20px;
-    max-width: 80%;
-  }
+const GiveItemWrapper = styled(PopUp)`
+  padding: 0rem 3rem;
 `
 
 /* 索取請求彈窗的標題 */
@@ -47,10 +30,7 @@ const Title = styled(BackstageTitle)`
   padding-bottom: 7px;
   text-align: left;
   border-bottom: 2px solid ${(props) => props.theme.general_500};
-
-  ${MEDIA_QUERY_SM} {
-    margin-top: 3rem;
-  }
+  margin: 2rem 0 1.25rem 0;
 `
 
 /* 索取項目的細節 */
@@ -61,19 +41,25 @@ const GiveDetail = styled.div`
   justify-content: center;
   align-items: flex-start;
   font-size: 20px;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 `
 
 /* 索取請求的留言內容  */
 const ApplyMessageInput = styled(Textarea)`
   width: 100%;
+  height: 7rem;
+
+  ${MEDIA_QUERY_SM} {
+    height: 5rem;
+  }
 `
 
 /* 彈窗下方操作按鈕們的全部區塊 */
 const ConfirmButtonsWrapper = styled.div`
   display: flex;
   justify-content: center;
-  margin-bottom: 50px;
+  margin-top: 25px;
+  margin-bottom: 32px;
   ${MEDIA_QUERY_SM} {
     flex-direction: column;
     align-items: center;
@@ -111,25 +97,19 @@ export default function ManageGiveItem({
   applyMsgs,
   setApplyMsgs,
 }) {
-  const {
-    select,
-    setSelect,
-    newApplyInput,
-    setNewApplyInput,
-    handleWantItem,
-    toggle,
-  } = useWantItem(
-    applyMsgs,
-    setApplyMsgs,
-    isApplyMessage,
-    post,
-    postMessageId,
-    handleToggleWantPopUp
-  )
+  const { select, setSelect, newApplyInput, setNewApplyInput, handleWantItem } =
+    useWantItem(
+      applyMsgs,
+      setApplyMsgs,
+      isApplyMessage,
+      post,
+      postMessageId,
+      handleToggleWantPopUp
+    )
   return (
     <>
       {/* 彈窗底下的遮罩，點擊彈窗以外的地方，會收回彈窗  */}
-      <BackDrop onClick={handleToggleWantPopUp}></BackDrop>
+      <PopUpBackDrop onClick={handleToggleWantPopUp}></PopUpBackDrop>
       {/* 整個索取請求的彈窗 */}
       <GiveItemWrapper>
         <Title>索取請求</Title>
@@ -207,9 +187,7 @@ export default function ManageGiveItem({
         {/* 彈窗下方操作按鈕們的全部區塊 */}
         <ConfirmButtonsWrapper>
           {/* 點擊 "取消" 按鈕後，隱藏索取請求的彈窗 */}
-          <CancelButton onClick={toggle ? handleToggleWantPopUp : undefined}>
-            取消
-          </CancelButton>
+          <CancelButton onClick={handleToggleWantPopUp}>取消</CancelButton>
 
           {/* 點擊 "確認" 按鈕，執行 "handleWantItem" */}
           <GiveButton type="submit" onClick={handleWantItem}>

@@ -244,9 +244,11 @@ export default function ItemPage() {
     // 串接拿到單筆的 post 的 API
     const fetchPost = async () => {
       const res = await getPost(id)
-      // 成功拿到資料後，將資料更新到 post 的 state
+
       if (res.data.message === 'success') {
+        // 成功拿到資料後，將資料更新到 post 的 state
         setPost(res.data.post)
+        // 成功拿到資料後，將 isDealLimit 的資料更新到 isDealLimit 的 state
         setIsDealLimit(res.data.isDealLimit)
       }
     }

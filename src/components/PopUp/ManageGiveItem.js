@@ -1,49 +1,28 @@
-import { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import { Input } from './textField'
-import { BackstageTitle } from './heading'
-import { SmallButton } from './buttons'
-import Swal from 'sweetalert2'
-import { MEDIA_QUERY_SM } from '../styles/breakpoints'
-
-// 引入接受索取請求、拿取所有交易資料的 API
-import { acceptTransaction, getAllTransactions } from '../WebAPI'
+import { Input } from '../textField'
+import { BackstageTitle } from '../heading'
+import { SmallButton } from '../buttons'
+import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 
 // 引入 InputErrorMessage 這個 component
-import { InputErrorMessage } from './textField'
+import { InputErrorMessage } from '../textField'
+
+// 引入 彈窗底下的遮罩 component
+import Backdrop from '../../components/PopUp/Backdrop'
+
+// 引入彈窗 component
+import PopUp from '../../components/PopUp/PopUp'
 
 // 引入操作 "給他禮物" 按鈕的 hook
-import useGiveItem from './../hooks/useGiveItem'
+import useGiveItem from '../../hooks/useGiveItem'
+import React from 'react'
 
 /* 彈窗底下的遮罩 */
-const BackDrop = styled.div`
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  z-index: 50;
-  left: 0;
-  top: 0;
-  background-color: rgba(0, 0, 0, 0.3);
-`
+const PopUpBackDrop = styled(Backdrop)``
 
 /* 整個贈與禮物的彈窗 */
-const GiveItemWrapper = styled.div`
-  z-index: 100;
-  width: 500px;
-  padding: 10px 50px;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  border: 1px solid ${(props) => props.theme.general_500};
-  border-radius: 4px;
-  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
-  transition: all 0.5s ease-out;
-  ${MEDIA_QUERY_SM} {
-    margin-top: 20px;
-    max-width: 80%;
-  }
+const GiveItemWrapper = styled(PopUp)`
+  padding: 0rem 3rem;
 `
 
 /* 贈與禮物彈窗的標題 */
@@ -52,10 +31,6 @@ const Title = styled(BackstageTitle)`
   padding-bottom: 7px;
   text-align: left;
   border-bottom: 2px solid ${(props) => props.theme.general_500};
-
-  ${MEDIA_QUERY_SM} {
-    margin-top: 3rem;
-  }
 `
 /* 贈與項目的細節 */
 const GiveDetail = styled.div`
@@ -65,20 +40,25 @@ const GiveDetail = styled.div`
   justify-content: center;
   align-items: flex-start;
   font-size: 20px;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 `
 
 /* 收款資訊  */
 const BankInfo = styled.div`
-  margin-top: 30px;
+  margin-top: 20px;
 `
 
 /* 收款資訊輸入欄  */
 const BankInfoInput = styled(Input)`
   width: 100%;
+  margin-top: 1.25rem;
   border-color: ${(props) => props.theme.general_500};
   &:focus {
     border-color: ${(props) => props.theme.general_600};
+  }
+
+  ${MEDIA_QUERY_SM} {
+    font-size: 1.2rem;
   }
 `
 
@@ -86,7 +66,8 @@ const BankInfoInput = styled(Input)`
 const ConfirmButtonsWrapper = styled.div`
   display: flex;
   justify-content: center;
-  margin-bottom: 50px;
+  margin-top: 25px;
+  margin-bottom: 32px;
   ${MEDIA_QUERY_SM} {
     flex-direction: column;
     align-items: center;
@@ -120,21 +101,24 @@ const GiveButton = styled(SmallButton)`
 
 export default function ManageGiveItem({
   post,
-  postMessageId,
   applyDealMethod,
   handleToggleGivePopUp,
   applyMsgId,
-  isDealLimit,
-  setIsDealLimit,
-  setApplyMsgIsDealing,
+  applyMainMsgs,
+  setApplyMainMsgs,
 }) {
-  const { errorMessages, handleInput, handleGiveItem, confirmGiveItem } =
-    useGiveItem(handleToggleGivePopUp, applyMsgId)
+  // 將 handleToggleGivePopUp,applyMsgId，applyMainMsgs,setApplyMainMsgs 帶入 useGiveItem 中並引入 errorMessages, handleInput, handleGiveItem
+  const { errorMessages, handleInput, handleGiveItem } = useGiveItem(
+    handleToggleGivePopUp,
+    applyMsgId,
+    applyMainMsgs,
+    setApplyMainMsgs
+  )
 
   return (
     <>
       {/* 彈窗底下的遮罩，點擊彈窗以外的地方，會收回彈窗  */}
-      <BackDrop onClick={handleToggleGivePopUp}></BackDrop>
+      <PopUpBackDrop onClick={handleToggleGivePopUp}></PopUpBackDrop>
       {/* 整個贈與禮物的彈窗 */}
       <GiveItemWrapper>
         <Title>贈與物品</Title>
@@ -154,7 +138,7 @@ export default function ManageGiveItem({
           )}
           {/* 若選擇店到店的寄送方式，下方出現填寫收款資訊的區塊，並在 "確認" 按鈕送出前驗證輸入內容的格式 */}
           {applyDealMethod.convenientStore && (
-            <>
+            <React.Fragment key={applyMsgId}>
               <BankInfo>
                 銀行代碼：
                 <BankInfoInput
@@ -181,7 +165,7 @@ export default function ManageGiveItem({
                   </InputErrorMessage>
                 )}
               </BankInfo>
-            </>
+            </React.Fragment>
           )}
         </GiveDetail>
 
@@ -190,15 +174,13 @@ export default function ManageGiveItem({
           {/* 點擊 "取消" 按鈕後，隱藏索取請求的彈窗 */}
           <CancelButton onClick={handleToggleGivePopUp}>取消</CancelButton>
 
-          {/* 如果達到交易數量的極限，則無法繼續贈送，除非有人取消交易 */}
-
           {/* 點擊 "確認" 按鈕，執行 "handleGiveItem" */}
+          {/* 如果達到交易數量的極限，則無法繼續贈送，除非有人取消交易 */}
           <GiveButton
             type="submit"
             disabled={post.isDealLimit}
             onClick={() => {
               handleGiveItem(applyDealMethod)
-              confirmGiveItem(setApplyMsgIsDealing)
             }}
           >
             確認

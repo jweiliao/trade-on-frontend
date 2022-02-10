@@ -4,7 +4,12 @@ import Swal from 'sweetalert2'
 // 引入新增留言 API
 import { acceptTransaction } from '../WebAPI'
 
-export default function useGiveItem(handleToggleGivePopUp, applyMsgId) {
+export default function useGiveItem(
+  handleToggleGivePopUp,
+  applyMsgId,
+  applyMainMsgs,
+  setApplyMainMsgs
+) {
   // 設定 新增交易 newTransactionData 的 state，預設為交易數量為 1，收款資訊為 null
   const [newTransactionData, setNewTransactionData] = useState({
     amount: 1,
@@ -17,9 +22,6 @@ export default function useGiveItem(handleToggleGivePopUp, applyMsgId) {
 
   // 設定 是否為提交 isSubmitting 的 state，預設為 false
   const [isSubmitting, setIsSubmitting] = useState(false)
-
-  // 設定 是否為交易中 isDealing 的 state，預設為 false
-  // const [applyMsgIsDealing, setApplyMsgIsDealing] = useState(false)
 
   // 當輸入框內有值時
   const handleInput = (e) => {
@@ -54,16 +56,13 @@ export default function useGiveItem(handleToggleGivePopUp, applyMsgId) {
     } else if (!/^\d{10,16}$/.test(values.accountNum)) {
       errors.accountNum = '銀行帳號格式不正確'
     }
-
     return errors
   }
 
   const confirmGiveItem = useCallback(
-    (setApplyMsgIsDealing) => {
+    () => {
       // 如果沒有出現錯誤訊息，且提交狀態為 true，則執行新增交易
       if (Object.keys(errorMessages).length === 0 && isSubmitting) {
-        // console.log('newTransactionData', newTransactionData)
-
         // 因為 API 為非同步的關係，設定一個 isUnmounted 的開關，讓非同步先執行完之後，再處理接下來的程式
         let isUnmounted = false
 
@@ -71,9 +70,6 @@ export default function useGiveItem(handleToggleGivePopUp, applyMsgId) {
         try {
           acceptTransaction(applyMsgId, newTransactionData)
             .then((res) => {
-              // const newTransactionData = res.data
-              // console.log(newTransactionData)
-
               // 如果新增交易成功
               if (res.data.message === 'success') {
                 if (!isUnmounted) {
@@ -84,8 +80,16 @@ export default function useGiveItem(handleToggleGivePopUp, applyMsgId) {
                     timer: 1500,
                   })
                 }
-                // 更新 applyMsgIsDealing的 state 為 true
-                setApplyMsgIsDealing(applyMsgId)
+                // 更新 applyMainMsgs 的 state, 將該留言的 isDealing 設為 true
+                setApplyMainMsgs(
+                  applyMainMsgs.map((msg) => {
+                    if (msg.id !== applyMsgId) return msg
+                    return {
+                      ...msg,
+                      isDealing: true,
+                    }
+                  })
+                )
               }
             })
             .catch((err) => {
@@ -109,11 +113,14 @@ export default function useGiveItem(handleToggleGivePopUp, applyMsgId) {
     [errorMessages, isSubmitting]
   )
 
+  // confirmGiveItem 有改變時，執行 confirmGiveItem()
+  useEffect(() => {
+    confirmGiveItem()
+  }, [confirmGiveItem])
+
   // 點擊 "確認" 按鈕後
   const handleGiveItem = (applyDealMethod) => {
-    // console.log('applyDealMethod', applyDealMethod)
     // 如果交易方式為店到店，驗證輸入框內容的格式
-
     if (!applyDealMethod.faceToFace) {
       // 驗證輸入框內的格式
       setErrorMessages(validateBankInfo(newTransactionData))
@@ -123,12 +130,9 @@ export default function useGiveItem(handleToggleGivePopUp, applyMsgId) {
     setIsSubmitting(true)
   }
 
-  // console.log('isDealing1', applyMsgIsDealing)
   return {
     errorMessages,
     handleInput,
     handleGiveItem,
-    // applyMsgIsDealing,
-    confirmGiveItem,
   }
 }

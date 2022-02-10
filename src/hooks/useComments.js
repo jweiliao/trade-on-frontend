@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import Swal from 'sweetalert2'
 
-// 引入留言相關的 API (取得 post 的所有留言以及新增、更新、刪除、回覆留言)
+// 引入留言相關的 API （取得 post 的所有留言以及新增、更新、刪除、回覆留言)
 import {
   getPostMessages,
   addMessage,
@@ -24,7 +24,7 @@ export default function useComments(isApplyMessage, postMessageId) {
   const [relatedMsgs, setRelatedMsgs] = useState({})
 
   //  設定 索取請求留言 的 state
-  const [applyMsgs, setApplyMsgs] = useState({})
+  const [applyMsgs, setApplyMsgs] = useState([])
 
   //  設定 索取請求留言 的主留言 state
   const [applyMainMsgs, setApplyMainMsgs] = useState({})
@@ -66,7 +66,6 @@ export default function useComments(isApplyMessage, postMessageId) {
         const res = await getPostMessages(postMessageId)
         // 拿到回傳的所有留言
         const messages = res.data.postMessages
-        console.log('resMessage', res.data.postMessages)
 
         if (messages && messages[0]) {
           messages.map((msg) => {
@@ -142,8 +141,6 @@ export default function useComments(isApplyMessage, postMessageId) {
     setNewMessageInput,
     isApplyMessage
   ) => {
-    // console.log('新增詢問留言的內容', newMessageInput)
-
     // 變數 newMessage 為串接新增留言的 API，要帶入的物件參數 "content"、"messageType"、 "relatedId"
     const newMessage = {
       content: newMessageInput,
@@ -154,9 +151,6 @@ export default function useComments(isApplyMessage, postMessageId) {
     try {
       // 串接新增詢問留言的 API，並帶入 newMessage
       addMessage(newMessage).then((res) => {
-        console.log('新增留言 API 回傳', res.data.new)
-        console.log('questionMsgs', questionMsgs)
-
         const newMsgRes = res.data.new
 
         // 如果新增詢問留言成功
@@ -208,9 +202,6 @@ export default function useComments(isApplyMessage, postMessageId) {
     try {
       // 串接回覆留言的 API，並帶入 relatedMsg、 newMessage
       replyMessage(relatedMsg, newMessage).then((res) => {
-        console.log('回覆 API 的 res', res.data.new)
-        // console.log('詢問留言', questionMsgs)
-        console.log('索取留言', applyMsgs)
         const replyMsgRes = res.data.new
 
         // 如果新增回覆留言成功
@@ -272,14 +263,10 @@ export default function useComments(isApplyMessage, postMessageId) {
       chooseDealMethod: chooseDealMethodValue || null,
     }
 
-    // console.log(editMsg)
-
     try {
       // 串接更新留言的 API，並帶入 msgId、editMsg
       updateMessage(msgId, editMsg).then((res) => {
-        console.log('questionMsgsUpdate', questionMsgs)
         const updatedMsgRes = res.data.update
-        console.log(res.data.update)
 
         // 如果更新留言成功
         if (res.data.message === 'success') {
@@ -320,8 +307,6 @@ export default function useComments(isApplyMessage, postMessageId) {
 
   // 刪除留言
   const handleDeleteMessage = (id, isDealing) => {
-    console.log('questionMsgsDelete', questionMsgs)
-
     // 交易進行時，不讓留言記錄被索取者刪除
     if (isDealing) {
       Swal.fire({
