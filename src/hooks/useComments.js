@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import Swal from 'sweetalert2'
 
-// 引入留言相關的 API (取得 post 的所有留言以及新增、更新、刪除、回覆留言)
+// 引入留言相關的 API （取得 post 的所有留言以及新增、更新、刪除、回覆留言)
 import {
   getPostMessages,
   addMessage,
@@ -24,7 +24,7 @@ export default function useComments(isApplyMessage, postMessageId) {
   const [relatedMsgs, setRelatedMsgs] = useState({})
 
   //  設定 索取請求留言 的 state
-  const [applyMsgs, setApplyMsgs] = useState({})
+  const [applyMsgs, setApplyMsgs] = useState([])
 
   //  設定 索取請求留言 的主留言 state
   const [applyMainMsgs, setApplyMainMsgs] = useState({})
@@ -66,7 +66,6 @@ export default function useComments(isApplyMessage, postMessageId) {
         const res = await getPostMessages(postMessageId)
         // 拿到回傳的所有留言
         const messages = res.data.postMessages
-        console.log('resMessage', res.data.postMessages)
 
         if (messages && messages[0]) {
           messages.map((msg) => {
@@ -271,8 +270,6 @@ export default function useComments(isApplyMessage, postMessageId) {
       content: editValue,
       chooseDealMethod: chooseDealMethodValue || null,
     }
-
-    // console.log(editMsg)
 
     try {
       // 串接更新留言的 API，並帶入 msgId、editMsg

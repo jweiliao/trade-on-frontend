@@ -18,8 +18,6 @@ export default function useWantItem(
   // 設定寄送方式選項的 state，預設為空值
   const [select, setSelect] = useState('')
 
-  const [toggle, setToggle] = useState(false)
-
   const handleWantItem = (e) => {
     //  索取請求視窗在點擊 "確認" 按鈕前判斷 "交易的數量總和已達到上限"，如果為 true，不讓索取者提出新索取，否則，進入新贈索求的流程
     if (post.isDealLimit) {
@@ -50,7 +48,6 @@ export default function useWantItem(
             // 如果新增索取請求成功
             if (res.data.message === 'success') {
               const newApplyMsgRes = res.data.new
-              console.log('isUnmounted 1', isUnmounted)
               if (!isUnmounted) {
                 // 將回傳的值新增到 applyMsgs 的 state
                 setApplyMsgs([...applyMsgs, newApplyMsgRes])
@@ -64,17 +61,17 @@ export default function useWantItem(
               text: '有地方沒填喔！',
               timer: 1500,
             })
+            console.log(err)
           })
-        isUnmounted = true
       } catch (err) {
         console.log(err)
       }
+      isUnmounted = true
       // 索取請求的留言內容清空
       setNewApplyInput('')
 
       // toggle 索取請求彈窗：若已顯示彈窗隱藏，否則就顯示
       if (isUnmounted) {
-        // setToggle(true)
         handleToggleWantPopUp()
       }
 
@@ -88,6 +85,5 @@ export default function useWantItem(
     newApplyInput,
     setNewApplyInput,
     handleWantItem,
-    toggle,
   }
 }

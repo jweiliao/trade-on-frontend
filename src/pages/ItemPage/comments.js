@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext } from 'react'
 import AuthContext from '../../contexts'
 import styled from 'styled-components'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
@@ -11,13 +11,11 @@ import useComments from '../../hooks/useComments'
 // 引入 "給與物品" 彈窗的 hook
 import useGiveItemPopup from '../../hooks/useGiveItemPopup'
 
-// 引入操作 "給與物品" 彈窗 "確認" 按鈕的 hook
-import useGiveItem from '../../hooks/useGiveItem'
-
 // 引入 "給他禮物" 按鈕點擊後的彈窗 component
-import ManageGiveItem from '../../components/ManageGiveItem'
+import ManageGiveItem from '../../components/PopUp/ManageGiveItem'
 
-import ManageWantItem from '../../components/ManageWantItem'
+// 引入 "想要禮物" 按鈕點擊後的彈窗 component
+import ManageWantItem from '../../components/PopUp/ManageWantItem'
 
 /* CommentsContainer - 留言的整個區塊 */
 const CommentsContainer = styled.div`
@@ -223,6 +221,7 @@ export function Comments({
     mainMsgs,
     relatedMsgs,
     applyMainMsgs,
+    setApplyMainMsgs,
     applyRelatedMsgs,
     isUpdating,
     setIsUpdating,
@@ -245,22 +244,13 @@ export function Comments({
     handleAddNewApplySubmit,
   } = useComments(isApplyMessage, postMessageId)
 
-  const [applyMsgIsDealing, setApplyMsgIsDealing] = useState(false)
-  // 從 useGiveItemPopup 中引入 givePopUp, handleToggleGivePopUp,applyMsgId
+  // 從 useGiveItemPopup 中引入 givePopUp, handleToggleGivePopUp,applyMsgId,applyMsgDealMethod
   const { givePopUp, handleToggleGivePopUp, applyMsgId, applyMsgDealMethod } =
     useGiveItemPopup()
 
-  // 從 useGiveItem 中引入 isDealing
-  // const { applyMsgIsDealing } = useGiveItem(
-  //   handleToggleGivePopUp,
-  //   applyMsgId,
-  //   setApplyMsgIsDealing
-  // )
-
-  // console.log('isDealing', applyMsgIsDealing)
   return (
     <CommentsContainer>
-      {/* 點擊 "想要禮物" 按鈕後,顯示申請索取的彈出視窗 */}
+      {/* 點擊 "想要禮物" 按鈕後,顯示要求索取的彈出視窗 */}
       {wantPopUp && (
         <ManageWantItem
           isApplyMessage={isApplyMessage}
@@ -275,15 +265,12 @@ export function Comments({
       {/* 如果 givePopUp 的 state 為 true，顯示 "贈與物品"的彈窗，並帶入所需的 props 值 */}
       {givePopUp && (
         <ManageGiveItem
-          isApplyMessage={isApplyMessage}
           post={post}
-          postMessageId={post.id}
           applyDealMethod={applyMsgDealMethod}
           handleToggleGivePopUp={handleToggleGivePopUp}
           applyMsgId={applyMsgId}
-          isDealLimit={isDealLimit}
-          setIsDealLimit={setIsDealLimit}
-          setApplyMsgIsDealing={setApplyMsgIsDealing}
+          applyMainMsgs={applyMainMsgs}
+          setApplyMainMsgs={setApplyMainMsgs}
         />
       )}
       {/* 填寫詢問留言的區塊，登入後顯示並可留言 */}
@@ -312,8 +299,8 @@ export function Comments({
       )}
       {isApplyMessageOrNot(applyMainMsgs, mainMsgs).length > 0 &&
         isApplyMessageOrNot(applyMainMsgs, mainMsgs).map((msg) => (
-          <>
-            <Comment key={msg.id}>
+          <React.Fragment key={msg.id}>
+            <Comment>
               {/* 留言最上方 */}
               <CommentTop>
                 {/* 留言最上方的留言者暱稱 */}
@@ -323,11 +310,8 @@ export function Comments({
                 {/* 如果登入者非發問者，不顯示任何按鈕 */}
                 {user && user.id === postAuthorId
                   ? isApplyMessage &&
+                    // msg 的資料顯示 isDealing 為 true，disable "物品贈送中" 按鈕，讓它不執行任何操作
                     (msg.isDealing ? (
-                      // 後端資料顯示 isDealing 為 true，disable "物品贈送中" 按鈕，讓它不執行任何操作
-                      <GivingGift disabled={true}>物品贈送中</GivingGift>
-                    ) : applyMsgIsDealing === msg.id ? (
-                      // 贈與物品彈窗 "確認" 按鈕點擊並成功進入交易後，disable "物品贈送中" 按鈕，讓它不執行任何操作
                       <GivingGift disabled={true}>物品贈送中</GivingGift>
                     ) : (
                       // 若物品不在交易中，點擊 "送他禮物" 按鈕後，執行 handleToggleGivePopUp 並帶入 message 的 id、applyDealMethod
@@ -519,7 +503,7 @@ export function Comments({
                     ) : null
                 )}
             </SubCommentContainer>
-          </>
+          </React.Fragment>
         ))}
     </CommentsContainer>
   )
