@@ -70,6 +70,18 @@ export default function useGiveItem(
         try {
           acceptTransaction(applyMsgId, newTransactionData)
             .then((res) => {
+              console.log(res)
+              const overRemainResponse = 'Amount is over remain quantities'
+              if (res.data.message.includes(overRemainResponse)) {
+                Swal.fire({
+                  icon: 'warning',
+                  title: 'Oops...',
+                  text: '沒有多的數量可以送了！',
+                  timer: 2000,
+                })
+                return
+              }
+
               // 如果新增交易成功
               if (res.data.message === 'success') {
                 if (!isUnmounted) {

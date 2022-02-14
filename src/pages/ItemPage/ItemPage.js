@@ -5,6 +5,7 @@ import { Link, useParams } from 'react-router-dom'
 import Container from '../../components/Container'
 import { MEDIA_QUERY_SM, MEDIA_QUERY_MD } from '../../styles/breakpoints'
 import { LargeButton } from '../../components/buttons'
+import shippingMethod from '../../constants/shippingMethod'
 import itemGoal from '../../images/itemGoal.svg'
 import { Img, ImgCircleWrapper } from '../../components/img'
 
@@ -237,6 +238,9 @@ export default function ItemPage() {
   // 設定是否已在交易進程的 state
   const [isDealLimit, setIsDealLimit] = useState(false)
 
+  // 引入 shippingMethod 物件
+  const { faceToFace, sevenEleven, familyMart } = shippingMethod
+
   // 設定 icon 尺寸的 state
   const iconSize = 25
 
@@ -361,17 +365,21 @@ export default function ItemPage() {
                     post.tradingOptions.selectedMethods &&
                     post.tradingOptions.selectedMethods.map((item, index) => {
                       if (item === '面交')
-                        return <TradingOptions key={index}>面交</TradingOptions>
+                        return (
+                          <TradingOptions key={index}>
+                            {faceToFace}
+                          </TradingOptions>
+                        )
                       if (item === '7-11')
                         return (
                           <TradingOptions key={index}>
-                            7-11 店到店
+                            {sevenEleven}
                           </TradingOptions>
                         )
                       if (item === '全家')
                         return (
                           <TradingOptions key={index}>
-                            全家 店到店
+                            {familyMart}
                           </TradingOptions>
                         )
                       return false
@@ -396,13 +404,22 @@ export default function ItemPage() {
             ) : user ? (
               <HandleGiftButton
                 onClick={() => handleToggleWantPopUp(post.id)}
-                disabled={post.isDealLimit}
+                disabled={post.isGoal}
+                // disabled={post.isDealLimit}
               >
-                {post.isDealLimit ? '物品贈送中' : '想要禮物'}
+                {post.isGoal
+                  ? '已送出'
+                  : post.isDealLimit
+                  ? '物品贈送中'
+                  : '想要禮物'}
               </HandleGiftButton>
             ) : (
-              <HandleGiftButton as={Link} to="/login">
-                想要禮物
+              <HandleGiftButton as={Link} to="/login" disabled={post.isGoal}>
+                {post.isGoal
+                  ? '已送出'
+                  : post.isDealLimit
+                  ? '物品贈送中'
+                  : '想要禮物'}
               </HandleGiftButton>
             )}
           </DetailRight>

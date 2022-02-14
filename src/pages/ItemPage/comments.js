@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
-import AuthContext from '../../contexts'
 import styled from 'styled-components'
+import { Link } from 'react-router-dom'
+import AuthContext from '../../contexts'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
 import { SmallButton } from '../../components/buttons'
 import LargeTextArea from './textArea'
@@ -304,11 +305,16 @@ export function Comments({
               {/* 留言最上方 */}
               <CommentTop>
                 {/* 留言最上方的留言者暱稱 */}
-                <CommentNickname>{msg.author.nickname}</CommentNickname>
+                <CommentNickname as={Link} to={`/portfolio/${msg.author._id}`}>
+                  {msg.author.nickname}
+                </CommentNickname>
                 {/* "送他禮物" 按鈕 */}
+                {/* 如果物品已成功送出，不顯示任何按鈕 */}
                 {/* 在"想要禮物" 區塊內"，如果登入者為發文者，若還未成立了交易。，顯示 "送他禮物" 按鈕，否則顯示 "物品贈送中" 按鈕 */}
                 {/* 如果登入者非發問者，不顯示任何按鈕 */}
-                {user && user.id === postAuthorId
+                {post.isGoal
+                  ? null
+                  : user && user.id === postAuthorId
                   ? isApplyMessage &&
                     // msg 的資料顯示 isDealing 為 true，disable "物品贈送中" 按鈕，讓它不執行任何操作
                     (msg.isDealing ? (
@@ -324,6 +330,22 @@ export function Comments({
                       </GivingGift>
                     ))
                   : null}
+                {/* {user && user.id === postAuthorId
+                  ? isApplyMessage &&
+                    // msg 的資料顯示 isDealing 為 true，disable "物品贈送中" 按鈕，讓它不執行任何操作
+                    (msg.isDealing ? (
+                      <GivingGift disabled={true}>物品贈送中</GivingGift>
+                    ) : (
+                      // 若物品不在交易中，點擊 "送他禮物" 按鈕後，執行 handleToggleGivePopUp 並帶入 message 的 id、applyDealMethod
+                      <GivingGift
+                        onClick={() =>
+                          handleToggleGivePopUp(msg.id, msg.applyDealMethod)
+                        }
+                      >
+                        送他禮物
+                      </GivingGift>
+                    ))
+                  : null} */}
               </CommentTop>
 
               {/* 留言的留言內容 */}
@@ -414,7 +436,10 @@ export function Comments({
                     msg.id === subMsg.relatedMsg ? (
                       <SubComment key={subMsg.id}>
                         <CommentTop>
-                          <CommentNickname>
+                          <CommentNickname
+                            as={Link}
+                            to={`/portfolio/${subMsg.author._id}`}
+                          >
                             {subMsg.author.nickname}
                           </CommentNickname>
                         </CommentTop>
@@ -457,7 +482,7 @@ export function Comments({
                           <CommentContent>{subMsg.content}</CommentContent>
                         )}
 
-                        <CommentBottom>
+                        <CommentBottom postIsGoal={postIsGoal}>
                           <CommentTime>{subMsg.lastModified}</CommentTime>
                           {user && (
                             <CommentUpdates>
