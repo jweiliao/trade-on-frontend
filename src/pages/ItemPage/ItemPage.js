@@ -5,7 +5,6 @@ import { Link, useParams } from 'react-router-dom'
 import Container from '../../components/Container'
 import { MEDIA_QUERY_SM, MEDIA_QUERY_MD } from '../../styles/breakpoints'
 import { LargeButton } from '../../components/buttons'
-import shippingMethod from '../../constants/shippingMethod'
 import itemGoal from '../../images/itemGoal.svg'
 import { Img, ImgCircleWrapper } from '../../components/img'
 
@@ -238,9 +237,6 @@ export default function ItemPage() {
   // 設定是否已在交易進程的 state
   const [isDealLimit, setIsDealLimit] = useState(false)
 
-  // 引入 shippingMethod 物件
-  const { faceToFace, sevenEleven, familyMart } = shippingMethod
-
   // 設定 icon 尺寸的 state
   const iconSize = 25
 
@@ -365,21 +361,17 @@ export default function ItemPage() {
                     post.tradingOptions.selectedMethods &&
                     post.tradingOptions.selectedMethods.map((item, index) => {
                       if (item === '面交')
-                        return (
-                          <TradingOptions key={index}>
-                            {faceToFace}
-                          </TradingOptions>
-                        )
+                        return <TradingOptions key={index}>面交</TradingOptions>
                       if (item === '7-11')
                         return (
                           <TradingOptions key={index}>
-                            {sevenEleven}
+                            7-11 店到店
                           </TradingOptions>
                         )
                       if (item === '全家')
                         return (
                           <TradingOptions key={index}>
-                            {familyMart}
+                            全家 店到店
                           </TradingOptions>
                         )
                       return false
