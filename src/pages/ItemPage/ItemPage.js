@@ -396,13 +396,22 @@ export default function ItemPage() {
             ) : user ? (
               <HandleGiftButton
                 onClick={() => handleToggleWantPopUp(post.id)}
-                disabled={post.isDealLimit}
+                disabled={post.isGoal}
+                // disabled={post.isDealLimit}
               >
-                {post.isDealLimit ? '物品贈送中' : '想要禮物'}
+                {post.isGoal
+                  ? '已送出'
+                  : post.isDealLimit
+                  ? '物品贈送中'
+                  : '想要禮物'}
               </HandleGiftButton>
             ) : (
-              <HandleGiftButton as={Link} to="/login">
-                想要禮物
+              <HandleGiftButton as={Link} to="/login" disabled={post.isGoal}>
+                {post.isGoal
+                  ? '已送出'
+                  : post.isDealLimit
+                  ? '物品贈送中'
+                  : '想要禮物'}
               </HandleGiftButton>
             )}
           </DetailRight>

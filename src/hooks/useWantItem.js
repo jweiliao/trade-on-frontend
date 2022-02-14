@@ -18,9 +18,16 @@ export default function useWantItem(
   // 設定寄送方式選項的 state，預設為空值
   const [select, setSelect] = useState('')
 
+  // 設定 錯誤訊息 errorMessages 的 state，預設為空物件
+  const [errorMessages, setErrorMessages] = useState(false)
+
   const handleWantItem = (e) => {
-    //  索取請求視窗在點擊 "確認" 按鈕前判斷 "交易的數量總和已達到上限"，如果為 true，不讓索取者提出新索取，否則，進入新贈索求的流程
-    if (post.isDealLimit) {
+    // 點擊 "確認"按鈕後先判斷是否有填寄送方式，如果沒有填寫，出現提示，且不讓索取者提出新索取
+    if (select === '') {
+      setErrorMessages(true)
+      return
+    } else if (post.isDealLimit) {
+      //  索取請求視窗在點擊 "確認" 按鈕前判斷 "交易的數量總和已達到上限"，如果為 true，不讓索取者提出新索取，否則，進入新贈索求的流程
       Swal.fire({
         icon: 'error',
         title: 'Oops...',
@@ -85,5 +92,6 @@ export default function useWantItem(
     newApplyInput,
     setNewApplyInput,
     handleWantItem,
+    errorMessages,
   }
 }

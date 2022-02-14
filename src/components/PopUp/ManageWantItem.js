@@ -3,6 +3,7 @@ import { Textarea } from '../textField'
 import { BackstageTitle } from '../heading'
 import { SmallButton } from '../buttons'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
+import shippingMethod from '../../constants/shippingMethod'
 
 // 引入 radio 相關 component
 import { RadioItem, RadioButtonLabel, RadioButton } from '../textField'
@@ -15,6 +16,9 @@ import PopUp from '../../components/PopUp/PopUp'
 
 // 引入 useWantItem
 import useWantItem from '../../hooks/useWantItem'
+
+// 引入 InputErrorMessage 這個 component
+import { InputErrorMessage } from '../textField'
 
 /* 彈窗底下的遮罩 */
 const PopUpBackDrop = styled(Backdrop)``
@@ -97,15 +101,26 @@ export default function ManageGiveItem({
   applyMsgs,
   setApplyMsgs,
 }) {
-  const { select, setSelect, newApplyInput, setNewApplyInput, handleWantItem } =
-    useWantItem(
-      applyMsgs,
-      setApplyMsgs,
-      isApplyMessage,
-      post,
-      postMessageId,
-      handleToggleWantPopUp
-    )
+  // 引入 shippingMethod 物件
+  const { faceToFace, sevenEleven, familyMart } = shippingMethod
+
+  // 將 applyMsgs,setApplyMsgs,isApplyMessage,post,postMessageId,handleToggleWantPopUp 帶入 useWantItem 中並引入 select, setSelect, newApplyInput, setNewApplyInput, handleWantItem
+
+  const {
+    select,
+    setSelect,
+    newApplyInput,
+    setNewApplyInput,
+    handleWantItem,
+    errorMessages,
+  } = useWantItem(
+    applyMsgs,
+    setApplyMsgs,
+    isApplyMessage,
+    post,
+    postMessageId,
+    handleToggleWantPopUp
+  )
   return (
     <>
       {/* 彈窗底下的遮罩，點擊彈窗以外的地方，會收回彈窗  */}
@@ -115,7 +130,6 @@ export default function ManageGiveItem({
         <Title>索取請求</Title>
         <GiveDetail>物品名稱：{post.itemName}</GiveDetail>
         <GiveDetail>物品數量：{post.quantity}</GiveDetail>
-
         {/* 留言的輸入框 */}
         <GiveDetail>
           留言：
@@ -129,7 +143,6 @@ export default function ManageGiveItem({
             required
           ></ApplyMessageInput>
         </GiveDetail>
-
         {/* 如果寄送方式可以 "面交" ，出現 "面交" 的單選選項*/}
         {post.tradingOptions.faceToFace ? (
           <RadioItem>
@@ -141,10 +154,9 @@ export default function ManageGiveItem({
               onChange={(e) => setSelect(e.target.value)}
             />
             <RadioButtonLabel />
-            <div>面交</div>
+            <div>{faceToFace}</div>
           </RadioItem>
         ) : null}
-
         {/* 如果寄送方式可以 "7-11 店到店" ，出現 "7-11 店到店" 的單選選項*/}
         {/* 如果寄送方式可以 "全家店到店" ，出現 "全家店到店" 的單選選項*/}
         {post.tradingOptions &&
@@ -161,7 +173,7 @@ export default function ManageGiveItem({
                     onChange={(e) => setSelect(e.target.value)}
                   />
                   <RadioButtonLabel />
-                  <div>7-11 店到店</div>
+                  <div>{sevenEleven}</div>
                 </RadioItem>
               )
             }
@@ -177,13 +189,16 @@ export default function ManageGiveItem({
                     onChange={(e) => setSelect(e.target.value)}
                   />
                   <RadioButtonLabel />
-                  <div>全家店到店</div>
+                  <div>{familyMart}</div>
                 </RadioItem>
               )
             }
             return false
           })}
-
+        {/* 點擊 "確認"按鈕後先判斷是否有填寄送方式，如果沒有填寫，出現提示，且不讓索取者提出新索取 */}
+        <InputErrorMessage>
+          {errorMessages ? '要填寄送方式喔！' : null}
+        </InputErrorMessage>
         {/* 彈窗下方操作按鈕們的全部區塊 */}
         <ConfirmButtonsWrapper>
           {/* 點擊 "取消" 按鈕後，隱藏索取請求的彈窗 */}
