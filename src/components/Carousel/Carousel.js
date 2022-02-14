@@ -83,12 +83,14 @@ const Content = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  padding: 0 1rem;
   border-top: solid 1px ${(props) => props.theme.general_300};
 `
 
 const ItemName = styled.p`
   color: ${(props) => props.theme.secondary};
   display: block;
+  overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 `
