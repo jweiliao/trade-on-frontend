@@ -54,7 +54,6 @@ export default function LoginPage() {
       setUser(res.data.userInfo)
     }
     if (res.data.error) {
-      console.log(res.data)
       Swal.fire({
         icon: 'error',
         title: '登入失敗',

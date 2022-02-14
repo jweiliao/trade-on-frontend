@@ -23,7 +23,6 @@ instance.interceptors.response.use(
   },
   (err) => {
     if (err.response) {
-      console.log(err.response)
       switch (err.response.status) {
         case 500:
           Swal.fire('系統問題，請稍候')
