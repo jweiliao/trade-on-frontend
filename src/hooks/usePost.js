@@ -3,6 +3,7 @@ import { useHistory } from 'react-router'
 import { useParams } from 'react-router-dom'
 import AuthContext, { LoadingContext } from '../contexts'
 import * as Yup from 'yup'
+import Swal from 'sweetalert2'
 import shippingMethod from '../constants/shippingMethod'
 import { cities, district } from '../constants/cities'
 import { getAllCategories, getPost, addPost, updatePost } from '../WebAPI'
@@ -36,7 +37,7 @@ export default function usePost() {
   const [districtOptions, setDistrictOptions] = useState([])
   const [images, setImages] = useState([])
   const DefaultPostImg = 'https://i.imgur.com/NGhlZr4.jpg'
-  const acceptImagesType = ['jpg', 'gif', 'png']
+  const acceptImagesType = ['jpeg', 'jpg', 'gif', 'png']
   const maxImagesNumber = 10
   const maxFileSize = 10485760 // 單位：Byte
   const [imageErrorMessage, setImageErrorMessage] = useState(null)
@@ -78,11 +79,6 @@ export default function usePost() {
         }))
       )
     }
-
-    fetchCategories()
-  }, [])
-
-  useEffect(() => {
     const fetchPost = async (id) => {
       const {
         data: {
@@ -121,6 +117,21 @@ export default function usePost() {
       history.push('/login')
       return
     }
+
+    if (!user.isAllowPost && !postId) {
+      history.push('/givings')
+      Swal.fire({
+        icon: 'error',
+        title: '錯誤',
+        text: '此帳號已被禁止發文',
+        showConfirmButton: true,
+        confirmButtonColor: '#B7B7B7',
+        confirmButtonText: '關閉',
+      })
+      return
+    }
+
+    fetchCategories()
     if (!postId) return
     fetchPost(postId)
   }, [history, postId, user])

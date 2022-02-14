@@ -65,8 +65,10 @@ export default function ManageGivingPage() {
                   {post.itemName.slice(WordLimit) && '...'}
                 </Data>
                 <Data data-label="物品介紹">
-                  {post.description.slice(0, WordLimit)}
-                  {post.description.slice(WordLimit) && '...'}
+                  {post.description && post.description.slice(0, WordLimit)}
+                  {post.description &&
+                    post.description.slice(WordLimit) &&
+                    '...'}
                 </Data>
                 <Data data-label="更新時間">{post.createdAt}</Data>
                 <ButtonTableCell>

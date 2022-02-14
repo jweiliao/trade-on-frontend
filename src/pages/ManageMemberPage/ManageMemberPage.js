@@ -125,15 +125,17 @@ export default function ManageMemberPage() {
                       儲存
                     </SaveBtn>
                   ) : (
-                    <EditBtn
-                      id={member.id}
-                      onClick={() => {
-                        setIsUpdating(member.id)
-                        handleChangeMemberData(member.id)
-                      }}
-                    >
-                      編輯
-                    </EditBtn>
+                    member.email !== 'admin123@mail.com' && (
+                      <EditBtn
+                        id={member.id}
+                        onClick={() => {
+                          setIsUpdating(member.id)
+                          handleChangeMemberData(member.id)
+                        }}
+                      >
+                        編輯
+                      </EditBtn>
+                    )
                   )}
                 </ButtonTableCell>
               </Row>

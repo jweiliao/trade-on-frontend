@@ -164,20 +164,22 @@ export default function ManageCategoryPage() {
               ) : (
                 <>
                   <Content id={category.id}>{category.categoryName}</Content>
-                  <ButtonsWrapper>
-                    <EditBtn
-                      onClick={(e) => {
-                        setIsUpdating(category.id)
-                      }}
-                    >
-                      編輯
-                    </EditBtn>
-                    <DeleteBtn
-                      onClick={() => handleDeleteCategory(category.id)}
-                    >
-                      刪除
-                    </DeleteBtn>
-                  </ButtonsWrapper>
+                  {category.categoryName !== '其他' && (
+                    <ButtonsWrapper>
+                      <EditBtn
+                        onClick={(e) => {
+                          setIsUpdating(category.id)
+                        }}
+                      >
+                        編輯
+                      </EditBtn>
+                      <DeleteBtn
+                        onClick={() => handleDeleteCategory(category.id)}
+                      >
+                        刪除
+                      </DeleteBtn>
+                    </ButtonsWrapper>
+                  )}
                 </>
               )}
             </Category>

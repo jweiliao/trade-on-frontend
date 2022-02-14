@@ -42,7 +42,10 @@ export default function usePassword() {
         }
       })
       .catch((err) => {
-        if (err.response.data.error.includes('new password is identical')) {
+        if (
+          err.response.data.error &&
+          err.response.data.error.includes('new password is identical')
+        ) {
           Swal.fire({
             icon: 'error',
             title: '錯誤',
@@ -51,12 +54,29 @@ export default function usePassword() {
             confirmButtonColor: '#B7B7B7',
             confirmButtonText: '關閉',
           })
+          return
         }
-        if (err.response.data.error.includes('old password does not match')) {
+        if (
+          err.response.data.error &&
+          err.response.data.error.includes('old password does not match')
+        ) {
           Swal.fire({
             icon: 'error',
             title: '更改失敗',
             text: '目前密碼輸入錯誤',
+            showConfirmButton: false,
+            timer: 1500,
+          })
+          return
+        }
+        if (
+          err.response.data.message &&
+          err.response.data.message.includes('primary user')
+        ) {
+          Swal.fire({
+            icon: 'error',
+            title: '更改失敗',
+            text: '無法變更預設管理員的密碼',
             showConfirmButton: false,
             timer: 1500,
           })
