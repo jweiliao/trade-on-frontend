@@ -15,7 +15,10 @@ import * as MdIcons from 'react-icons/md'
 import * as ImIcons from 'react-icons/im'
 
 // 引入 AsNavFor （圖片輪播）
-import AsNavFor from './AsNavFor'
+// import AsNavFor from './AsNavFor'
+
+// 引入 ImageSlides （圖片輪播）
+import ImageSlides from './ImageSlides'
 
 // 引入 留言
 import { Comments } from './comments'
@@ -171,7 +174,9 @@ const HandleGiftButton = styled(LargeButton)`
 `
 
 /* 禮物詳情頁下方的全部區塊 */
-const GiftContent = styled.div``
+const GiftContent = styled.div`
+  margin-top: 6rem;
+`
 
 /* 禮物詳情頁的 "物品介紹" 區塊 */
 const GiftIntro = styled.div`
@@ -281,7 +286,7 @@ export default function ItemPage() {
           <DetailLeft>
             {/* 圖片輪播 */}
             {/*  帶入 post 的資料到 props*/}
-            <AsNavFor post={post}></AsNavFor>
+            <ImageSlides post={post}></ImageSlides>
           </DetailLeft>
 
           {/* "物品" 資訊：右側 */}
