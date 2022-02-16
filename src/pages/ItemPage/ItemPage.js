@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
+import Swal from 'sweetalert2'
 import AuthContext from '../../contexts'
 import styled from 'styled-components'
 import { Link, useParams } from 'react-router-dom'
@@ -89,6 +90,7 @@ const AvatarImg = styled(ImgCircleWrapper)`
     max-width: 50px;
     max-height: 50px;
     margin: 0 auto 1rem;
+    margin-right: 0.4rem;
   }
 `
 
@@ -229,6 +231,19 @@ export default function ItemPage() {
   // toggle 彈出視窗：若已顯示，則收起彈窗；否則跳出彈窗
   const handleToggleWantPopUp = (id) => {
     setWantPopUp(!wantPopUp)
+  }
+
+  const alertIsAllowMessage = (id) => {
+    if (user.isAllowMessage) {
+      handleToggleWantPopUp(id)
+    } else {
+      Swal.fire({
+        icon: 'warning',
+        title: '警告',
+        text: '此帳號已被禁止留言',
+        showConfirmButton: false,
+      })
+    }
   }
 
   // 設定 post 的 state
@@ -395,9 +410,8 @@ export default function ItemPage() {
               )
             ) : user ? (
               <HandleGiftButton
-                onClick={() => handleToggleWantPopUp(post.id)}
-                disabled={post.isGoal}
-                // disabled={post.isDealLimit}
+                onClick={() => alertIsAllowMessage(post.id)}
+                disabled={post.isDealLimit}
               >
                 {post.isGoal
                   ? '已送出'
@@ -405,13 +419,21 @@ export default function ItemPage() {
                   ? '物品贈送中'
                   : '想要禮物'}
               </HandleGiftButton>
-            ) : (
-              <HandleGiftButton as={Link} to="/login" disabled={post.isGoal}>
+            ) : post.isDealLimit ? (
+              <HandleGiftButton disabled={post.isDealLimit}>
                 {post.isGoal
                   ? '已送出'
                   : post.isDealLimit
                   ? '物品贈送中'
                   : '想要禮物'}
+              </HandleGiftButton>
+            ) : (
+              <HandleGiftButton
+                as={Link}
+                to="/login"
+                disabled={post.isDealLimit}
+              >
+                想要禮物
               </HandleGiftButton>
             )}
           </DetailRight>
@@ -439,6 +461,7 @@ export default function ItemPage() {
               <Comments
                 isApplyMessage={true}
                 post={post}
+                setPost={setPost}
                 postMessageId={post.id}
                 postAuthorId={post.author._id}
                 postIsGoal={post.isGoal}

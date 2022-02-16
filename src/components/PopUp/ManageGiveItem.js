@@ -1,7 +1,4 @@
-import { useContext } from 'react'
 import styled from 'styled-components'
-import AuthContext from '../../contexts'
-
 import { Input } from '../textField'
 import { BackstageTitle } from '../heading'
 import { SmallButton } from '../buttons'
@@ -104,17 +101,17 @@ const GiveButton = styled(SmallButton)`
 
 export default function ManageGiveItem({
   post,
+  setPost,
   applyDealMethod,
   handleToggleGivePopUp,
   applyMsgId,
   applyMainMsgs,
   setApplyMainMsgs,
 }) {
-  // 拿到 登入後的使用者資料
-  const { user } = useContext(AuthContext)
-
   // 將 handleToggleGivePopUp,applyMsgId，applyMainMsgs,setApplyMainMsgs 帶入 useGiveItem 中並引入 errorMessages, handleInput, handleGiveItem
   const { errorMessages, handleInput, handleGiveItem } = useGiveItem(
+    post,
+    setPost,
     handleToggleGivePopUp,
     applyMsgId,
     applyMainMsgs,
@@ -145,7 +142,6 @@ export default function ManageGiveItem({
           {/* 若選擇店到店的寄送方式，下方出現填寫收款資訊的區塊，並在 "確認" 按鈕送出前驗證輸入內容的格式 */}
           {applyDealMethod.convenientStore && (
             <React.Fragment key={applyMsgId}>
-              {/* {console.log(user)} */}
               <BankInfo>
                 銀行代碼：
                 <BankInfoInput

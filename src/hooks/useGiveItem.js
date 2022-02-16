@@ -5,6 +5,8 @@ import Swal from 'sweetalert2'
 import { acceptTransaction } from '../WebAPI'
 
 export default function useGiveItem(
+  post,
+  setPost,
   handleToggleGivePopUp,
   applyMsgId,
   applyMainMsgs,
@@ -70,7 +72,7 @@ export default function useGiveItem(
         try {
           acceptTransaction(applyMsgId, newTransactionData)
             .then((res) => {
-              console.log(res)
+              // console.log(res)
               const overRemainResponse = 'Amount is over remain quantities'
               if (res.data.message.includes(overRemainResponse)) {
                 Swal.fire({
@@ -102,6 +104,9 @@ export default function useGiveItem(
                     }
                   })
                 )
+                // 更新post 的 state, 將該留言的 isDealLimit 設為 true
+                // todo: 贈送多件物品
+                setPost({ ...post, isDealLimit: true })
               }
             })
             .catch((err) => {

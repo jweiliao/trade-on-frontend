@@ -152,7 +152,6 @@ export default function useComments(isApplyMessage, postMessageId) {
       // 串接新增詢問留言的 API，並帶入 newMessage
       addMessage(newMessage).then((res) => {
         const newMsgRes = res.data.new
-
         // 如果新增詢問留言成功
         if (res.data.message === 'success') {
           // 將回傳的值新增到 questionMsgs 的 state
