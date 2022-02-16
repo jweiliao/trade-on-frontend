@@ -19,9 +19,28 @@ export default function usePost() {
     categoryId: '',
     description: '',
     itemStatus: '',
-    tradingOptions: [],
-    region: '',
-    district: '',
+    tradingOptions:
+      (user &&
+        user.preferDealMethods &&
+        user &&
+        user.preferDealMethods.selectedMethods) ||
+      [],
+    region:
+      (user &&
+        user.preferDealMethods &&
+        user &&
+        user.preferDealMethods.faceToFace &&
+        user &&
+        user.preferDealMethods.faceToFace.region) ||
+      '',
+    district:
+      (user &&
+        user.preferDealMethods &&
+        user &&
+        user.preferDealMethods.faceToFace &&
+        user &&
+        user.preferDealMethods.faceToFace.district) ||
+      '',
   })
   const [categoryOptions, setCategoryOptions] = useState([])
   const statusOptions = [
@@ -34,7 +53,14 @@ export default function usePost() {
     { key: faceToFace, value: '面交' },
   ]
   const regionOptions = cities
-  const [districtOptions, setDistrictOptions] = useState([])
+  const [districtOptions, setDistrictOptions] = useState(
+    (user &&
+      user.preferDealMethods &&
+      user &&
+      user.preferDealMethods.faceToFace &&
+      [district[user && user.preferDealMethods.faceToFace.region]][0]) ||
+      []
+  )
   const [images, setImages] = useState([])
   const DefaultPostImg = 'https://i.imgur.com/NGhlZr4.jpg'
   const acceptImagesType = ['jpeg', 'jpg', 'gif', 'png']
@@ -121,12 +147,10 @@ export default function usePost() {
     if (!user.isAllowPost && !postId) {
       history.push('/givings')
       Swal.fire({
-        icon: 'error',
-        title: '錯誤',
+        icon: 'warning',
+        title: '警告',
         text: '此帳號已被禁止發文',
-        showConfirmButton: true,
-        confirmButtonColor: '#B7B7B7',
-        confirmButtonText: '關閉',
+        showConfirmButton: false,
       })
       return
     }
