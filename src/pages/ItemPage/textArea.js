@@ -89,16 +89,6 @@ const LargeTextArea = ({
         {/* 點擊 "送出留言" 按鈕後的操作，透過 addNewComment 這個 props， 判斷是 "留言"還是 "回覆" ，再執行各自操作*/}
         <MessageSubmitButton
           type="submit"
-          // onClick={() =>
-          //   addNewComment
-          //     ? handleAddQuestionSubmit(
-          //         post,
-          //         newMessageInput,
-          //         setNewMessageInput,
-          //         isApplyMessage
-          //       )
-          //     : handleReplySubmit(relatedMsg, isApplyMessage)
-          // }
           onClick={alertIsAllowMessage}
           disabled={postIsGoal}
         >

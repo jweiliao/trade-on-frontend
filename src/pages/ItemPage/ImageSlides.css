@@ -1,18 +1,41 @@
-/* .carousel .slider-wrapper {
-  width: 50%;
-} */
-
-/* .carousel .thumb {
-  width: 5%;
-  height: 50px;
-} */
-
-.carousel .thumb img {
-  width: 100% !important;
-  height: 100% !important;
+.main-slide {
+  width: 100%;
 }
 
+/* 大圖的外框 */
+.carousel .slider-wrapper {
+  max-width: 521px;
+  max-height: 400px;
+}
+
+/* 大圖的圖片 */
 .carousel .slide img {
-  max-height: 300px; /* change this to whatever you want */
-  width: auto;
+  max-height: 400px;
+  /* margin-left: 4px; */
+  object-fit: cover;
+  object-position: center center;
+}
+
+/* 所有小圖一起的總外框 */
+.carousel .thumbs-wrapper {
+  margin-left: 0px;
+}
+
+/* 每張小圖的圖片 */
+.carousel .thumb img {
+  max-height: 70px;
+  object-fit: cover;
+  object-position: center center;
+}
+
+@media (max-width: 768px) {
+  /* 大圖的外框 */
+  .carousel .slider-wrapper {
+    margin-left: 12px;
+  }
+
+  /* 所有小圖一起的總外框 */
+  .carousel .thumbs-wrapper {
+    margin-left: 10px;
+  }
 }

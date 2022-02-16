@@ -145,7 +145,7 @@ export default function ManageGiveItem({
         </GiveDetail>
         {/* 如果寄送方式可以 "面交" ，出現 "面交" 的單選選項*/}
         {post.tradingOptions.faceToFace ? (
-          <RadioItem key={'6'}>
+          <RadioItem key={'faceToFace'}>
             <RadioButton
               type="radio"
               name="tradingOptions"
@@ -164,7 +164,7 @@ export default function ManageGiveItem({
           post.tradingOptions.selectedMethods.map((applyDealMethodItem) => {
             if (applyDealMethodItem === '7-11') {
               return (
-                <RadioItem key={'7'}>
+                <RadioItem key={'sevenEleven'}>
                   <RadioButton
                     type="radio"
                     name="tradingOptions"
@@ -180,7 +180,7 @@ export default function ManageGiveItem({
 
             if (applyDealMethodItem === '全家') {
               return (
-                <RadioItem key={'8'}>
+                <RadioItem key={'familyMart'}>
                   <RadioButton
                     type="radio"
                     name="tradingOptions"

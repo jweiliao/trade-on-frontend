@@ -3,6 +3,9 @@ import React, { useState, useEffect } from 'react'
 import 'react-responsive-carousel/lib/styles/carousel.min.css' // requires a loader
 import { Carousel } from 'react-responsive-carousel'
 
+// 引入 ImageSlides.css
+import './ImageSlides.css'
+
 export default function ImageSlides({ post }) {
   // 設定帶入的資料
   const [images, setImages] = useState([])
@@ -15,7 +18,12 @@ export default function ImageSlides({ post }) {
   }, [post])
 
   return (
-    <Carousel showStatus={false} showIndicators={false} dynamicHeight={false}>
+    <Carousel
+      showStatus={false}
+      showIndicators={false}
+      dynamicHeight={false}
+      showArrows={false}
+    >
       {images.map((current, index) => (
         /* 圖片 */
         <div className="main-slide" key={index}>

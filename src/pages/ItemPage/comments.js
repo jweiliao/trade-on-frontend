@@ -397,22 +397,6 @@ export function Comments({
                       </GivingGift>
                     ))
                   : null}
-                {/* {user && user.id === postAuthorId
-                  ? isApplyMessage &&
-                    // msg 的資料顯示 isDealing 為 true，disable "物品贈送中" 按鈕，讓它不執行任何操作
-                    (msg.isDealing ? (
-                      <GivingGift disabled={true}>物品贈送中</GivingGift>
-                    ) : (
-                      // 若物品不在交易中，點擊 "送他禮物" 按鈕後，執行 handleToggleGivePopUp 並帶入 message 的 id、applyDealMethod
-                      <GivingGift
-                        onClick={() =>
-                          handleToggleGivePopUp(msg.id, msg.applyDealMethod)
-                        }
-                      >
-                        送他禮物
-                      </GivingGift>
-                    ))
-                  : null} */}
               </CommentTop>
 
               {/* 留言的留言內容 */}
