@@ -1,7 +1,10 @@
+import { useContext } from 'react'
+import AuthContext from '../../contexts'
 import styled from 'styled-components'
 import { SmallButton } from '../../components/buttons'
 import { Textarea } from '../../components/textField'
 import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
+import Swal from 'sweetalert2'
 
 /* Form - 整個區塊 */
 const Form = styled.div`
@@ -43,6 +46,29 @@ const LargeTextArea = ({
   relatedMsg,
   postIsGoal,
 }) => {
+  // 拿到 登入後的使用者資料
+  const { user } = useContext(AuthContext)
+
+  const alertIsAllowMessage = () => {
+    if (user.isAllowMessage) {
+      addNewComment
+        ? handleAddQuestionSubmit(
+            post,
+            newMessageInput,
+            setNewMessageInput,
+            isApplyMessage
+          )
+        : handleReplySubmit(relatedMsg, isApplyMessage)
+    } else {
+      Swal.fire({
+        icon: 'warning',
+        title: '警告',
+        text: '此帳號已被禁止留言',
+        showConfirmButton: false,
+      })
+    }
+  }
+
   return (
     <>
       <Form>
@@ -63,16 +89,17 @@ const LargeTextArea = ({
         {/* 點擊 "送出留言" 按鈕後的操作，透過 addNewComment 這個 props， 判斷是 "留言"還是 "回覆" ，再執行各自操作*/}
         <MessageSubmitButton
           type="submit"
-          onClick={() =>
-            addNewComment
-              ? handleAddQuestionSubmit(
-                  post,
-                  newMessageInput,
-                  setNewMessageInput,
-                  isApplyMessage
-                )
-              : handleReplySubmit(relatedMsg, isApplyMessage)
-          }
+          // onClick={() =>
+          //   addNewComment
+          //     ? handleAddQuestionSubmit(
+          //         post,
+          //         newMessageInput,
+          //         setNewMessageInput,
+          //         isApplyMessage
+          //       )
+          //     : handleReplySubmit(relatedMsg, isApplyMessage)
+          // }
+          onClick={alertIsAllowMessage}
           disabled={postIsGoal}
         >
           送出留言

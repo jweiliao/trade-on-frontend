@@ -2,9 +2,10 @@ import React, { useContext } from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import AuthContext from '../../contexts'
-import { MEDIA_QUERY_SM } from '../../styles/breakpoints'
+import { MEDIA_QUERY_SM, MEDIA_QUERY_MD } from '../../styles/breakpoints'
 import { SmallButton } from '../../components/buttons'
 import LargeTextArea from './textArea'
+import { Img, ImgCircleWrapper } from '../../components/img'
 
 // 引入操作留言的 hook
 import useComments from '../../hooks/useComments'
@@ -53,6 +54,40 @@ const CommentTop = styled.div`
   max-width: 100%;
 `
 
+/* Taker - 索物者資訊 */
+const Taker = styled.div`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+`
+
+/* AvatarImg - 贈物者頭像 */
+const AvatarImg = styled(ImgCircleWrapper)`
+  min-width: 30px;
+  min-height: 30px;
+  margin-right: 0.4rem;
+  cursor: pointer;
+  // border: none;
+  ${MEDIA_QUERY_MD} {
+    position: relative;
+    left: 0;
+  }
+  ${MEDIA_QUERY_SM} {
+    max-width: 30px;
+    max-height: 30px;
+    margin: 0 auto;
+    margin-right: 0.4rem;
+  }
+`
+
+/* UserImg - 贈物者頭像圖片 */
+const UserImg = styled(Img)`
+  min-width: 30px;
+  min-height: 30px;
+  object-fit: cover;
+  object-position: center center;
+`
+
 /* CommentNickname - 留言最上方的留言者暱稱 */
 const CommentNickname = styled.div`
   font-size: 16px;
@@ -86,12 +121,25 @@ const CommentBottom = styled.div`
       opacity: 0.4;
     `}
 `
+/* CommentBottomLeft - 留言的最下方的發送留言時間 */
+const CommentBottomLeft = styled.div`
+  display: flex;
+`
 
 /* CommentTime - 留言的最下方的發送留言時間 */
 const CommentTime = styled.div`
   font-size: 12px;
   line-height: 1.5;
   letter-spacing: 0.4px;
+  color: ${(props) => props.theme.general_500};
+`
+
+/* CommentStatus - 留言的贈送狀態 */
+const CommentStatus = styled.div`
+  font-size: 12px;
+  line-height: 1.25;
+  letter-spacing: 0.4px;
+  margin-left: 0.5rem;
   color: ${(props) => props.theme.general_500};
 `
 
@@ -206,6 +254,7 @@ const CancelBtn = styled(SaveBtn)`
 export function Comments({
   isApplyMessage,
   post,
+  setPost,
   postMessageId,
   postAuthorId,
   postIsGoal,
@@ -267,6 +316,7 @@ export function Comments({
       {givePopUp && (
         <ManageGiveItem
           post={post}
+          setPost={setPost}
           applyDealMethod={applyMsgDealMethod}
           handleToggleGivePopUp={handleToggleGivePopUp}
           applyMsgId={applyMsgId}
@@ -304,10 +354,25 @@ export function Comments({
             <Comment>
               {/* 留言最上方 */}
               <CommentTop>
-                {/* 留言最上方的留言者暱稱 */}
-                <CommentNickname as={Link} to={`/portfolio/${msg.author._id}`}>
-                  {msg.author.nickname}
-                </CommentNickname>
+                <Taker>
+                  <Link to={`/portfolio/${msg.author._id}`}>
+                    <AvatarImg>
+                      <UserImg
+                        src={
+                          msg.author.avatarUrl && msg.author.avatarUrl.imgUrl
+                        }
+                      />
+                    </AvatarImg>
+                  </Link>
+                  {/* 留言最上方的留言者暱稱 */}
+                  <CommentNickname
+                    as={Link}
+                    to={`/portfolio/${msg.author._id}`}
+                  >
+                    {msg.author.nickname}
+                  </CommentNickname>
+                </Taker>
+
                 {/* "送他禮物" 按鈕 */}
                 {/* 如果物品已成功送出，不顯示任何按鈕 */}
                 {/* 在"想要禮物" 區塊內"，如果登入者為發文者，若還未成立了交易。，顯示 "送他禮物" 按鈕，否則顯示 "物品贈送中" 按鈕 */}
@@ -319,6 +384,8 @@ export function Comments({
                     // msg 的資料顯示 isDealing 為 true，disable "物品贈送中" 按鈕，讓它不執行任何操作
                     (msg.isDealing ? (
                       <GivingGift disabled={true}>物品贈送中</GivingGift>
+                    ) : post.isDealLimit ? (
+                      <GivingGift disabled={true}>達贈送上限</GivingGift>
                     ) : (
                       // 若物品不在交易中，點擊 "送他禮物" 按鈕後，執行 handleToggleGivePopUp 並帶入 message 的 id、applyDealMethod
                       <GivingGift
@@ -387,7 +454,13 @@ export function Comments({
 
               {/* 留言的最下方 */}
               <CommentBottom postIsGoal={postIsGoal}>
-                <CommentTime>{msg.lastModified}</CommentTime>
+                <CommentBottomLeft>
+                  <CommentTime>{msg.lastModified}</CommentTime>
+                  <CommentStatus>
+                    {msg.isDealing ? '物品贈送中' : null}
+                  </CommentStatus>
+                </CommentBottomLeft>
+
                 {/* 留言的最下方的留言更新區塊 */}
                 {/* 登入者可以回覆留言，登入者為該留言者時才可以編輯、刪除該留言 */}
                 {user && (
@@ -436,12 +509,25 @@ export function Comments({
                     msg.id === subMsg.relatedMsg ? (
                       <SubComment key={subMsg.id}>
                         <CommentTop>
-                          <CommentNickname
-                            as={Link}
-                            to={`/portfolio/${subMsg.author._id}`}
-                          >
-                            {subMsg.author.nickname}
-                          </CommentNickname>
+                          <Taker>
+                            <Link to={`/portfolio/${subMsg.author._id}`}>
+                              <AvatarImg>
+                                <UserImg
+                                  src={
+                                    subMsg.author.avatarUrl &&
+                                    subMsg.author.avatarUrl.imgUrl
+                                  }
+                                />
+                              </AvatarImg>
+                            </Link>
+                            {/* 留言最上方的留言者暱稱 */}
+                            <CommentNickname
+                              as={Link}
+                              to={`/portfolio/${subMsg.author._id}`}
+                            >
+                              {subMsg.author.nickname}
+                            </CommentNickname>
+                          </Taker>
                         </CommentTop>
 
                         {/* 留言的留言內容 */}
