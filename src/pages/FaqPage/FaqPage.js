@@ -20,6 +20,7 @@ const Faq = styled.div`
 
 const Question = styled(SubTitle)`
   cursor: pointer;
+  margin-bottom: 0;
 `
 
 const Answer = styled.div`
