@@ -5,6 +5,7 @@ import Swal from 'sweetalert2'
 
 export default function useAvatar() {
   const {
+    user,
     user: { avatarUrl, id },
     setUser,
   } = useContext(AuthContext)
@@ -91,7 +92,7 @@ export default function useAvatar() {
     updateAvatar(id, avatarFile).then((res) => {
       const { data } = res
       if (data.message === 'success') {
-        setUser(data.update)
+        setUser({ ...user, avatarUrl: data.update.avatarUrl })
         prop.handleToggleAvatarPopUp()
       }
       setIsLoading(false)
