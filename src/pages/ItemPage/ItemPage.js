@@ -52,8 +52,8 @@ const DetailLeft = styled.div`
 
   ${MEDIA_QUERY_SM} {
     width: 100%;
-    height: 600px;
-    margin-bottom: 0px auto 10px;
+    height: 500px;
+    margin-bottom: 0px auto;
   }
 `
 /* "物品" 資訊：右側全部的區塊 */
@@ -67,15 +67,19 @@ const DetailRight = styled.div`
 
   ${MEDIA_QUERY_SM} {
     width: 100%;
+    margin-top: 30px;
     margin-bottom: 250px;
   }
 `
 /* "物品" 資訊右側：贈物者資訊 */
 const Donor = styled.div`
-  margin-bottom: 38px;
+  margin-bottom: 15px;
   display: flex;
   justify-content: flex-start;
   align-items: center;
+  ${MEDIA_QUERY_MD} {
+    margin-bottom: 0px;
+  }
 `
 
 /* 贈物者頭像 */
@@ -156,9 +160,9 @@ const Icon = styled.div`
 const Label = styled.div`
   margin-left: 17px;
   font-size: 1.35rem;
-  ${MEDIA_QUERY_SM} {
-    font-size: 3.5vmin;
-  }
+  // ${MEDIA_QUERY_SM} {
+  //   font-size: 3.5vmin;
+  // }
 `
 
 /* 每一項寄送方式的內容 */
@@ -175,7 +179,7 @@ const HandleGiftButton = styled(LargeButton)`
 
 /* 禮物詳情頁下方的全部區塊 */
 const GiftContent = styled.div`
-  margin-top: 6rem;
+  // margin-top: 6rem;
 `
 
 /* 禮物詳情頁的 "物品介紹" 區塊 */
