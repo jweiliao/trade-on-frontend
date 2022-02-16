@@ -1,14 +1,19 @@
 const theme = {
   // primary
   primary_100: '#FFF3B3',
+  primary_150: '#ffe563',
   primary_200: '#FFD803',
+  primary_250: '#ffcd05',
   primary_300: '#B8A53A',
 
   // secondary
   secondary: '#272343',
+  secondary_100: '#e3f6f5',
+  secondary_200: '#bae8e8',
 
   // danger
-  danger: '#E56051',
+  danger_000: '#E56051',
+  danger_100: '#e25151',
 
   // general
   general_000: '#FFFFFF',
