@@ -1,0 +1,18 @@
+/* .carousel .slider-wrapper {
+  width: 50%;
+} */
+
+/* .carousel .thumb {
+  width: 5%;
+  height: 50px;
+} */
+
+.carousel .thumb img {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.carousel .slide img {
+  max-height: 300px; /* change this to whatever you want */
+  width: auto;
+}
